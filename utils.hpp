@@ -270,13 +270,15 @@ inline auto erase(auto& r0, auto&& k)
   if (r0)
   {
     std::uintptr_t* q{};
-    pointer p{};
+    pointer p{}, pp{};
 
     for (auto n(r0);;)
     {
       if (auto const c(node::cmp(k, n->key())); c < 0)
       {
         q = &n->l_;
+
+        pp = p;
 
         auto const tmp(n);
         n = left_node(n, p);
@@ -285,6 +287,8 @@ inline auto erase(auto& r0, auto&& k)
       else if (c > 0)
       {
         q = &n->r_;
+
+        pp = p;
 
         auto const tmp(n);
         n = right_node(n, p);
@@ -298,18 +302,30 @@ inline auto erase(auto& r0, auto&& k)
         {
           if (q)
           {
-            *q = conv(p);
+            *q = conv(pp);
+          }
+          else
+          {
+            delete r0;
+            r0 = {};
           }
 
           sg::detail::move(r0, n, p, l, r);
         }
         else
         {
-          *q = l ? conv(l, p) : conv(r, p);
+          if (q)
+          {
+            *q = l ? conv(l, pp) : conv(r, pp);
+          }
+          else
+          {
+            delete r0;
+            r0 = l ? l : r;
+          }
         }
 
-        n->l_ = n->r_ = {};
-        destroy(n, p);
+        delete n;
 
         return std::tuple(nn, np);
       }
