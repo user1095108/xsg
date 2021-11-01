@@ -139,6 +139,7 @@ inline std::size_t size(auto const n, auto const p) noexcept
 
 //
 inline void destroy(auto const n, auto const p)
+  noexcept(noexcept(delete n))
 {
   if (n)
   {
