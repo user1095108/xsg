@@ -142,8 +142,8 @@ inline void destroy(auto const n, auto const p)
 {
   if (n)
   {
-    destroy(left_node(n, p));
-    destroy(right_node(n, p));
+    destroy(left_node(n, p), n);
+    destroy(right_node(n, p), n);
 
     delete n;
   }
