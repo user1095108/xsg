@@ -14,37 +14,34 @@ namespace xsg
 namespace detail
 {
 
-constexpr auto conv(auto const n) noexcept
+constexpr auto conv(auto const ...n) noexcept
 {
-  return std::uintptr_t(n);
-}
-
-constexpr auto conv(auto const a, auto const b) noexcept
-{
-  return std::uintptr_t(a) ^ std::uintptr_t(b);
+  return (std::uintptr_t(n) ^ ...);
 }
 
 //
 inline auto left_node(auto const n, decltype(n) p) noexcept
 {
+  assert(n);
   return std::remove_const_t<decltype(n)>(conv(p) ^ n->l_);
 }
 
 inline auto right_node(auto const n, decltype(n) p) noexcept
 {
+  assert(n);
   return std::remove_const_t<decltype(n)>(conv(p) ^ n->r_);
 }
 
 inline auto first_node(auto n, decltype(n) p) noexcept
 {
-  for (decltype(n) tmp; (tmp = left_node(n, p)); p = n, n = tmp);
+  for (decltype(n) l; (l = left_node(n, p)); p = n, n = l);
 
   return std::tuple(n, p);
 }
 
 inline auto last_node(auto n, decltype(n) p) noexcept
 {
-  for (decltype(n) tmp; (tmp = right_node(n, p)); p = n, n = tmp);
+  for (decltype(n) r; (r = right_node(n, p)); p = n, n = r);
 
   return std::tuple(n, p);
 }
@@ -52,11 +49,13 @@ inline auto last_node(auto n, decltype(n) p) noexcept
 //
 inline auto lparent_node(auto const n, decltype(n) l) noexcept
 {
+  assert(n);
   return std::remove_const_t<decltype(n)>(conv(l) ^ n->l_);
 }
 
 inline auto rparent_node(auto const n, decltype(n) r) noexcept
 {
+  assert(n);
   return std::remove_const_t<decltype(n)>(conv(r) ^ n->r_);
 }
 
@@ -68,12 +67,11 @@ inline auto next_node(auto n, decltype(n) p) noexcept
 
   if (auto const r(right_node(n, p)); r)
   {
-    auto const [fn, fp](first_node(r, p));
-
-    return fn ? std::tuple(fn, fp) : std::tuple(r, n);
+    return first_node(r, n);
   }
-  else
+  else if (p)
   {
+    std::cout << "!!!" << n->kv_ << std::endl;
     for (auto&& key(n->key()); p;)
     {
       {
@@ -88,6 +86,10 @@ inline auto next_node(auto n, decltype(n) p) noexcept
       }
     }
   }
+  else
+  {
+    n = {};
+  }
 
   return std::tuple(n, p);
 }
@@ -95,20 +97,19 @@ inline auto next_node(auto n, decltype(n) p) noexcept
 inline auto prev_node(auto n, decltype(n) p) noexcept
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
-  assert(n);
 
   if (!n)
   {
-    n = p;
-    p = right_node(n, nullptr);
+    assert(p);
+    p = right_node(n = p, nullptr);
   }
   else if (auto const l(left_node(n, p)); l)
   {
-    auto const [ln, lp](last_node(l, p));
+    auto const [ln, lp](last_node(l, n));
 
     return ln ? std::tuple(ln, lp) : std::tuple(l, n);
   }
-  else
+  else if (p)
   {
     for (auto&& key(n->key()); p;)
     {
@@ -123,6 +124,10 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
         break;
       }
     }
+  }
+  else
+  {
+    n = {};
   }
 
   return std::tuple(n, p);
@@ -176,9 +181,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
     {
       if (auto const r(right_node(n, p)); r)
       {
-        auto const [fn, fp] = first_node(r, n);
-
-        std::tie(gn, gp) = fn ? std::tuple(fn, fp) : std::tuple(r, n);
+        auto const [gn, gp] = first_node(r, n);
       }
 
       break;
