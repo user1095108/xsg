@@ -97,7 +97,12 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
   assert(n);
 
-  if (auto const l(left_node(n, p)); l)
+  if (!n)
+  {
+    n = p;
+    p = right_node(n, nullptr);
+  }
+  else if (auto const l(left_node(n, p)); l)
   {
     auto const [ln, lp](last_node(l, p));
 
@@ -138,7 +143,7 @@ inline std::size_t size(auto const n, auto const p) noexcept
 }
 
 //
-inline void destroy(auto const n, auto const p)
+inline void destroy(auto const n, decltype(n) p)
   noexcept(noexcept(delete n))
 {
   if (n)
@@ -150,7 +155,7 @@ inline void destroy(auto const n, auto const p)
   }
 }
 
-inline auto equal_range(auto n, auto p, auto&& k) noexcept
+inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
@@ -161,11 +166,11 @@ inline auto equal_range(auto n, auto p, auto&& k) noexcept
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
       gn = n; gp = p;
-      n = left_node(n, p); p = n;
+      auto const tmp(n); n = left_node(n, p); p = tmp;
     }
     else if (c > 0)
     {
-      n = right_node(n); p = n;
+      auto const tmp(n); n = right_node(n, p); p = tmp;
     }
     else
     {
@@ -180,7 +185,7 @@ inline auto equal_range(auto n, auto p, auto&& k) noexcept
     }
   }
 
-  return std::tuple(n, p, gn, gp);
+  return std::tuple(std::tuple(n, p), std::tuple(gn, gp));
 }
 
 inline auto find(auto n, decltype(n) p, auto&& k) noexcept
@@ -191,13 +196,15 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
+      auto const tmp(n);
       n = left_node(n, p);
-      p = n
+      p = tmp;
     }
     else if (c > 0)
     {
+      auto const tmp(n);
       n = right_node(n, p);
-      p = n
+      p = tmp;
     }
     else
     {
@@ -213,7 +220,8 @@ inline void move(auto& n, auto p, auto const ...d)
   using pointer = std::remove_cvref_t<decltype(n)>;
   using node = std::remove_pointer_t<pointer>;
 
-  auto const f([&](auto&& f, auto& n, auto p, auto const d) noexcept -> std::size_t
+  auto const f([&](auto&& f, auto& n, auto p, auto const d) noexcept ->
+    std::tuple<pointer, std::size_t>
     {
       std::size_t sl, sr;
 
@@ -221,15 +229,24 @@ inline void move(auto& n, auto p, auto const ...d)
       {
         if (auto const l(left_node(n, p)); l)
         {
-          if (sl = f(f, l, n, d); !sl)
+          if (auto const [nn, s](f(f, l, n, d)); s)
           {
-            return 0;
+            sl = s;
+          }
+          else
+          {
+            if (nn)
+            {
+              n->l_ = conv(nn, p);
+            }
+
+            return {{}, 0};
           }
         }
         else
         {
-          n->l_ = conv(p, d);
-          sl = size(d);
+          n->l_ = conv(d, p);
+          sl = size(d, n);
         }
 
         sr = size(right_node(n, p));
@@ -238,15 +255,24 @@ inline void move(auto& n, auto p, auto const ...d)
       {
         if (auto const r(right_node(n, p)); r)
         {
-          if (sr = f(f, r, n, d); !sr)
+          if (auto const [nn, s](f(f, r, n, d)); s)
           {
-            return 0;
+            sr = s;
+          }
+          else
+          {
+            if (nn)
+            {
+              n->r_ = conv(nn, p);
+            }
+
+            return {{}, 0};
           }
         }
         else
         {
-          n->r_ = conv(p, d);
-          sr = size(d);
+          n->r_ = conv(d, p);
+          sr = size(d, n);
         }
 
         sl = size(left_node(n, p));
@@ -255,11 +281,13 @@ inline void move(auto& n, auto p, auto const ...d)
       //
       auto const s(1 + sl + sr), S(2 * s);
 
-      return (3 * sl > S) || (3 * sr > S) ? (n = n->rebuild(p), 0) : s;
+      return (3 * sl > S) || (3 * sr > S) ?
+        std::tuple(node::rebuild(n, p), std::size_t{}) :
+        std::tuple(nullptr, s);
     }
   );
 
-  ((n ? f(f, n, p, d) : (n = d, 0)), ...);
+  ((n ? f(f, n, p, d) : std::tuple(n = d, std::size_t())), ...);
 }
 
 inline auto erase(auto& r0, auto&& k)
@@ -310,7 +338,7 @@ inline auto erase(auto& r0, auto&& k)
             r0 = {};
           }
 
-          sg::detail::move(r0, n, p, l, r);
+          detail::move(r0, n, p, l, r);
         }
         else
         {
@@ -325,7 +353,10 @@ inline auto erase(auto& r0, auto&& k)
           }
         }
 
-        delete n;
+        if (q)
+        {
+          delete n;
+        }
 
         return std::tuple(nn, np);
       }
@@ -337,6 +368,84 @@ inline auto erase(auto& r0, auto&& k)
 
 }
 
+constexpr bool operator==(auto const& lhs, decltype(lhs) rhs) noexcept
+  requires(
+    requires{
+      lhs.begin(); lhs.end();
+      &std::remove_cvref_t<decltype(lhs)>::node::cmp;
+    } &&
+    !std::is_const_v<std::remove_reference_t<decltype(lhs)>>
+  )
+{
+  return std::equal(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end(),
+    [](auto&& a, auto && b) noexcept
+    {
+      return std::remove_cvref_t<decltype(lhs)>::node::cmp(a, b) == 0;
+    }
+  );
 }
 
-#endif // SG_UTILS_HPP
+constexpr auto operator<=>(auto const& lhs, decltype(lhs) rhs) noexcept
+  requires(
+    requires{
+      lhs.begin(); lhs.end();
+      &std::remove_cvref_t<decltype(lhs)>::node::cmp;
+    } &&
+    !std::is_const_v<std::remove_reference_t<decltype(lhs)>>
+  )
+{
+  return std::lexicographical_compare_three_way(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end(),
+    std::remove_cvref_t<decltype(lhs)>::node::cmp
+  );
+}
+
+constexpr auto erase(auto& c, auto const& k)
+  requires(
+    requires{
+      c.begin(); c.end();
+      &std::remove_cvref_t<decltype(c)>::node::cmp;
+    } &&
+    !std::is_const_v<std::remove_reference_t<decltype(c)>>
+  )
+{
+  return c.erase(k);
+}
+
+constexpr auto erase_if(auto& c, auto pred)
+  requires(
+    requires{
+      c.begin(); c.end();
+      &std::remove_cvref_t<decltype(c)>::node::cmp;
+    } &&
+    !std::is_const_v<std::remove_reference_t<decltype(c)>>
+  )
+{
+  std::size_t r{};
+
+  for (auto i(c.begin()); i.node();)
+  {
+    i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
+  }
+
+  return r;
+}
+
+constexpr void swap(auto& lhs, decltype(lhs) rhs) noexcept
+  requires(
+    requires{
+      lhs.begin(); lhs.end();
+      &std::remove_cvref_t<decltype(lhs)>::node::cmp;
+    } &&
+    !std::is_const_v<std::remove_reference_t<decltype(lhs)>>
+  )
+{
+  lhs.swap(rhs);
+}
+
+}
+
+#endif // XSG_UTILS_HPP
