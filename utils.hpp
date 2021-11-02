@@ -87,9 +87,9 @@ inline auto next_node(auto n, decltype(n) p) noexcept
         break;
       }
     }
-
-    return std::tuple(p, n);
   }
+
+  return std::tuple(n, p);
 }
 
 inline auto prev_node(auto n, decltype(n) p) noexcept
@@ -123,9 +123,9 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
         break;
       }
     }
-
-    return std::tuple(p, n);
   }
+
+  return std::tuple(n, p);
 }
 
 //
@@ -240,7 +240,7 @@ inline void move(auto& n, auto p, auto const ...d)
               n->l_ = conv(nn, p);
             }
 
-            return {{}, 0};
+            return {nullptr, 0};
           }
         }
         else
@@ -249,7 +249,7 @@ inline void move(auto& n, auto p, auto const ...d)
           sl = size(d, n);
         }
 
-        sr = size(right_node(n, p));
+        sr = size(right_node(n, p), n);
       }
       else
       {
@@ -266,7 +266,7 @@ inline void move(auto& n, auto p, auto const ...d)
               n->r_ = conv(nn, p);
             }
 
-            return {{}, 0};
+            return {nullptr, 0};
           }
         }
         else
@@ -275,7 +275,7 @@ inline void move(auto& n, auto p, auto const ...d)
           sr = size(d, n);
         }
 
-        sl = size(left_node(n, p));
+        sl = size(left_node(n, p), n);
       }
 
       //
