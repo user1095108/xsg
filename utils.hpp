@@ -345,18 +345,27 @@ inline auto erase(auto& r0, auto&& k)
         auto const nn(next_node(n, p));
 
         // pp - p - n - lr
-        if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
+        auto const l(left_node(n, p)), r(right_node(n, p));
+        delete n;
+
+        if (l)
         {
           l->l_ ^= conv(n); l->r_ ^= conv(n);
-          r->l_ ^= conv(n); r->r_ ^= conv(n);
+        }
 
+        if (r)
+        {
+          r->l_ ^= conv(n); r->r_ ^= conv(n);
+        }
+
+        if (l && r)
+        {
           if (q)
           {
             *q = conv(pp);
           }
           else
           {
-            delete r0;
             r0 = {};
           }
 
@@ -364,29 +373,14 @@ inline auto erase(auto& r0, auto&& k)
         }
         else
         {
-          if (l)
-          {
-            l->l_ ^= conv(n); l->r_ ^= conv(n);
-          }
-          else if (r)
-          {
-            r->l_ ^= conv(n); r->r_ ^= conv(n);
-          }
-
           if (q)
           {
             *q = l ? conv(l, pp) : conv(r, pp);
           }
           else
           {
-            delete r0;
             r0 = l ? l : r;
           }
-        }
-
-        if (q)
-        {
-          delete n;
         }
 
         return nn;
