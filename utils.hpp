@@ -348,10 +348,13 @@ inline auto erase(auto& r0, auto&& k)
       }
       else
       {
-        auto const [nn, np](next_node(n, p));
+        auto const nn(next_node(n, p));
 
         if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
         {
+          l->l_ ^= conv(p); l->r_ ^= conv(p);
+          r->l_ ^= conv(p); r->r_ ^= conv(p);
+
           if (q)
           {
             *q = conv(pp);
@@ -382,7 +385,7 @@ inline auto erase(auto& r0, auto&& k)
           delete n;
         }
 
-        return std::tuple(nn, np);
+        return nn;
       }
     }
   }
