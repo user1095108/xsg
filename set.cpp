@@ -51,8 +51,8 @@ int main()
   std::cout << s.contains(100) << std::endl;
 
   std::for_each(
-    s.crbegin(),
-    s.crend(),
+    s.cbegin(),
+    s.cend(),
     [](auto&& p) noexcept
     {
       std::cout << p << std::endl;
@@ -60,12 +60,12 @@ int main()
   );
 
   std::cout << "eq: " << (s == xsg::set<int>{1, 2, 3, 4}) << std::endl;
-  s.erase(std::next(s.cbegin()));
-  //s.erase({std::next(s.cbegin()), std::prev(s.cend())});
+  //s.erase(std::next(s.cbegin()));
+  s.erase({std::next(s.cbegin()), std::prev(s.cend())});
 
   std::for_each(
-    s.cbegin(),
-    s.cend(),
+    s.crbegin(),
+    s.crend(),
     [](auto&& p) noexcept
     {
       std::cout << p << std::endl;

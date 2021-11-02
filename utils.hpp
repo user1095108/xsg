@@ -89,7 +89,7 @@ inline auto next_node(auto n, decltype(n) p) noexcept
     while (p);
   }
 
-  return std::tuple(pointer{}, std::get<0>(last_node(n, {})));
+  return std::tuple(pointer{}, pointer{});
 }
 
 inline auto prev_node(auto n, decltype(n) p) noexcept
@@ -100,7 +100,7 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
   if (!n)
   {
     assert(p);
-    return std::tuple(p, right_node(p, nullptr));
+    return std::tuple(p, right_node(p, {}));
   }
   else if (auto const l(left_node(n, p)); l)
   {
@@ -126,7 +126,7 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
     while (p);
   }
 
-  return std::tuple(pointer{}, std::get<0>(last_node(n, {})));
+  return std::tuple(pointer{}, pointer{});
 }
 
 //
@@ -220,13 +220,13 @@ constexpr auto invoke_all(auto f, auto&& ...a) noexcept(noexcept(
   (f(std::forward<decltype(a)>(a)), ...);
 }
 
-inline void move(auto& r, auto p, auto const ...d)
+inline void move(auto& r, auto const ...d)
 {
   using pointer = std::remove_cvref_t<decltype(r)>;
   using node = std::remove_pointer_t<pointer>;
 
-  auto const f([&](auto&& f, auto n, auto p, auto const d) noexcept ->
-    std::tuple<pointer, std::size_t>
+  auto const f([&](auto&& f, auto n, decltype(n) p,
+    decltype(n) const d) noexcept -> std::tuple<pointer, std::size_t>
     {
       assert(n);
       std::size_t sl, sr;
@@ -249,6 +249,8 @@ inline void move(auto& r, auto p, auto const ...d)
         else
         {
           n->l_ = conv(d, p);
+          d->l_ ^= conv(n); d->r_ ^= conv(n);
+
           sl = size(d, n);
         }
 
@@ -272,6 +274,8 @@ inline void move(auto& r, auto p, auto const ...d)
         else
         {
           n->r_ = conv(d, p);
+          d->l_ ^= conv(n); d->r_ ^= conv(n);
+
           sr = size(d, n);
         }
 
@@ -288,18 +292,18 @@ inline void move(auto& r, auto p, auto const ...d)
   );
 
   invoke_all(
-    [&](auto const d)
+    [&](auto const p)
     {
       if (r)
       {
-        if (auto const [nn, s](f(f, r, nullptr, d)); nn)
+        if (auto const [nn, s](f(f, r, nullptr, p)); nn)
         {
           r = nn;
         }
       }
       else
       {
-        r = d;
+        r = p;
       }
     },
     d...
@@ -340,10 +344,11 @@ inline auto erase(auto& r0, auto&& k)
       {
         auto const nn(next_node(n, p));
 
+        // pp - p - n - lr
         if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
         {
-          l->l_ ^= conv(p); l->r_ ^= conv(p);
-          r->l_ ^= conv(p); r->r_ ^= conv(p);
+          l->l_ ^= conv(n); l->r_ ^= conv(n);
+          r->l_ ^= conv(n); r->r_ ^= conv(n);
 
           if (q)
           {
@@ -355,10 +360,19 @@ inline auto erase(auto& r0, auto&& k)
             r0 = {};
           }
 
-          detail::move(r0, n, p, l, r);
+          detail::move(r0, l, r);
         }
         else
         {
+          if (l)
+          {
+            l->l_ ^= conv(n); l->r_ ^= conv(n);
+          }
+          else if (r)
+          {
+            r->l_ ^= conv(n); r->r_ ^= conv(n);
+          }
+
           if (q)
           {
             *q = l ? conv(l, pp) : conv(r, pp);
