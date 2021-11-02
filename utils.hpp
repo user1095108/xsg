@@ -397,8 +397,7 @@ constexpr bool operator==(auto const& lhs, decltype(lhs) rhs) noexcept
     requires{
       lhs.begin(); lhs.end();
       &std::remove_cvref_t<decltype(lhs)>::node::cmp;
-    } &&
-    !std::is_const_v<std::remove_reference_t<decltype(lhs)>>
+    }
   )
 {
   return std::equal(
@@ -416,8 +415,7 @@ constexpr auto operator<=>(auto const& lhs, decltype(lhs) rhs) noexcept
     requires{
       lhs.begin(); lhs.end();
       &std::remove_cvref_t<decltype(lhs)>::node::cmp;
-    } &&
-    !std::is_const_v<std::remove_reference_t<decltype(lhs)>>
+    }
   )
 {
   return std::lexicographical_compare_three_way(
