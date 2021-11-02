@@ -89,13 +89,14 @@ public:
             {
               if constexpr(std::is_same_v<decltype(v), empty_t&&>)
               {
-                s = q = new node(std::move(k));
+                q = new node(std::move(k));
               }
               else
               {
-                s = q = new node(std::move(k), std::forward<decltype(v)>(v));
+                q = new node(std::move(k), std::forward<decltype(v)>(v));
               }
 
+              s = q;
               q->l_ = q->r_ = detail::conv(n);
 
               n->l_ = detail::conv(q, qp = p);
@@ -125,13 +126,14 @@ public:
             {
               if constexpr(std::is_same_v<decltype(v), empty_t&&>)
               {
-                s = q = new node(std::move(k));
+                q = new node(std::move(k));
               }
               else
               {
-                s = q = new node(std::move(k), std::forward<decltype(v)>(v));
+                q = new node(std::move(k), std::forward<decltype(v)>(v));
               }
 
+              s = q;
               q->l_ = q->r_ = detail::conv(n);
 
               n->l_ = detail::conv(p);
@@ -170,14 +172,14 @@ public:
       {
         if constexpr(std::is_same_v<decltype(v), empty_t&&>)
         {
-          s = q = new node(std::move(k));
+          q = new node(std::move(k));
         }
         else
         {
-          s = q = new node(std::move(k), std::forward<decltype(v)>(v));
+          q = new node(std::move(k), std::forward<decltype(v)>(v));
         }
 
-        r = q;
+        r = q; s = q;
         q->l_ = q->r_ = {};
         qp = {};
       }

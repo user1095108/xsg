@@ -47,9 +47,7 @@ iterator begin() noexcept
 
 iterator end() noexcept
 {
-  return root_ ?
-    iterator(this, {}, detail::last_node(root, {})) :
-    iterator(this);
+  return root_ ? iterator(this, {}, {}) : iterator(this);
 }
 
 // const iterators
@@ -62,9 +60,7 @@ const_iterator begin() const noexcept
 
 const_iterator end() const noexcept
 {
-  return root_ ?
-    const_iterator(this, {}, {}) :
-    const_iterator(this);
+  return root_ ? const_iterator(this, {}, {}) : const_iterator(this);
 }
 
 const_iterator cbegin() const noexcept
@@ -76,9 +72,7 @@ const_iterator cbegin() const noexcept
 
 const_iterator cend() const noexcept
 {
-  return root_ ?
-    const_iterator(this, {}, std::get<0>(detail::last_node(root_, {}))) :
-    const_iterator(this);
+  return root_ ? const_iterator(this, {}, {}) : const_iterator(this);
 }
 
 // reverse iterators
@@ -160,12 +154,12 @@ iterator erase(std::initializer_list<const_iterator> il)
 //
 iterator find(Key const& k) noexcept
 {
-  return iterator(root_, xsg::detail::find(root_, {}, k));
+  return iterator(this, xsg::detail::find(root_, {}, k));
 }
 
 const_iterator find(Key const& k) const noexcept
 {
-  return const_iterator(root_, xsg::detail::find(root_, {}, k));
+  return const_iterator(this, xsg::detail::find(root_, {}, k));
 }
 
 // these may always throw

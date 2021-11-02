@@ -78,7 +78,8 @@ public:
             }
             else
             {
-              s = q = new node(std::move(k));
+              q = new node(std::move(k));
+              s = q;
               q->l_ = q->r_ = detail::conv(n);
 
               n->l_ = detail::conv(q, qp = p);
@@ -106,7 +107,8 @@ public:
             }
             else
             {
-              s = q = new node(std::move(k));
+              q = new node(std::move(k));
+              s = q;
               q->l_ = q->r_ = detail::conv(n);
 
               n->l_ = detail::conv(p);
