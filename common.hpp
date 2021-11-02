@@ -41,80 +41,76 @@ friend bool operator>=(this_class const&, this_class const&) = default;
 iterator begin() noexcept
 {
   return root_ ?
-    iterator(detail::first_node(root_, {})) :
-    iterator();
+    iterator(this, detail::first_node(root_, {})) :
+    iterator(this);
 }
 
 iterator end() noexcept
 {
   return root_ ?
-    iterator({}, detail::last_node(root, {})) :
-    iterator();
+    iterator(this, {}, detail::last_node(root, {})) :
+    iterator(this);
 }
 
 // const iterators
 const_iterator begin() const noexcept
 {
   return root_ ?
-    const_iterator(detail::first_node(root_, {})) :
-    const_iterator();
+    const_iterator(this, detail::first_node(root_, {})) :
+    const_iterator(this);
 }
 
 const_iterator end() const noexcept
 {
   return root_ ?
-    const_iterator({}, std::get<0>(detail::last_node(root_, {}))) :
-    const_iterator();
+    const_iterator(this, {}, {}) :
+    const_iterator(this);
 }
 
 const_iterator cbegin() const noexcept
 {
   return root_ ?
-    const_iterator(detail::first_node(root_, {})) :
-    const_iterator();
+    const_iterator(this, detail::first_node(root_, {})) :
+    const_iterator(this);
 }
 
 const_iterator cend() const noexcept
 {
   return root_ ?
-    const_iterator({}, std::get<0>(detail::last_node(root_, {}))) :
-    const_iterator();
+    const_iterator(this, {}, std::get<0>(detail::last_node(root_, {}))) :
+    const_iterator(this);
 }
 
 // reverse iterators
 reverse_iterator rbegin() noexcept
 {
   return root_ ?
-    reverse_iterator(
-      iterator({}, std::get<0>(detail::last_node(root_, {})))
-    ) :
-    reverse_iterator();
+    reverse_iterator(iterator(this, {}, {})) :
+    reverse_iterator(iterator(this));
 }
 
 reverse_iterator rend() noexcept
 {
   return root_ ?
-    reverse_iterator(iterator{detail::first_node(root_, {})}) :
-    reverse_iterator();
+    reverse_iterator(iterator(this, detail::first_node(root_, {}))) :
+    reverse_iterator(iterator(this));
 }
 
 // const reverse iterators
 const_reverse_iterator crbegin() const noexcept
 {
   return root_ ?
-    const_reverse_iterator(
-      const_iterator({}, std::get<0>(detail::last_node(root_, {})))
-    ) :
-    const_reverse_iterator();
+    const_reverse_iterator(const_iterator(this, {}, {})) :
+    const_reverse_iterator(const_iterator(this));
 }
 
 const_reverse_iterator crend() const noexcept
 {
   return root_ ?
     const_reverse_iterator(
-      const_iterator{detail::first_node(root_, {})}
+      const_iterator(this, detail::first_node(root_, {}))
     ) :
-    const_reverse_iterator();
+    const_reverse_iterator(const_iterator(this));
 }
 
 //
@@ -153,7 +149,7 @@ iterator erase(const_iterator a, const_iterator const b)
 
 iterator erase(std::initializer_list<const_iterator> il)
 {
-  iterator r;
+  iterator r(this);
 
   // must be sequential
   std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(i); });

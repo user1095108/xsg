@@ -130,15 +130,15 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
 }
 
 //
-inline std::size_t height(auto const n, auto const p) noexcept
+inline std::size_t height(auto const n, decltype(n) p) noexcept
 {
   return n ?
     (left_node(n, p) || right_node(n, p)) +
-    std::max(height(left_node(n), n), height(right_node(n), n)) :
+    std::max(height(left_node(n, p), n), height(right_node(n, p), n)) :
     std::size_t{};
 }
 
-inline std::size_t size(auto const n, auto const p) noexcept
+inline std::size_t size(auto const n, decltype(n) p) noexcept
 {
   return n ? 1 + size(left_node(n, p), n) + size(right_node(n, p), n) : 0;
 }

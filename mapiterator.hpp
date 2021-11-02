@@ -9,17 +9,18 @@
 namespace xsg
 {
 
-template <typename T>
+template <typename C, typename T>
 class mapiterator
 {
   using inverse_const_t = std::conditional_t<
     std::is_const_v<T>,
-    mapiterator<std::remove_const_t<T>>,
-    mapiterator<T const>
+    mapiterator<C, std::remove_const_t<T>>,
+    mapiterator<C const, T const>
   >;
 
   friend inverse_const_t;
 
+  C* c_;
   T* n_{};
   T* p_{};
 
@@ -36,15 +37,21 @@ public:
   using reference = value_type&;
 
 public:
-  mapiterator() = default;
+  mapiterator(C* c) noexcept:
+    c_(c)
+  {
+  }
 
-  mapiterator(std::tuple<std::remove_const_t<T>*,
-    std::remove_const_t<T>*> const& t) noexcept
+  mapiterator(C* c,
+    std::tuple<std::remove_const_t<T>*,
+    std::remove_const_t<T>*> const& t) noexcept:
+    c_(c)
   {
     std::tie(n_, p_) = t;
   }
 
-  mapiterator(T* const n, T* const p) noexcept:
+  mapiterator(C* c, T* const n, T* const p) noexcept:
+    c_(c),
     n_(n),
     p_(p)
   {
@@ -54,6 +61,7 @@ public:
   mapiterator(mapiterator&&) = default;
 
   mapiterator(inverse_const_t const& o) noexcept requires(std::is_const_v<T>):
+    c_(o.c_),
     n_(o.n_),
     p_(o.p_)
   {
@@ -76,7 +84,9 @@ public:
 
   auto& operator--() noexcept
   {
-    std::tie(n_, p_) = detail::prev_node(n_, p_);
+    std::tie(n_, p_) = n_ ?
+      detail::prev_node(n_, p_) :
+      detail::last_node(c_->root(), {});
 
     return *this;
   }
