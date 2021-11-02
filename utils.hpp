@@ -61,6 +61,7 @@ inline auto rparent_node(auto const n, decltype(n) r) noexcept
 
 inline auto next_node(auto n, decltype(n) p) noexcept
 {
+  using pointer = std::remove_cvref_t<decltype(n)>;
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
   assert(n);
 
@@ -86,25 +87,20 @@ inline auto next_node(auto n, decltype(n) p) noexcept
       }
     }
     while (p);
-
-    n = {};
-  }
-  {
-    n = {};
   }
 
-  return std::tuple(n, p);
+  return std::tuple(pointer{}, std::get<0>(last_node(n, {})));
 }
 
 inline auto prev_node(auto n, decltype(n) p) noexcept
 {
+  using pointer = std::remove_cvref_t<decltype(n)>;
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
   if (!n)
   {
     assert(p);
-    n = p;
-    p = right_node(n, nullptr);
+    return std::tuple(p, right_node(p, nullptr));
   }
   else if (auto const l(left_node(n, p)); l)
   {
@@ -128,15 +124,9 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
       }
     }
     while (p);
-
-    n = {};
-  }
-  else
-  {
-    n = {};
   }
 
-  return std::tuple(n, p);
+  return std::tuple(pointer{}, std::get<0>(last_node(n, {})));
 }
 
 //
