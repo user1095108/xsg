@@ -5,21 +5,26 @@
 using namespace std::literals::string_literals;
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-void dump(auto n)
+void dump(auto n, decltype(n) p)
 {
-  std::vector<decltype(n)> q{n};
+  std::vector<std::pair<decltype(n), decltype(n)>> q{{n, p}};
 
   do
   {
     for (auto m(q.size()); m--;)
     {
-      auto const n(q.front());
+      auto const [n, p](q.front());
       q.erase(q.begin());
 
       if (n)
       {
-        q.insert(q.end(), {n->l_, n->r_});
+        q.insert(
+          q.end(),
+          {
+            {xsg::detail::left_node(n, p), n},
+            {xsg::detail::right_node(n, p), n}
+          }
+        );
 
         std::cout << '(' << n->kv_.first << ',' << n->kv_.second << ')';
       }
@@ -34,9 +39,8 @@ void dump(auto n)
     std::cout << std::endl;
   }
   while (q.size() && std::any_of(q.cbegin(), q.cend(),
-    [](auto const p) noexcept { return p; }));
+    [](auto const p) noexcept { return std::get<0>(p); }));
 }
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 int main()
@@ -58,7 +62,7 @@ int main()
   }
   */
 
-  //dump(st.root());
+  dump(st.root(), {});
 
   std::cout << "height: " << xsg::detail::height(st.root(), {}) << std::endl;
   std::cout << "size: " << st.size() << std::endl;
