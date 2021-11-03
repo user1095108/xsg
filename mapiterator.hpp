@@ -77,7 +77,7 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    std::tie(n_, p_) = detail::next_node(n_, p_);
+    std::tie(n_, p_) = detail::next_node(nullptr, n_, p_);
 
     return *this;
   }
@@ -85,7 +85,7 @@ public:
   auto& operator--() noexcept
   {
     std::tie(n_, p_) = n_ ?
-      detail::prev_node(n_, p_) :
+      detail::prev_node(nullptr, n_, p_) :
       detail::last_node(c_->root(), {});
 
     return *this;

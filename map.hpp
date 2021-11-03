@@ -64,19 +64,16 @@ public:
 
       key_type k(std::forward<decltype(a)>(a));
 
-      auto const create_node([&](auto const n, decltype(n) p)
+      auto const create_node([&]()
         {
           if constexpr(std::is_same_v<decltype(v), empty_t&&>)
           {
-            s = (q = new node(std::move(k)));
+            return new node(std::move(k));
           }
           else
           {
-            s = (q = new node(std::move(k), std::forward<decltype(v)>(v)));
+            return new node(std::move(k), std::forward<decltype(v)>(v));
           }
-
-          q->l_ = q->r_ = detail::conv(n);
-          qp = n;
         }
       );
 
@@ -95,6 +92,10 @@ public:
 
                 return {nullptr, {}};
               }
+              else if (!sz)
+              {
+                return {nullptr, {}};
+              }
               else
               {
                 sl = sz;
@@ -102,8 +103,10 @@ public:
             }
             else
             {
-              create_node(n, p);
+              s = (q = create_node());
+              q->l_ = q->r_ = detail::conv(n);
 
+              qp = n;
               n->l_ = detail::conv(q, p);
 
               sl = 1;
@@ -121,6 +124,10 @@ public:
 
                 return {nullptr, {}};
               }
+              else if (!sz)
+              {
+                return {nullptr, {}};
+              }
               else
               {
                 sr = sz;
@@ -128,8 +135,10 @@ public:
             }
             else
             {
-              create_node(n, p);
+              s = (q = create_node());
+              q->l_ = q->r_ = detail::conv(n);
 
+              qp = n;
               n->r_ = detail::conv(q, p);
 
               sr = 1;
@@ -149,29 +158,29 @@ public:
           auto const s(1 + sl + sr), S(2 * s);
 
           return (3 * sl > S) || (3 * sr > S) ?
-            std::tuple(rebuild(n, p), 0) :
+            std::tuple(rebuild(n, p, qp, q), 0) :
             std::tuple(nullptr, s);
         }
       );
 
       if (r)
       {
-        if (auto const [nn, s](f(f, r, {})); nn)
+        if (auto const [nn, sz](f(f, r, {})); nn)
         {
           r = nn;
         }
       }
       else
       {
-        create_node(r, {});
-
-        r = q;
+        r = q = create_node();
+        q->l_ = q->r_ = detail::conv(nullptr);
+        qp = {};
       }
 
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p)
+    static auto rebuild(auto const n, decltype(n) p, auto& qp, auto& q)
     {
       std::vector<node*> l;
       l.reserve(1024);
@@ -184,14 +193,19 @@ public:
           l.emplace_back(std::get<0>(t));
         }
         while (std::get<0>(t =
-          detail::next_node(std::get<0>(t), std::get<1>(t))));
+          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
       }
 
-      auto const f([&](auto&& f, node* const p,
+      auto const f([&](auto&& f, auto const p,
         auto const a, auto const b) noexcept -> node*
         {
           auto const i((a + b) / 2);
           auto const n(l[i]);
+
+          if (n == q)
+          {
+            qp = p;
+          }
 
           switch (b - a)
           {
@@ -202,21 +216,24 @@ public:
 
             case 1:
               {
-                auto const nb(l[b]);
-
                 // n - nb
-                n->l_ = detail::conv(p);
-                n->r_ = detail::conv(nb, p);
+                auto const nb(l[b]);
                 nb->l_ = nb->r_ = detail::conv(n);
 
-                break;
+                if (nb == q)
+                {
+                  qp = n;
+                }
+
+                n->l_ = detail::conv(p);
+                n->r_ = detail::conv(nb, p);
               }
+
+              break;
 
             default:
               n->l_ = detail::conv(f(f, n, a, i - 1), p);
               n->r_ = detail::conv(f(f, n, i + 1, b), p);
-
-              break;
           }
 
           return n;
