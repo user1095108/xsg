@@ -216,8 +216,9 @@ inline void move(auto& r, auto const ...d)
   auto const f([&](auto&& f, auto const n, decltype(n) p,
     decltype(n) d) noexcept -> std::tuple<pointer, std::size_t>
     {
-      assert(n);
       std::size_t sl, sr;
+
+      std::cout << n << std::endl;
 
       if (auto const c(node::cmp(d->key(), n->key())); c < 0)
       {
@@ -243,7 +244,9 @@ inline void move(auto& r, auto const ...d)
           n->l_ = conv(d, p);
           d->l_ ^= conv(n); d->r_ ^= conv(n);
 
+          std::cout << "00000" << d << " " << left_node(d, n) << " " << right_node(d, n) << std::endl;
           sl = size(d, n);
+          std::cout << "11111" << std::endl;
         }
 
         sr = size(right_node(n, p), n);
@@ -272,7 +275,9 @@ inline void move(auto& r, auto const ...d)
           n->r_ = conv(d, p);
           d->l_ ^= conv(n); d->r_ ^= conv(n);
 
+          std::cout << "22222" << d << " " << left_node(d, n) << " " << right_node(d, n) << std::endl;
           sr = size(d, n);
+          std::cout << "33333" << std::endl;
         }
 
         sl = size(left_node(n, p), n);
@@ -288,12 +293,13 @@ inline void move(auto& r, auto const ...d)
     }
   );
 
+
   invoke_all(
     [&](auto const d)
     {
       if (r)
       {
-        if (auto const [nn, sz](f(f, r, nullptr, d)); nn)
+        if (auto const [nn, sz](f(f, r, {}, d)); nn)
         {
           r = nn;
         }
@@ -345,15 +351,18 @@ inline auto erase(auto& r0, auto&& k)
         auto const l(left_node(n, p)), r(right_node(n, p));
         delete n;
 
-        if (l)
-        {
-          l->l_ ^= conv(n); l->r_ ^= conv(n);
-        }
-
-        if (r)
-        {
-          r->l_ ^= conv(n); r->r_ ^= conv(n);
-        }
+        invoke_all(
+          [&](auto const np) noexcept
+          {
+            if (np)
+            {
+              np->l_ ^= conv(n);
+              np->r_ ^= conv(n);
+            }
+          },
+          l,
+          r
+        );
 
         if (l && r)
         {
@@ -366,6 +375,10 @@ inline auto erase(auto& r0, auto&& k)
             r0 = {};
           }
 
+          std::cout << "1111 " <<
+            l << " " << left_node(l, {}) << " " << right_node(l, {}) <<
+            r << " " << left_node(r, {}) << " " << right_node(r, {}) << std::endl;
+
           detail::move(r0, l, r);
         }
         else
@@ -373,6 +386,17 @@ inline auto erase(auto& r0, auto&& k)
           if (q)
           {
             *q = l ? conv(l, pp) : conv(r, pp);
+
+            if (l) // p is not the parent of l and r
+            {
+              l->l_ ^= conv(p);
+              l->r_ ^= conv(p);
+            }
+            else if (r)
+            {
+              r->l_ ^= conv(p);
+              r->r_ ^= conv(p);
+            }
           }
           else
           {
