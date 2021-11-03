@@ -51,6 +51,7 @@ int main()
   };
 
   st.insert_or_assign("b"s, 0);
+
   st.emplace("d"s, 2);
   st.insert({"e", 3});
   st["f"s] = 4;

@@ -64,7 +64,23 @@ public:
 
       key_type k(std::forward<decltype(a)>(a));
 
-      auto const f([&](auto&& f, auto const n, node* const p) noexcept ->
+      auto const create_node([&](auto const n, decltype(n) p)
+        {
+          if constexpr(std::is_same_v<decltype(v), empty_t&&>)
+          {
+            s = (q = new node(std::move(k)));
+          }
+          else
+          {
+            s = (q = new node(std::move(k), std::forward<decltype(v)>(v)));
+          }
+
+          q->l_ = q->r_ = detail::conv(n);
+          qp = n;
+        }
+      );
+
+      auto const f([&](auto&& f, auto const n, decltype(n) p) ->
         std::tuple<node*, size_type>
         {
           size_type sl, sr;
@@ -73,33 +89,22 @@ public:
           {
             if (auto const l(detail::left_node(n, p)); l)
             {
-              if (auto const [nn, s](f(f, l, n)); nn)
+              if (auto const [nn, sz](f(f, l, n)); nn)
               {
                 n->l_ = detail::conv(nn, p);
 
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
-              else if (!(sl = s))
+              else
               {
-                return {nullptr, 0};
+                sl = sz;
               }
             }
             else
             {
-              if constexpr(std::is_same_v<decltype(v), empty_t&&>)
-              {
-                q = new node(std::move(k));
-              }
-              else
-              {
-                q = new node(std::move(k), std::forward<decltype(v)>(v));
-              }
+              create_node(n, p);
 
-              s = q;
-              q->l_ = q->r_ = detail::conv(n);
-
-              n->l_ = detail::conv(q, qp = p);
-              n->r_ = detail::conv(p);
+              n->l_ = detail::conv(q, p);
 
               sl = 1;
             }
@@ -110,33 +115,22 @@ public:
           {
             if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const [nn, s](f(f, r, n)); nn)
+              if (auto const [nn, sz](f(f, r, n)); nn)
               {
                 n->r_ = detail::conv(nn, p);
 
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
-              else if (!(sr = s))
+              else
               {
-                return {nullptr, 0};
+                sr = sz;
               }
             }
             else
             {
-              if constexpr(std::is_same_v<decltype(v), empty_t&&>)
-              {
-                q = new node(std::move(k));
-              }
-              else
-              {
-                q = new node(std::move(k), std::forward<decltype(v)>(v));
-              }
+              create_node(n, p);
 
-              s = q;
-              q->l_ = q->r_ = detail::conv(n);
-
-              n->l_ = detail::conv(p);
-              n->r_ = detail::conv(q, qp = p);
+              n->r_ = detail::conv(q, p);
 
               sr = 1;
             }
@@ -148,7 +142,7 @@ public:
             q = n;
             qp = p;
 
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
 
           //
@@ -169,18 +163,9 @@ public:
       }
       else
       {
-        if constexpr(std::is_same_v<decltype(v), empty_t&&>)
-        {
-          q = new node(std::move(k));
-        }
-        else
-        {
-          q = new node(std::move(k), std::forward<decltype(v)>(v));
-        }
+        create_node(r, {});
 
-        r = q; s = q;
-        q->l_ = q->r_ = {};
-        qp = {};
+        r = q;
       }
 
       return std::tuple(q, qp, s);
