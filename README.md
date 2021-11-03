@@ -1,5 +1,5 @@
 # xsg
-c++ associative containers based on the XOR [scapegoat tree](https://en.wikipedia.org/wiki/Scapegoat_tree). XOR [BST](https://en.wikipedia.org/wiki/Binary_search_tree) trees are cousins of the [XOR linked list](https://en.wikipedia.org/wiki/XOR_linked_list). Eye-popping performance and modest resource requirements make XOR [scapegoat tree](https://en.wikipedia.org/wiki/Scapegoat_tree) trees stand out of the [BST](https://en.wikipedia.org/wiki/Binary_search_tree) crowd.
+c++ associative containers based on the XOR [scapegoat tree](https://en.wikipedia.org/wiki/Scapegoat_tree). XOR [BST](https://en.wikipedia.org/wiki/Binary_search_tree) trees are cousins of the [XOR linked list](https://en.wikipedia.org/wiki/XOR_linked_list). Eye-popping performance and modest resource requirements make XOR [scapegoat trees](https://en.wikipedia.org/wiki/Scapegoat_tree) stand out of the [BST](https://en.wikipedia.org/wiki/Binary_search_tree) crowd.
 
 All iterators, but not references and pointers, are invalidated when adding to or erasing from XOR [binary trees](https://en.wikipedia.org/wiki/Binary_tree). You will be able to get away dereferencing invalidated iterators, but you won't be able to iterate with them.
 
