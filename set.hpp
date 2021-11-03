@@ -97,15 +97,19 @@ public:
           {
             if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const [nn, s](f(f, r, n)); nn)
+              if (auto const [nn, sz](f(f, r, n)); nn)
               {
                 n->r_ = detail::conv(nn, p);
 
                 return {nullptr, 0};
               }
-              else if (!(sr = s))
+              else if (!sz)
               {
                 return {nullptr, 0};
+              }
+              else
+              {
+                sr = sz;
               }
             }
             else
