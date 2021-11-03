@@ -376,7 +376,15 @@ public:
   //
   iterator erase(const_iterator const i)
   {
-    return {&root_, detail::erase(root_, std::get<0>(*i))};
+    //return {&root_, detail::erase(root_, std::get<0>(*i))};
+    return {
+      &root_,
+      xsg::detail::erase(
+        root_,
+        const_cast<node*>(i.n()),
+        const_cast<node*>(i.p())
+      )
+    };
   }
 
   size_type erase(Key const& k)
