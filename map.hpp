@@ -64,16 +64,22 @@ public:
 
       key_type k(std::forward<decltype(a)>(a));
 
-      auto const create_node([&]()
+      auto const create_node([&](auto const p)
         {
+          node* q;
+
           if constexpr(std::is_same_v<decltype(v), empty_t&&>)
           {
-            return new node(std::move(k));
+            q = new node(std::move(k));
           }
           else
           {
-            return new node(std::move(k), std::forward<decltype(v)>(v));
+            q = new node(std::move(k), std::forward<decltype(v)>(v));
           }
+
+          q->l_ = q->r_ = detail::conv(p);
+
+          return q;
         }
       );
 
@@ -103,8 +109,7 @@ public:
             }
             else
             {
-              s = (q = create_node());
-              q->l_ = q->r_ = detail::conv(n);
+              s = (q = create_node(n));
 
               n->l_ = detail::conv(q, p);
 
@@ -135,8 +140,7 @@ public:
             }
             else
             {
-              s = (q = create_node());
-              q->l_ = q->r_ = detail::conv(n);
+              s = (q = create_node(n));
 
               n->r_ = detail::conv(q, p);
 
@@ -158,7 +162,7 @@ public:
           auto const s(1 + sl + sr), S(2 * s);
 
           return (3 * sl > S) || (3 * sr > S) ?
-            std::tuple(rebuild(n, p, qp, q), 0) :
+            std::tuple(rebuild(n, p, qp, q), std::size_t{}) :
             std::tuple(nullptr, s);
         }
       );
@@ -172,8 +176,7 @@ public:
       }
       else
       {
-        r = q = create_node();
-        q->l_ = q->r_ = detail::conv(nullptr);
+        s = (r = q = create_node(nullptr));
         qp = {};
       }
 

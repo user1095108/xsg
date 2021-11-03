@@ -55,7 +55,17 @@ public:
 
       key_type k(std::forward<decltype(a)>(a)...);
 
-      auto const f([&](auto&& f, auto const n, node* const p) noexcept ->
+      auto const create_node([&](auto const p)
+        {
+          auto const q(new node(std::move(k)));
+
+          q->l_ = q->r_ = detail::conv(p);
+
+          return q;
+        }
+      );
+
+      auto const f([&](auto&& f, auto const n, decltype(n) p) noexcept ->
         std::tuple<node*, size_type>
         {
           //
@@ -69,11 +79,11 @@ public:
               {
                 n->l_ = detail::conv(nn, p);
 
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
               else if (!sz)
               {
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
               else
               {
@@ -82,8 +92,7 @@ public:
             }
             else
             {
-              s = (q = new node(std::move(k)));
-              q->l_ = q->r_ = detail::conv(n);
+              s = (q = create_node(n));
 
               n->l_ = detail::conv(q, p);
 
@@ -101,11 +110,11 @@ public:
               {
                 n->r_ = detail::conv(nn, p);
 
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
               else if (!sz)
               {
-                return {nullptr, 0};
+                return {nullptr, {}};
               }
               else
               {
@@ -114,8 +123,7 @@ public:
             }
             else
             {
-              s = (q = new node(std::move(k)));
-              q->l_ = q->r_ = detail::conv(n);
+              s = (q = create_node(n));
 
               n->r_ = detail::conv(q, p);
 
@@ -130,14 +138,14 @@ public:
             q = n;
             qp = p;
 
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
 
           //
           auto const s(1 + sl + sr), S(2 * s);
 
           return (3 * sl > S) || (3 * sr > S) ?
-            std::tuple(rebuild(n, p, q, qp), 0) :
+            std::tuple(rebuild(n, p, q, qp), std::size_t{}) :
             std::tuple(nullptr, s);
         }
       );
@@ -151,8 +159,7 @@ public:
       }
       else
       {
-        s = (r = q = new node(std::move(k)));
-        q->l_ = q->r_ = detail::conv(nullptr);
+        s = (r = q = create_node(nullptr));
         qp = {};
       }
 

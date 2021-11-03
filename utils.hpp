@@ -213,8 +213,8 @@ inline void move(auto& r, auto const ...d)
   using pointer = std::remove_cvref_t<decltype(r)>;
   using node = std::remove_pointer_t<pointer>;
 
-  auto const f([&](auto&& f, auto n, decltype(n) p,
-    decltype(n) const d) noexcept -> std::tuple<pointer, std::size_t>
+  auto const f([&](auto&& f, auto const n, decltype(n) p,
+    decltype(n) d) noexcept -> std::tuple<pointer, std::size_t>
     {
       assert(n);
       std::size_t sl, sr;
@@ -227,11 +227,11 @@ inline void move(auto& r, auto const ...d)
           {
             n->l_ = conv(nn, p);
 
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
           else if (!sz)
           {
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
           else
           {
@@ -256,11 +256,11 @@ inline void move(auto& r, auto const ...d)
           {
             n->r_ = conv(nn, p);
 
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
           else if (!sz)
           {
-            return {nullptr, 0};
+            return {nullptr, {}};
           }
           else
           {
@@ -283,24 +283,24 @@ inline void move(auto& r, auto const ...d)
 
       node* q{};
       return (3 * sl > S) || (3 * sr > S) ?
-        std::tuple(node::rebuild(n, p, q, q), 0) :
+        std::tuple(node::rebuild(n, p, q, q), std::size_t{}) :
         std::tuple(nullptr, s);
     }
   );
 
   invoke_all(
-    [&](auto const p)
+    [&](auto const d)
     {
       if (r)
       {
-        if (auto const [nn, s](f(f, r, nullptr, p)); nn)
+        if (auto const [nn, sz](f(f, r, nullptr, d)); nn)
         {
           r = nn;
         }
       }
       else
       {
-        r = p;
+        r = d;
       }
     },
     d...
