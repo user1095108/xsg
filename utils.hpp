@@ -314,80 +314,77 @@ inline auto erase(auto& r0, auto&& k)
   using pointer = std::remove_cvref_t<decltype(r0)>;
   using node = std::remove_pointer_t<pointer>;
 
-  if (r0)
+  std::uintptr_t* q{};
+  pointer p{}, pp{};
+
+  for (auto n(r0); n;)
   {
-    std::uintptr_t* q{};
-    pointer p{}, pp{};
-
-    for (auto n(r0); n;)
+    if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      if (auto const c(node::cmp(k, n->key())); c < 0)
+      pp = p;
+
+      auto const tmp(n);
+      q = &n->l_;
+      n = left_node(n, p);
+      p = tmp;
+    }
+    else if (c > 0)
+    {
+      pp = p;
+
+      auto const tmp(n);
+      q = &n->r_;
+      n = right_node(n, p);
+      p = tmp;
+    }
+    else
+    {
+      auto const nn(next_node(nullptr, n, p));
+
+      // pp - p - n - lr
+      auto const l(left_node(n, p)), r(right_node(n, p));
+      delete n;
+
+      if (l && r)
       {
-        pp = p;
+        l->l_ ^= conv(n); l->r_ ^= conv(n);
+        r->l_ ^= conv(n); r->r_ ^= conv(n);
 
-        auto const tmp(n);
-        q = &n->l_;
-        n = left_node(n, p);
-        p = tmp;
-      }
-      else if (c > 0)
-      {
-        pp = p;
-
-        auto const tmp(n);
-        q = &n->r_;
-        n = right_node(n, p);
-        p = tmp;
-      }
-      else
-      {
-        auto const nn(next_node(nullptr, n, p));
-
-        // pp - p - n - lr
-        auto const l(left_node(n, p)), r(right_node(n, p));
-        delete n;
-
-        if (l && r)
+        if (q)
         {
-          l->l_ ^= conv(n); l->r_ ^= conv(n);
-          r->l_ ^= conv(n); r->r_ ^= conv(n);
-
-          if (q)
-          {
-            *q = conv(pp);
-          }
-          else
-          {
-            r0 = {};
-          }
-
-          detail::move(r0, l, r);
+          *q = conv(pp);
         }
         else
         {
-          if (l) // p is now the parent of l and r
-          {
-            l->l_ ^= conv(n); l->r_ ^= conv(n);
-            l->l_ ^= conv(p); l->r_ ^= conv(p);
-          }
-          else if (r)
-          {
-            r->l_ ^= conv(n); r->r_ ^= conv(n);
-            r->l_ ^= conv(p); r->r_ ^= conv(p);
-          }
-
-          if (q)
-          {
-            *q = l ? conv(l, pp) : conv(r, pp);
-          }
-          else
-          {
-            r0 = l ? l : r;
-          }
+          r0 = {};
         }
 
-        return nn;
+        detail::move(r0, l, r);
       }
+      else
+      {
+        if (l) // p is now the parent of l and r
+        {
+          l->l_ ^= conv(n); l->r_ ^= conv(n);
+          l->l_ ^= conv(p); l->r_ ^= conv(p);
+        }
+        else if (r)
+        {
+          r->l_ ^= conv(n); r->r_ ^= conv(n);
+          r->l_ ^= conv(p); r->r_ ^= conv(p);
+        }
+
+        if (q)
+        {
+          *q = l ? conv(l, pp) : conv(r, pp);
+        }
+        else
+        {
+          r0 = l ? l : r;
+        }
+      }
+
+      return nn;
     }
   }
 
