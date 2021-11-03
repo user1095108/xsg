@@ -393,6 +393,76 @@ inline auto erase(auto& r0, auto&& k)
   return std::tuple(pointer{}, pointer{});
 }
 
+inline auto erase(auto& r0, auto const n, decltype(n) p)
+{
+  using pointer = std::remove_cvref_t<decltype(r0)>;
+  using node = std::remove_pointer_t<pointer>;
+
+  pointer pp;
+  std::uintptr_t* q{};
+
+  if (p)
+  {
+    if (auto const c(node::cmp(n->key(), p->key())); c < 0)
+    {
+      pp = lparent_node(p, n);
+      q = &p->l_;
+    }
+    else
+    {
+      pp = rparent_node(p, n);
+      q = &p->r_;
+    }
+  }
+
+  auto const nn(next_node(nullptr, n, p));
+
+  // pp - p - n - lr
+  auto const l(left_node(n, p)), r(right_node(n, p));
+  delete n;
+
+  if (l && r)
+  {
+    l->l_ ^= conv(n); l->r_ ^= conv(n);
+    r->l_ ^= conv(n); r->r_ ^= conv(n);
+
+    if (q)
+    {
+      *q = conv(pp);
+    }
+    else
+    {
+      r0 = {};
+    }
+
+    detail::move(r0, l, r);
+  }
+  else
+  {
+    if (l) // p is now the parent of l and r
+    {
+      l->l_ ^= conv(n); l->r_ ^= conv(n);
+      l->l_ ^= conv(p); l->r_ ^= conv(p);
+    }
+    else if (r)
+    {
+      r->l_ ^= conv(n); r->r_ ^= conv(n);
+      r->l_ ^= conv(p); r->r_ ^= conv(p);
+    }
+
+    if (q)
+    {
+      *q = l ? conv(l, pp) : conv(r, pp);
+    }
+    else
+    {
+      r0 = l ? l : r;
+    }
+  }
+
+  return nn;
+}
+
 }
 
 constexpr bool operator==(auto const& lhs, decltype(lhs) rhs) noexcept

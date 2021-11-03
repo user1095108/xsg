@@ -47,7 +47,7 @@ iterator begin() noexcept
 
 iterator end() noexcept
 {
-  return root_ ? iterator(&root_, {}, {}) : iterator(&root_);
+  return iterator(&root_);
 }
 
 // const iterators
@@ -60,7 +60,7 @@ const_iterator begin() const noexcept
 
 const_iterator end() const noexcept
 {
-  return root_ ? const_iterator(&root_, {}, {}) : const_iterator(&root_);
+  return const_iterator(&root_);
 }
 
 const_iterator cbegin() const noexcept
@@ -72,15 +72,13 @@ const_iterator cbegin() const noexcept
 
 const_iterator cend() const noexcept
 {
-  return root_ ? const_iterator(&root_, {}, {}) : const_iterator(&root_);
+  return const_iterator(&root_);
 }
 
 // reverse iterators
 reverse_iterator rbegin() noexcept
 {
-  return root_ ?
-    reverse_iterator(iterator(&root_, {}, {})) :
-    reverse_iterator(iterator(&root_));
+  return reverse_iterator(iterator(&root_));
 }
 
 reverse_iterator rend() noexcept
@@ -93,9 +91,7 @@ reverse_iterator rend() noexcept
 // const reverse iterators
 const_reverse_iterator crbegin() const noexcept
 {
-  return root_ ?
-    const_reverse_iterator(const_iterator(&root_, {}, {})) :
-    const_reverse_iterator(const_iterator(&root_));
+  return const_reverse_iterator(const_iterator(&root_));
 }
 
 const_reverse_iterator crend() const noexcept
@@ -139,16 +135,6 @@ iterator erase(const_iterator a, const_iterator const b)
   for (; a != b; i = erase(a), a = i);
 
   return i;
-}
-
-iterator erase(std::initializer_list<const_iterator> il)
-{
-  iterator r(&root_);
-
-  // must be sequential
-  std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(i); });
-
-  return r;
 }
 
 //

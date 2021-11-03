@@ -101,7 +101,8 @@ public:
   auto& operator*() const noexcept { return n_->kv_; }
 
   //
-  auto node() const noexcept { return n_; }
+  auto n() const noexcept { return n_; }
+  auto p() const noexcept { return p_; }
 };
 
 }

@@ -335,7 +335,15 @@ public:
 
   iterator erase(const_iterator const i)
   {
-    return {&root_, xsg::detail::erase(root_, *i)};
+    //return {&root_, xsg::detail::erase(root_, *i)};
+    return {
+      &root_,
+      xsg::detail::erase(
+        root_,
+        const_cast<node*>(i.n()),
+        const_cast<node*>(i.p())
+      )
+    };
   }
 
   //
