@@ -24,13 +24,11 @@ constexpr auto conv(auto const ...n) noexcept
 //
 inline auto left_node(auto const n, decltype(n) p) noexcept
 {
-  assert(n);
   return std::remove_const_t<decltype(n)>(conv(p) ^ n->l_);
 }
 
 inline auto right_node(auto const n, decltype(n) p) noexcept
 {
-  assert(n);
   return std::remove_const_t<decltype(n)>(conv(p) ^ n->r_);
 }
 
@@ -51,13 +49,11 @@ inline auto last_node(auto n, decltype(n) p) noexcept
 //
 inline auto lparent_node(auto const n, decltype(n) l) noexcept
 {
-  assert(n);
   return std::remove_const_t<decltype(n)>(conv(l) ^ n->l_);
 }
 
 inline auto rparent_node(auto const n, decltype(n) r) noexcept
 {
-  assert(n);
   return std::remove_const_t<decltype(n)>(conv(r) ^ n->r_);
 }
 
