@@ -335,7 +335,12 @@ inline auto erase(auto& r0, auto&& k)
     }
     else
     {
-      auto const nn(next_node(nullptr, n, p));
+      decltype(&n->key()) k{};
+
+      if (auto const nn(std::get<0>(next_node(nullptr, n, p))); nn)
+      {
+        k = &nn->key();
+      }
 
       // pp - p - n - lr
       auto const l(left_node(n, p)), r(right_node(n, p));
@@ -361,13 +366,11 @@ inline auto erase(auto& r0, auto&& k)
       {
         if (l) // p is now the parent of l and r
         {
-          l->l_ ^= conv(n); l->r_ ^= conv(n);
-          l->l_ ^= conv(p); l->r_ ^= conv(p);
+          l->l_ ^= conv(n) ^ conv(p); l->r_ ^= conv(n) ^ conv(p);
         }
         else if (r)
         {
-          r->l_ ^= conv(n); r->r_ ^= conv(n);
-          r->l_ ^= conv(p); r->r_ ^= conv(p);
+          r->l_ ^= conv(n) ^ conv(p); r->r_ ^= conv(n) ^ conv(p);
         }
 
         if (q)
@@ -380,7 +383,9 @@ inline auto erase(auto& r0, auto&& k)
         }
       }
 
-      return nn;
+      return k ?
+        detail::find(pointer(r0), {}, *k) :
+        std::tuple(pointer{}, pointer{});
     }
   }
   while (n);
@@ -410,7 +415,12 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  auto const nn(next_node(nullptr, n, p));
+  decltype(&n->key()) k{};
+
+  if (auto const nn(std::get<0>(next_node(nullptr, n, p))); nn)
+  {
+    k = &nn->key();
+  }
 
   // pp - p - n - lr
   auto const l(left_node(n, p)), r(right_node(n, p));
@@ -436,13 +446,11 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   {
     if (l) // p is now the parent of l and r
     {
-      l->l_ ^= conv(n); l->r_ ^= conv(n);
-      l->l_ ^= conv(p); l->r_ ^= conv(p);
+      l->l_ ^= conv(n) ^ conv(p); l->r_ ^= conv(n) ^ conv(p);
     }
     else if (r)
     {
-      r->l_ ^= conv(n); r->r_ ^= conv(n);
-      r->l_ ^= conv(p); r->r_ ^= conv(p);
+      r->l_ ^= conv(n) ^ conv(p); r->r_ ^= conv(n) ^ conv(p);
     }
 
     if (q)
@@ -455,7 +463,9 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  return nn;
+  return k ?
+    detail::find(pointer(r0), {}, *k) :
+    std::tuple(pointer{}, pointer{});
 }
 
 }
