@@ -314,10 +314,11 @@ inline auto erase(auto& r0, auto&& k)
   using pointer = std::remove_cvref_t<decltype(r0)>;
   using node = std::remove_pointer_t<pointer>;
 
-  std::uintptr_t* q{};
+  auto n(r0);
   pointer p{}, pp{};
+  std::uintptr_t* q{};
 
-  for (auto n(r0); n;)
+  do
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
@@ -387,6 +388,7 @@ inline auto erase(auto& r0, auto&& k)
       return nn;
     }
   }
+  while (n);
 
   return std::tuple(pointer{}, pointer{});
 }
