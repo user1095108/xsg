@@ -119,7 +119,7 @@ auto max_size() const noexcept { return ~size_type{} / 3; }
 //
 bool contains(Key const& k) const noexcept
 {
-  return std::get<0>(xsg::detail::find(root_, {}, k));
+  return std::get<0>(detail::find(root_, {}, k));
 }
 
 bool contains(auto&& k) const noexcept
@@ -150,12 +150,12 @@ iterator erase(std::initializer_list<const_iterator> il)
 //
 iterator find(Key const& k) noexcept
 {
-  return iterator(&root_, xsg::detail::find(root_, {}, k));
+  return iterator(&root_, detail::find(root_, {}, k));
 }
 
 const_iterator find(Key const& k) const noexcept
 {
-  return const_iterator(&root_, xsg::detail::find(root_, {}, k));
+  return const_iterator(&root_, detail::find(root_, {}, k));
 }
 
 // these may always throw
@@ -168,25 +168,25 @@ void insert(std::initializer_list<value_type> il)
 //
 iterator lower_bound(Key const& k) noexcept
 {
-  auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+  auto const [e, g](detail::equal_range(root_, {}, k));
   return {e ? e : g};
 }
 
 const_iterator lower_bound(Key const& k) const noexcept
 {
-  auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+  auto const [e, g](detail::equal_range(root_, {}, k));
   return {e ? e : g};
 }
 
 iterator lower_bound(auto const& k) noexcept
 {
-  auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+  auto const [e, g](detail::equal_range(root_, {}, k));
   return {e ? e : g};
 }
 
 const_iterator lower_bound(auto const& k) const noexcept
 {
-  auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+  auto const [e, g](detail::equal_range(root_, {}, k));
   return {e ? e : g};
 }
 
@@ -194,27 +194,27 @@ const_iterator lower_bound(auto const& k) const noexcept
 iterator upper_bound(Key const& k) noexcept
 {
   return {
-    std::get<1>(xsg::detail::equal_range(root_, k))
+    std::get<1>(detail::equal_range(root_, k))
   };
 }
 
 const_iterator upper_bound(Key const& k) const noexcept
 {
   return {
-    std::get<1>(xsg::detail::equal_range(root_, k))
+    std::get<1>(detail::equal_range(root_, k))
   };
 }
 
 iterator upper_bound(auto const& k) noexcept
 {
   return {
-    std::get<1>(xsg::detail::equal_range(root_, k))
+    std::get<1>(detail::equal_range(root_, k))
   };
 }
 
 const_iterator upper_bound(auto const& k) const noexcept
 {
   return {
-    std::get<1>(xsg::detail::equal_range(root_, k))
+    std::get<1>(detail::equal_range(root_, k))
   };
 }

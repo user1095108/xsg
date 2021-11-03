@@ -269,12 +269,12 @@ public:
 # include "common.hpp"
 
   //
-  auto size() const noexcept { return xsg::detail::size(root_, {}); }
+  auto size() const noexcept { return detail::size(root_, {}); }
 
   //
   size_type count(Key const& k) const noexcept
   {
-    return bool(xsg::detail::find(root_, {}, k));
+    return bool(detail::find(root_, {}, k));
   }
 
   //
@@ -288,7 +288,7 @@ public:
   //
   auto equal_range(Key const& k) noexcept
   {
-    auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+    auto const [e, g](detail::equal_range(root_, {}, k));
 
     return std::pair(
       iterator(&root_, std::get<0>(e) ? e : g),
@@ -298,7 +298,7 @@ public:
 
   auto equal_range(Key const& k) const noexcept
   {
-    auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+    auto const [e, g](detail::equal_range(root_, {}, k));
 
     return std::pair(
       const_iterator(&root_, std::get<0>(e) ? e : g),
@@ -308,7 +308,7 @@ public:
 
   auto equal_range(auto const& k) noexcept
   {
-    auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+    auto const [e, g](detail::equal_range(root_, {}, k));
 
     return std::pair(
       iterator(&root_, std::get<0>(e) ? e : g),
@@ -318,7 +318,7 @@ public:
 
   auto equal_range(auto const& k) const noexcept
   {
-    auto const [e, g](xsg::detail::equal_range(root_, {}, k));
+    auto const [e, g](detail::equal_range(root_, {}, k));
 
     return std::pair(
       const_iterator(&root_, std::get<0>(e) ? e : g),
@@ -329,15 +329,15 @@ public:
   //
   size_type erase(Key const& k)
   {
-    return bool(std::get<0>(xsg::detail::erase(root_, k)));
+    return bool(std::get<0>(detail::erase(root_, k)));
   }
 
   iterator erase(const_iterator const i)
   {
-    //return {&root_, xsg::detail::erase(root_, *i)};
+    //return {&root_, detail::erase(root_, *i)};
     return {
       &root_,
-      xsg::detail::erase(
+      detail::erase(
         root_,
         const_cast<node*>(i.n()),
         const_cast<node*>(i.p())

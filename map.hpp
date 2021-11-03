@@ -378,7 +378,7 @@ public:
     //return {&root_, detail::erase(root_, std::get<0>(*i))};
     return {
       &root_,
-      xsg::detail::erase(
+      detail::erase(
         root_,
         const_cast<node*>(i.n()),
         const_cast<node*>(i.p())
