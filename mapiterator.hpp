@@ -22,7 +22,7 @@ class mapiterator
 
   T* n_{};
   T* p_{};
-  T* const* r_;
+  T* const* r_{};
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
@@ -37,6 +37,8 @@ public:
   using reference = value_type&;
 
 public:
+  mapiterator() = default;
+
   mapiterator(T* const* const r) noexcept:
     r_(r)
   {
