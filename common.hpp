@@ -132,9 +132,19 @@ iterator erase(const_iterator a, const_iterator const b)
 {
   iterator i(b);
 
-  for (; a != b; i = erase(a), a = i);
+  for (; a != b; i = erase(*a), a = i);
 
   return i;
+}
+
+iterator erase(std::initializer_list<const_iterator> il)
+{
+  iterator r;
+
+  // must be sequential
+  std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(*i); });
+
+  return r;
 }
 
 //
