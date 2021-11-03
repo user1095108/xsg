@@ -127,26 +127,6 @@ bool contains(auto&& k) const noexcept
   return std::get<0>(detail::find(root_, {}, std::forward<decltype(k)>(k)));
 }
 
-// these may always throw, because of tree rebalancing
-iterator erase(const_iterator a, const_iterator const b)
-{
-  iterator i(b);
-
-  for (; a != b; i = erase(*a), a = i);
-
-  return i;
-}
-
-iterator erase(std::initializer_list<const_iterator> il)
-{
-  iterator r;
-
-  // must be sequential
-  std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(*i); });
-
-  return r;
-}
-
 //
 iterator find(Key const& k) noexcept
 {

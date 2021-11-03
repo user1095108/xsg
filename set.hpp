@@ -344,6 +344,26 @@ public:
     };
   }
 
+  // these may always throw, because of tree rebalancing
+  iterator erase(const_iterator a, const_iterator const b)
+  {
+    iterator i(b);
+
+    for (; a != b; i = erase(*a), a = i);
+
+    return i;
+  }
+
+  iterator erase(std::initializer_list<const_iterator> il)
+  {
+    iterator r;
+
+    // must be sequential
+    std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(*i); });
+
+    return r;
+  }
+
   //
   auto insert(value_type const& v)
   {
