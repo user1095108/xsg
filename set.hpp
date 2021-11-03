@@ -55,10 +55,9 @@ public:
 
       key_type k(std::forward<decltype(a)>(a)...);
 
-      auto const create_node([&](auto const p)
+      auto const create_node([&](decltype(q) const p)
         {
           auto const q(new node(std::move(k)));
-
           q->l_ = q->r_ = detail::conv(p);
 
           return q;
@@ -159,7 +158,7 @@ public:
       }
       else
       {
-        s = (r = q = create_node(nullptr));
+        s = (r = q = create_node({}));
         qp = {};
       }
 
