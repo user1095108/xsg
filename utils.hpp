@@ -319,7 +319,7 @@ inline auto erase(auto& r0, auto&& k)
     std::uintptr_t* q{};
     pointer p{}, pp{};
 
-    for (auto n(r0);;)
+    for (auto n(r0); n;)
     {
       if (auto const c(node::cmp(k, n->key())); c < 0)
       {
@@ -365,7 +365,7 @@ inline auto erase(auto& r0, auto&& k)
         }
         else
         {
-          if (l) // p is not the parent of l and r
+          if (l) // p is now the parent of l and r
           {
             l->l_ ^= conv(n); l->r_ ^= conv(n);
             l->l_ ^= conv(p); l->r_ ^= conv(p);
