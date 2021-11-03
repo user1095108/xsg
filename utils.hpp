@@ -63,7 +63,6 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
 {
   using pointer = std::remove_cvref_t<decltype(n)>;
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
-  assert(n);
 
   if (auto const r(right_node(n, p)); r)
   {
@@ -71,9 +70,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
   }
   else
   {
-    auto&& key(n->key());
-
-    while (p && (r0 != n))
+    for (auto&& key(n->key()); p && (r0 != n);)
     {
       if (auto const c(node::cmp(key, p->key())); c < 0)
       {
@@ -93,8 +90,8 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
 
 inline auto prev_node(auto const r0, auto n, decltype(n) p) noexcept
 {
-  using pointer = std::remove_cvref_t<decltype(n)>;
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
+  using pointer = std::remove_cvref_t<decltype(n)>;
 
   if (auto const l(left_node(n, p)); l)
   {
@@ -102,9 +99,7 @@ inline auto prev_node(auto const r0, auto n, decltype(n) p) noexcept
   }
   else
   {
-    auto&& key(n->key());
-
-    while (p && (r0 != n))
+    for (auto&& key(n->key()); p && (r0 != n);)
     {
       if (auto const c(node::cmp(key, p->key())); c > 0)
       {

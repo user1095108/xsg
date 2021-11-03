@@ -106,9 +106,9 @@ public:
               s = (q = create_node());
               q->l_ = q->r_ = detail::conv(n);
 
-              qp = n;
               n->l_ = detail::conv(q, p);
 
+              qp = n;
               sl = 1;
             }
 
@@ -138,9 +138,9 @@ public:
               s = (q = create_node());
               q->l_ = q->r_ = detail::conv(n);
 
-              qp = n;
               n->r_ = detail::conv(q, p);
 
+              qp = n;
               sr = 1;
             }
 
