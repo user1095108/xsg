@@ -446,11 +446,11 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   {
     if (l) // p is now the parent of l and r
     {
-      l->l_ ^= conv(n) ^ conv(p); l->r_ ^= conv(n) ^ conv(p);
+      l->l_ ^= conv(n, p); l->r_ ^= conv(n, p);
     }
     else if (r)
     {
-      r->l_ ^= conv(n) ^ conv(p); r->r_ ^= conv(n) ^ conv(p);
+      r->l_ ^= conv(n, p); r->r_ ^= conv(n, p);
     }
 
     if (q)
