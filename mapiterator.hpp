@@ -9,20 +9,20 @@
 namespace xsg
 {
 
-template <typename C, typename T>
+template <typename T>
 class mapiterator
 {
   using inverse_const_t = std::conditional_t<
     std::is_const_v<T>,
-    mapiterator<std::remove_const_t<C>, std::remove_const_t<T>>,
-    mapiterator<C const, T const>
+    mapiterator<std::remove_const_t<T>>,
+    mapiterator<T const>
   >;
 
   friend inverse_const_t;
 
   T* n_{};
   T* p_{};
-  C* c_;
+  T* const* r_;
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
@@ -37,23 +37,23 @@ public:
   using reference = value_type&;
 
 public:
-  mapiterator(C* c) noexcept:
-    c_(c)
+  mapiterator(T* const* const r) noexcept:
+    r_(r)
   {
   }
 
-  mapiterator(C* c,
+  mapiterator(T* const* const r,
     std::tuple<std::remove_const_t<T>*,
     std::remove_const_t<T>*> const& t) noexcept:
-    c_(c)
+    r_(r)
   {
     std::tie(n_, p_) = t;
   }
 
-  mapiterator(C* c, T* const n, T* const p) noexcept:
+  mapiterator(T* const* const r, T* const n, T* const p) noexcept:
     n_(n),
     p_(p),
-    c_(c)
+    r_(r)
   {
   }
 
@@ -63,7 +63,7 @@ public:
   mapiterator(inverse_const_t const& o) noexcept requires(std::is_const_v<T>):
     n_(o.n_),
     p_(o.p_),
-    c_(o.c_)
+    r_(o.r_)
   {
   }
 
@@ -86,7 +86,7 @@ public:
   {
     std::tie(n_, p_) = n_ ?
       detail::prev_node(nullptr, n_, p_) :
-      detail::last_node(c_->root(), {});
+      detail::last_node(*r_, {});
 
     return *this;
   }

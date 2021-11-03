@@ -25,9 +25,9 @@ public:
   using reference = value_type&;
   using const_reference = value_type const&;
 
-  using const_iterator = mapiterator<set const, node const>;
+  using const_iterator = mapiterator<node const>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-  using iterator = mapiterator<set, node>;
+  using iterator = mapiterator<node>;
   using reverse_iterator = std::reverse_iterator<iterator>;
 
   struct node
@@ -276,7 +276,7 @@ public:
   {
     auto const [n, p, s](node::emplace(root_, std::forward<decltype(a)>(a)...));
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   //
@@ -285,8 +285,8 @@ public:
     auto const [e, g](xsg::detail::equal_range(root_, {}, k));
 
     return std::pair(
-      iterator(this, std::get<0>(e) ? e : g),
-      iterator(this, g)
+      iterator(&root_, std::get<0>(e) ? e : g),
+      iterator(&root_, g)
     );
   }
 
@@ -295,8 +295,8 @@ public:
     auto const [e, g](xsg::detail::equal_range(root_, {}, k));
 
     return std::pair(
-      const_iterator(this, std::get<0>(e) ? e : g),
-      const_iterator(this, g)
+      const_iterator(&root_, std::get<0>(e) ? e : g),
+      const_iterator(&root_, g)
     );
   }
 
@@ -305,8 +305,8 @@ public:
     auto const [e, g](xsg::detail::equal_range(root_, {}, k));
 
     return std::pair(
-      iterator(this, std::get<0>(e) ? e : g),
-      iterator(this, g)
+      iterator(&root_, std::get<0>(e) ? e : g),
+      iterator(&root_, g)
     );
   }
 
@@ -315,8 +315,8 @@ public:
     auto const [e, g](xsg::detail::equal_range(root_, {}, k));
 
     return std::pair(
-      const_iterator(this, std::get<0>(e) ? e : g),
-      const_iterator(this, g)
+      const_iterator(&root_, std::get<0>(e) ? e : g),
+      const_iterator(&root_, g)
     );
   }
 
@@ -328,7 +328,7 @@ public:
 
   iterator erase(const_iterator const i)
   {
-    return {this, xsg::detail::erase(root_, *i)};
+    return {&root_, xsg::detail::erase(root_, *i)};
   }
 
   //
@@ -336,14 +336,14 @@ public:
   {
     auto const [n, p, s](node::emplace(root_, v));
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   auto insert(value_type&& v)
   {
     auto const [n, p, s](node::emplace(root_, std::move(v)));
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)

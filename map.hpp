@@ -27,9 +27,9 @@ public:
   using reference = value_type&;
   using const_reference = value_type const&;
 
-  using const_iterator = mapiterator<map const, node const>;
+  using const_iterator = mapiterator<node const>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-  using iterator = mapiterator<map, node>;
+  using iterator = mapiterator<node>;
   using reverse_iterator = std::reverse_iterator<iterator>;
 
   struct node
@@ -326,7 +326,7 @@ public:
   {
     auto const [n, p, s](node::emplace(root_, std::forward<decltype(a)>(a)...));
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   //
@@ -335,8 +335,8 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      iterator(this, std::get<0>(e) ? e : g),
-      iterator(this, g)
+      iterator(&root_, std::get<0>(e) ? e : g),
+      iterator(&root_, g)
     );
   }
 
@@ -345,8 +345,8 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      const_iterator(this, std::get<0>(e) ? e : g),
-      const_iterator(this, g)
+      const_iterator(&root_, std::get<0>(e) ? e : g),
+      const_iterator(&root_, g)
     );
   }
 
@@ -355,8 +355,8 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      iterator(this, std::get<0>(e) ? e : g),
-      iterator(this, g)
+      iterator(&root_, std::get<0>(e) ? e : g),
+      iterator(&root_, g)
     );
   }
 
@@ -365,15 +365,15 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      const_iterator(this, std::get<0>(e) ? e : g),
-      const_iterator(this, g)
+      const_iterator(&root_, std::get<0>(e) ? e : g),
+      const_iterator(&root_, g)
     );
   }
 
   //
   iterator erase(const_iterator const i)
   {
-    return {this, detail::erase(root_, std::get<0>(*i))};
+    return {&root_, detail::erase(root_, std::get<0>(*i))};
   }
 
   size_type erase(Key const& k)
@@ -388,7 +388,7 @@ public:
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   auto insert(value_type&& v)
@@ -397,7 +397,7 @@ public:
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
@@ -424,7 +424,7 @@ public:
       std::get<1>(n->kv_) = std::forward<decltype(v)>(v);
     }
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 
   auto insert_or_assign(key_type&& k, auto&& v)
@@ -438,7 +438,7 @@ public:
       std::get<1>(n->kv_) = std::forward<decltype(v)>(v);
     }
 
-    return std::tuple(iterator(this, n, p), s);
+    return std::tuple(iterator(&root_, n, p), s);
   }
 };
 
