@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <compare>
 
+#include <iostream>
+
 namespace xsg
 {
 
@@ -218,8 +220,6 @@ inline void move(auto& r, auto const ...d)
     {
       std::size_t sl, sr;
 
-      std::cout << n << std::endl;
-
       if (auto const c(node::cmp(d->key(), n->key())); c < 0)
       {
         if (auto const l(left_node(n, p)); l)
@@ -244,9 +244,7 @@ inline void move(auto& r, auto const ...d)
           n->l_ = conv(d, p);
           d->l_ ^= conv(n); d->r_ ^= conv(n);
 
-          std::cout << "00000" << d << " " << left_node(d, n) << " " << right_node(d, n) << std::endl;
           sl = size(d, n);
-          std::cout << "11111" << std::endl;
         }
 
         sr = size(right_node(n, p), n);
@@ -275,9 +273,7 @@ inline void move(auto& r, auto const ...d)
           n->r_ = conv(d, p);
           d->l_ ^= conv(n); d->r_ ^= conv(n);
 
-          std::cout << "22222" << d << " " << left_node(d, n) << " " << right_node(d, n) << std::endl;
           sr = size(d, n);
-          std::cout << "33333" << std::endl;
         }
 
         sl = size(left_node(n, p), n);
@@ -351,21 +347,11 @@ inline auto erase(auto& r0, auto&& k)
         auto const l(left_node(n, p)), r(right_node(n, p));
         delete n;
 
-        invoke_all(
-          [&](auto const np) noexcept
-          {
-            if (np)
-            {
-              np->l_ ^= conv(n);
-              np->r_ ^= conv(n);
-            }
-          },
-          l,
-          r
-        );
-
         if (l && r)
         {
+          l->l_ ^= conv(n); l->r_ ^= conv(n);
+          r->l_ ^= conv(n); r->r_ ^= conv(n);
+
           if (q)
           {
             *q = conv(pp);
@@ -375,28 +361,24 @@ inline auto erase(auto& r0, auto&& k)
             r0 = {};
           }
 
-          std::cout << "1111 " <<
-            l << " " << left_node(l, {}) << " " << right_node(l, {}) <<
-            r << " " << left_node(r, {}) << " " << right_node(r, {}) << std::endl;
-
           detail::move(r0, l, r);
         }
         else
         {
+          if (l) // p is not the parent of l and r
+          {
+            l->l_ ^= conv(n); l->r_ ^= conv(n);
+            l->l_ ^= conv(p); l->r_ ^= conv(p);
+          }
+          else if (r)
+          {
+            r->l_ ^= conv(n); r->r_ ^= conv(n);
+            r->l_ ^= conv(p); r->r_ ^= conv(p);
+          }
+
           if (q)
           {
             *q = l ? conv(l, pp) : conv(r, pp);
-
-            if (l) // p is not the parent of l and r
-            {
-              l->l_ ^= conv(p);
-              l->r_ ^= conv(p);
-            }
-            else if (r)
-            {
-              r->l_ ^= conv(p);
-              r->r_ ^= conv(p);
-            }
           }
           else
           {
