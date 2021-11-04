@@ -362,22 +362,20 @@ inline auto erase(auto& r0, auto&& k)
       }
       else
       {
-        if (auto const np(conv(n, p)); l) // p is now the parent of l and r
+        auto const lr(l ? l : r);
+
         {
-          l->l_ ^= np; l->r_ ^= np;
-        }
-        else if (r)
-        {
-          r->l_ ^= np; r->r_ ^= np;
+          auto const np(conv(n, p));
+          lr->l_ ^= np; lr->r_ ^= np;
         }
 
         if (q)
         {
-          *q = l ? conv(l, pp) : conv(r, pp);
+          *q = conv(lr, pp);
         }
         else
         {
-          r0 = l ? l : r;
+          r0 = lr;
         }
       }
 
@@ -441,22 +439,20 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   }
   else
   {
-    if (auto const np(conv(n, p)); l) // p is now the parent of l and r
+    auto const lr(l ? l : r);
+
     {
-      l->l_ ^= np; l->r_ ^= np;
-    }
-    else if (r)
-    {
-      r->l_ ^= np; r->r_ ^= np;
+      auto const np(conv(n, p));
+      lr->l_ ^= np; lr->r_ ^= np;
     }
 
     if (q)
     {
-      *q = l ? conv(l, pp) : conv(r, pp);
+      *q = conv(lr, pp);
     }
     else
     {
-      r0 = l ? l : r;
+      r0 = lr;
     }
   }
 
