@@ -67,6 +67,7 @@ int main()
 
   std::cout << "height: " << xsg::detail::height(st.root(), {}) << std::endl;
   std::cout << "size: " << st.size() << std::endl;
+  std::cout << (st == st) << std::endl;
 
   st.erase(st.cbegin());
 
