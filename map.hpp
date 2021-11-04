@@ -396,7 +396,10 @@ public:
   {
     iterator i(b);
 
-    for (; a != b; i = erase(std::get<0>(*a)), a = i);
+    auto&& k(b.n()->key());
+
+    for (; a != b;
+      i = {&root_, detail::erase(root_, std::get<0>(*a))}, a = i);
 
     return i;
   }
@@ -409,7 +412,10 @@ public:
     std::for_each(
       il.begin(),
       il.end(),
-      [&](auto const i) { r = erase(std::get<0>(*i)); }
+      [&](auto const i)
+      {
+        r = {&root_, detail::erase(root_, std::get<0>(*i))};
+      }
     );
 
     return r;
