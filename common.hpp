@@ -37,6 +37,27 @@ friend bool operator<=(this_class const&, this_class const&) = default;
 friend bool operator>(this_class const&, this_class const&) = default;
 friend bool operator>=(this_class const&, this_class const&) = default;
 
+friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
+{
+  return std::equal(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end(),
+    [](auto&& a, auto && b) noexcept
+    {
+      return std::remove_cvref_t<decltype(lhs)>::node::cmp(a, b) == 0;
+    }
+  );
+}
+
+friend auto operator<=>(this_class const& lhs, this_class const& rhs) noexcept
+{
+  return std::lexicographical_compare_three_way(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end(),
+    std::remove_cvref_t<decltype(lhs)>::node::cmp
+  );
+}
+
 // iterators
 iterator begin() noexcept
 {
