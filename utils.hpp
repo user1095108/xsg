@@ -462,39 +462,6 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
 
 }
 
-constexpr bool operator==(auto const& lhs, decltype(lhs) rhs) noexcept
-  requires(
-    requires{
-      lhs.begin(); lhs.end();
-      &std::remove_cvref_t<decltype(lhs)>::node::cmp;
-    }
-  )
-{
-  return std::equal(
-    lhs.begin(), lhs.end(),
-    rhs.begin(), rhs.end(),
-    [](auto&& a, auto && b) noexcept
-    {
-      return std::remove_cvref_t<decltype(lhs)>::node::cmp(a, b) == 0;
-    }
-  );
-}
-
-constexpr auto operator<=>(auto const& lhs, decltype(lhs) rhs) noexcept
-  requires(
-    requires{
-      lhs.begin(); lhs.end();
-      &std::remove_cvref_t<decltype(lhs)>::node::cmp;
-    }
-  )
-{
-  return std::lexicographical_compare_three_way(
-    lhs.begin(), lhs.end(),
-    rhs.begin(), rhs.end(),
-    std::remove_cvref_t<decltype(lhs)>::node::cmp
-  );
-}
-
 constexpr auto erase(auto& c, auto const& k)
   requires(
     requires{
