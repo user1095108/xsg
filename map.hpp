@@ -396,8 +396,6 @@ public:
   {
     iterator i(b);
 
-    auto&& k(b.n()->key());
-
     for (; a != b;
       i = {&root_, detail::erase(root_, std::get<0>(*a))}, a = i);
 
