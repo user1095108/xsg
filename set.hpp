@@ -349,7 +349,7 @@ public:
   {
     iterator i(b);
 
-    for (; a != b; i = erase(*a), a = i);
+    for (; a != b; i = {&root_, detail::erase(root_, *a)}, a = i);
 
     return i;
   }
@@ -359,7 +359,14 @@ public:
     iterator r;
 
     // must be sequential
-    std::for_each(il.begin(), il.end(), [&](auto const i) { r = erase(*i); });
+    std::for_each(
+      il.begin(),
+      il.end(),
+      [&](auto const i)
+      {
+        r = {&root_, detail::erase(root_, *i)};
+      }
+    );
 
     return r;
   }

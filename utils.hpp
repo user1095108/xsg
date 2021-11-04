@@ -341,10 +341,7 @@ inline auto erase(auto& r0, auto&& k)
       }
 
       // pp - p - n - lr
-      auto const l(left_node(n, p)), r(right_node(n, p));
-      delete n;
-
-      if (l && r)
+      if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
       {
         l->l_ ^= conv(n); l->r_ ^= conv(n);
         r->l_ ^= conv(n); r->r_ ^= conv(n);
@@ -378,6 +375,8 @@ inline auto erase(auto& r0, auto&& k)
           r0 = lr;
         }
       }
+
+      delete n;
 
       return k ?
         detail::find(pointer(r0), {}, *k) :
