@@ -361,8 +361,9 @@ inline auto erase(auto& r0, auto&& k)
       {
         auto const lr(l ? l : r);
 
-        if (auto const np(conv(n, p)); lr)
+        if (lr)
         {
+          auto const np(conv(n, p));
           lr->l_ ^= np; lr->r_ ^= np;
         }
 
@@ -440,8 +441,9 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   {
     auto const lr(l ? l : r);
 
-    if (auto const np(conv(n, p)); lr)
+    if (lr)
     {
+      auto const np(conv(n, p));
       lr->l_ ^= np; lr->r_ ^= np;
     }
 
