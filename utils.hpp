@@ -195,7 +195,7 @@ constexpr auto invoke_all(auto f, auto&& ...a) noexcept(noexcept(
   (f(std::forward<decltype(a)>(a)), ...);
 }
 
-inline void move(auto& r, auto const ...d)
+inline void move(auto& r, auto& nn, auto const ...d)
 {
   using pointer = std::remove_cvref_t<decltype(r)>;
   using node = std::remove_pointer_t<pointer>;
@@ -267,13 +267,11 @@ inline void move(auto& r, auto const ...d)
       //
       auto const s(1 + sl + sr), S(2 * s);
 
-      node* q{};
       return (3 * sl > S) || (3 * sr > S) ?
-        std::tuple(node::rebuild(n, p, q, q), std::size_t{}) :
+        std::tuple(node::rebuild(n, p, std::get<0>(nn), std::get<1>(nn)), 0) :
         std::tuple(nullptr, s);
     }
   );
-
 
   invoke_all(
     [&](auto const d)
@@ -323,12 +321,7 @@ inline auto erase(auto& r0, auto&& k)
     }
     else
     {
-      decltype(&n->key()) k{};
-
-      if (auto const nn(std::get<0>(next_node(nullptr, n, p))); nn)
-      {
-        k = &nn->key();
-      }
+      auto nn(next_node(nullptr, n, p));
 
       // pp - p - n - lr
       if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
@@ -345,7 +338,7 @@ inline auto erase(auto& r0, auto&& k)
           r0 = {};
         }
 
-        detail::move(r0, l, r);
+        detail::move(r0, nn, l, r);
       }
       else
       {
@@ -369,9 +362,7 @@ inline auto erase(auto& r0, auto&& k)
 
       delete n;
 
-      return k ?
-        detail::find(pointer(r0), {}, *k) :
-        std::tuple(pointer{}, pointer{});
+      return nn;
     }
   }
 
@@ -400,18 +391,10 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  decltype(&n->key()) k{};
-
-  if (auto const nn(std::get<0>(next_node(nullptr, n, p))); nn)
-  {
-    k = &nn->key();
-  }
+  auto nn(next_node(nullptr, n, p));
 
   // pp - p - n - lr
-  auto const l(left_node(n, p)), r(right_node(n, p));
-  delete n;
-
-  if (l && r)
+  if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
   {
     l->l_ ^= conv(n); l->r_ ^= conv(n);
     r->l_ ^= conv(n); r->r_ ^= conv(n);
@@ -425,7 +408,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
       r0 = {};
     }
 
-    detail::move(r0, l, r);
+    detail::move(r0, nn, l, r);
   }
   else
   {
@@ -447,9 +430,9 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  return k ?
-    detail::find(pointer(r0), {}, *k) :
-    std::tuple(pointer{}, pointer{});
+  delete n;
+
+  return nn;
 }
 
 }
