@@ -162,7 +162,7 @@ public:
           auto const s(1 + sl + sr), S(2 * s);
 
           return (3 * sl > S) || (3 * sr > S) ?
-            std::tuple(rebuild(n, p, qp, q), std::size_t{}) :
+            std::tuple(rebuild(n, p, q, qp), std::size_t{}) :
             std::tuple(nullptr, s);
         }
       );
@@ -183,7 +183,7 @@ public:
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p, auto& qp, auto& q)
+    static auto rebuild(auto const n, decltype(n) p, auto& q, auto& qp)
     {
       std::vector<node*> l;
       l.reserve(1024);
