@@ -85,6 +85,10 @@ public:
       auto const f([&](auto&& f, auto const n, decltype(n) p) ->
         std::tuple<node*, size_type>
         {
+          //
+          n->m_ = cmp(n->m_, maxk) < 0 ? maxk : n->m_;
+
+          //
           size_type sl, sr;
 
           if (auto const c(cmp(mink, n->key())); c < 0)
