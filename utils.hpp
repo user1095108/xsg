@@ -59,7 +59,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
   {
     for (auto&& key(n->key()); p && (r0 != n);)
     {
-      if (auto const c(node::cmp(key, p->key())); c < 0)
+      if (node::cmp(key, p->key()) < 0)
       {
         return std::tuple(p, left_node(p, n));
       }
@@ -88,7 +88,7 @@ inline auto prev_node(auto const r0, auto n, decltype(n) p) noexcept
   {
     for (auto&& key(n->key()); p && (r0 != n);)
     {
-      if (auto const c(node::cmp(key, p->key())); c > 0)
+      if (node::cmp(key, p->key()) > 0)
       {
         return std::tuple(p, right_node(p, n));
       }
@@ -189,109 +189,6 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
   return std::tuple(n, p);
 }
 
-constexpr auto invoke_all(auto f, auto&& ...a) noexcept(noexcept(
-  (f(std::forward<decltype(a)>(a)), ...)))
-{
-  (f(std::forward<decltype(a)>(a)), ...);
-}
-
-inline void move(auto& r, auto& nn, auto const ...d)
-{
-  using pointer = std::remove_cvref_t<decltype(r)>;
-  using node = std::remove_pointer_t<pointer>;
-
-  auto const f([&](auto&& f, auto const n, decltype(n) p,
-    decltype(n) d) noexcept -> std::tuple<pointer, std::size_t>
-    {
-      std::size_t sl, sr;
-
-      if (auto const c(node::cmp(d->key(), n->key())); c < 0)
-      {
-        if (auto const l(left_node(n, p)); l)
-        {
-          if (auto const [nn, sz](f(f, l, n, d)); nn)
-          {
-            n->l_ = conv(nn, p);
-
-            return {nullptr, {}};
-          }
-          else if (!sz)
-          {
-            return {nullptr, {}};
-          }
-          else
-          {
-            sl = sz;
-          }
-        }
-        else
-        {
-          n->l_ = conv(d, p);
-          d->l_ ^= conv(n); d->r_ ^= conv(n);
-
-          sl = size(d, n);
-        }
-
-        sr = size(right_node(n, p), n);
-      }
-      else
-      {
-        if (auto const r(right_node(n, p)); r)
-        {
-          if (auto const [nn, sz](f(f, r, n, d)); nn)
-          {
-            n->r_ = conv(nn, p);
-
-            return {nullptr, {}};
-          }
-          else if (!sz)
-          {
-            return {nullptr, {}};
-          }
-          else
-          {
-            sr = sz;
-          }
-        }
-        else
-        {
-          n->r_ = conv(d, p);
-          d->l_ ^= conv(n); d->r_ ^= conv(n);
-
-          sr = size(d, n);
-        }
-
-        sl = size(left_node(n, p), n);
-      }
-
-      //
-      auto const s(1 + sl + sr), S(2 * s);
-
-      return (3 * sl > S) || (3 * sr > S) ?
-        std::tuple(node::rebuild(n, p, std::get<0>(nn), std::get<1>(nn)), 0) :
-        std::tuple(nullptr, s);
-    }
-  );
-
-  invoke_all(
-    [&](auto const d)
-    {
-      if (r)
-      {
-        if (auto const [nn, sz](f(f, r, {}, d)); nn)
-        {
-          r = nn;
-        }
-      }
-      else
-      {
-        r = d;
-      }
-    },
-    d...
-  );
-}
-
 inline auto erase(auto& r0, auto&& k)
 {
   using pointer = std::remove_cvref_t<decltype(r0)>;
@@ -321,24 +218,81 @@ inline auto erase(auto& r0, auto&& k)
     }
     else
     {
-      auto nn(next_node(nullptr, n, p));
+      auto [nnn, nnp](next_node(nullptr, n, p));
 
       // pp - p - n - lr
       if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
       {
-        l->l_ ^= conv(n); l->r_ ^= conv(n);
-        r->l_ ^= conv(n); r->r_ ^= conv(n);
-
-        if (q)
+        if (size(r, n) > size(l, n))
         {
-          *q = conv(pp);
+          auto const [fnn, fnp](first_node(r, n));
+
+          if (fnn == nnn)
+          {
+            nnp = p;
+          }
+
+          fnn->l_ = conv(l, p); fnn->r_ ^= conv(fnp, p);
+          l->l_ ^= conv(n, fnn); l->r_ ^= conv(n, fnn);
+
+          if (fnp != n)
+          {
+            if (node::cmp(fnn->key(), fnp->key()) < 0)
+            {
+              fnp->l_ = conv(left_node(fnp, fnn));
+            }
+            else
+            {
+              fnp->r_ = conv(right_node(fnp, fnn));
+            }
+          }
+
+          if (q)
+          {
+            *q = conv(pp, fnn);
+          }
+          else
+          {
+            r0 = fnn;
+          }
         }
         else
         {
-          r0 = {};
-        }
+          auto const [lnn, lnp](last_node(l, n));
 
-        detail::move(r0, nn, l, r);
+          if (lnn == nnn)
+          {
+            nnp = p;
+          }
+          else if (nnn == r)
+          {
+            nnp = lnn;
+          }
+
+          lnn->l_ ^= conv(lnp, p); lnn->r_ = conv(r, p);
+          r->l_ ^= conv(n, lnn); r->r_ ^= conv(n, lnn);
+
+          if (lnp != n)
+          {
+            if (node::cmp(lnn->key(), lnp->key()) < 0)
+            {
+              lnp->l_ = conv(left_node(lnp, lnn));
+            }
+            else
+            {
+              lnp->r_ = conv(right_node(lnp, lnn));
+            }
+          }
+
+          if (q)
+          {
+            *q = conv(pp, lnn);
+          }
+          else
+          {
+            r0 = lnn;
+          }
+        }
       }
       else
       {
@@ -348,6 +302,11 @@ inline auto erase(auto& r0, auto&& k)
         {
           auto const np(conv(n, p));
           lr->l_ ^= np; lr->r_ ^= np;
+
+          if (lr == nnn)
+          {
+            nnp = p;
+          }
         }
 
         if (q)
@@ -362,7 +321,7 @@ inline auto erase(auto& r0, auto&& k)
 
       delete n;
 
-      return nn;
+      return std::tuple(nnn, nnp);
     }
   }
 
@@ -379,7 +338,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
 
   if (p)
   {
-    if (auto const c(node::cmp(n->key(), p->key())); c < 0)
+    if (node::cmp(n->key(), p->key()) < 0)
     {
       pp = left_node(p, n);
       q = &p->l_;
@@ -391,24 +350,81 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  auto nn(next_node(nullptr, n, p));
+  auto [nnn, nnp](next_node(nullptr, n, p));
 
   // pp - p - n - lr
   if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
   {
-    l->l_ ^= conv(n); l->r_ ^= conv(n);
-    r->l_ ^= conv(n); r->r_ ^= conv(n);
-
-    if (q)
+    if (size(r, n) > size(l, n))
     {
-      *q = conv(pp);
+      auto const [fnn, fnp](first_node(r, n));
+
+      if (fnn == nnn)
+      {
+        nnp = p;
+      }
+
+      fnn->l_ = conv(l, p); fnn->r_ ^= conv(fnp, p);
+      l->l_ ^= conv(n, fnn); l->r_ ^= conv(n, fnn);
+
+      if (fnp != n)
+      {
+        if (node::cmp(fnn->key(), fnp->key()) < 0)
+        {
+          fnp->l_ = conv(left_node(fnp, fnn));
+        }
+        else
+        {
+          fnp->r_ = conv(right_node(fnp, fnn));
+        }
+      }
+
+      if (q)
+      {
+        *q = conv(pp, fnn);
+      }
+      else
+      {
+        r0 = fnn;
+      }
     }
     else
     {
-      r0 = {};
-    }
+      auto const [lnn, lnp](last_node(l, n));
 
-    detail::move(r0, nn, l, r);
+      if (lnn == nnn)
+      {
+        nnp = p;
+      }
+      else if (nnn == r)
+      {
+        nnp = lnn;
+      }
+
+      lnn->l_ ^= conv(lnp, p); lnn->r_ = conv(r, p);
+      r->l_ ^= conv(n, lnn); r->r_ ^= conv(n, lnn);
+
+      if (lnp != n)
+      {
+        if (node::cmp(lnn->key(), lnp->key()) < 0)
+        {
+          lnp->l_ = conv(left_node(lnp, lnn));
+        }
+        else
+        {
+          lnp->r_ = conv(right_node(lnp, lnn));
+        }
+      }
+
+      if (q)
+      {
+        *q = conv(pp, lnn);
+      }
+      else
+      {
+        r0 = lnn;
+      }
+    }
   }
   else
   {
@@ -418,6 +434,11 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     {
       auto const np(conv(n, p));
       lr->l_ ^= np; lr->r_ ^= np;
+
+      if (lr == nnn)
+      {
+        nnp = p;
+      }
     }
 
     if (q)
@@ -432,7 +453,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
 
   delete n;
 
-  return nn;
+  return std::tuple(nnn, nnp);
 }
 
 }

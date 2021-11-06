@@ -63,6 +63,8 @@ int main()
   //s.erase(std::next(s.cbegin()));
   s.erase({std::next(s.cbegin()), std::prev(s.cend())});
 
+  dump(s.root(), {});
+
   std::for_each(
     s.crbegin(),
     s.crend(),
