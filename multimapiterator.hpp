@@ -138,7 +138,9 @@ public:
   {
     if (!n_ || (n_->v_.begin() == i_))
     {
-      std::tie(n_, p_) = detail::prev_node(nullptr, n_, p_);
+      std::tie(n_, p_) = n_ ?
+        detail::prev_node(nullptr, n_, p_) :
+        detail::last_node(*r_, {});
       i_ = n_ ? std::prev(n_->v_.end()) : decltype(i_){};
     }
     else
