@@ -474,13 +474,12 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
 
     if (lr)
     {
-      auto const np(conv(n, p));
-      lr->l_ ^= np; lr->r_ ^= np;
-
       if (lr == nnn)
       {
         nnp = p;
       }
+
+      lr->l_ ^= conv(n, p); lr->r_ ^= conv(n, p);
     }
 
     if (q)
