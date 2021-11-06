@@ -165,7 +165,7 @@ public:
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p, auto& qp, auto& q)
+    static auto rebuild(auto const n, decltype(n) p, auto& q, auto& qp)
     {
       std::vector<node*> l;
       l.reserve(1024);
