@@ -232,19 +232,22 @@ inline auto erase(auto& r0, auto&& k)
             nnp = p;
           }
 
-          fnn->l_ = conv(l, p); fnn->r_ ^= conv(fnp, p);
+          // convert and attach l
           l->l_ ^= conv(n, fnn); l->r_ ^= conv(n, fnn);
+          fnn->l_ = conv(l, p); 
 
-          if (fnp != n)
+          if (n == fnp)
           {
-            if (node::cmp(fnn->key(), fnp->key()) < 0)
-            {
-              fnp->l_ = conv(left_node(fnp, fnn));
-            }
-            else
-            {
-              fnp->r_ = conv(right_node(fnp, fnn));
-            }
+            fnn->r_ ^= conv(n, p);
+          }
+          else
+          {
+            // attach right node of fnn to parent left
+            fnp->l_ = conv(right_node(fnn, fnp), left_node(fnp, fnn));
+
+            // convert and attach r
+            r->l_ ^= conv(n, fnn); r->r_ ^= conv(n, fnn);
+            fnn->r_ = conv(r, p);
           }
 
           if (q)
@@ -269,19 +272,21 @@ inline auto erase(auto& r0, auto&& k)
             nnp = lnn;
           }
 
-          lnn->l_ ^= conv(lnp, p); lnn->r_ = conv(r, p);
+          // convert and attach r
           r->l_ ^= conv(n, lnn); r->r_ ^= conv(n, lnn);
+          lnn->r_ = conv(r, p); 
 
-          if (lnp != n)
+          if (lnp == n)
           {
-            if (node::cmp(lnn->key(), lnp->key()) < 0)
-            {
-              lnp->l_ = conv(left_node(lnp, lnn));
-            }
-            else
-            {
-              lnp->r_ = conv(right_node(lnp, lnn));
-            }
+            lnn->l_ ^= conv(n, p);
+          }
+          else
+          {
+            lnp->r_ = conv(left_node(lnn, lnp), right_node(lnp, lnn));
+
+            // convert and attach l
+            l->l_ ^= conv(n, lnn); l->r_ ^= conv(n, lnn);
+            lnn->l_ = conv(l, p);
           }
 
           if (q)
