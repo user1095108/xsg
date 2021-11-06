@@ -376,7 +376,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   // pp - p - n - lr
   if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
   {
-    if (size(r, n) > size(l, n))
+    if (size(l, n) < size(r, n))
     {
       auto const [fnn, fnp](first_node(r, n));
 
