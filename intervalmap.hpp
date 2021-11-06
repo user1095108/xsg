@@ -113,10 +113,10 @@ public:
             else
             {
               q = create_node(n);
+              qp = n;
 
               n->l_ = detail::conv(q, p);
 
-              qp = n;
               sl = 1;
             }
 
@@ -144,10 +144,10 @@ public:
             else
             {
               q = create_node(n);
+              qp = n;
 
               n->r_ = detail::conv(q, p);
 
-              qp = n;
               sr = 1;
             }
 
@@ -159,7 +159,6 @@ public:
               std::move(k),
               std::forward<decltype(v)>(v)
             );
-
             qp = p;
 
             return {nullptr, {}};
