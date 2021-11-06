@@ -497,6 +497,8 @@ public:
             case 0:
               n->l_ = n->r_ = detail::conv(p);
 
+              n->m_ = node_max(n);
+
               break;
 
             case 1:
@@ -507,6 +509,10 @@ public:
                 nb->l_ = nb->r_ = detail::conv(n);
                 n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
 
+                n->m_ = std::max(node_max(n), nb->m_ = node_max(nb),
+                  [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
+                );
+
                 if (nb == q)
                 {
                   qp = n;
@@ -516,8 +522,15 @@ public:
               break;
 
             default:
-              n->l_ = detail::conv(f(f, n, a, i - 1), p);
-              n->r_ = detail::conv(f(f, n, i + 1, b), p);
+              auto const l(f(f, n, a, i - 1));
+              n->l_ = detail::conv(l, p);
+
+              auto const r(f(f, n, i + 1, b));
+              n->r_ = detail::conv(r, p);
+
+              n->m_ = std::max({node_max(n), l->m_, r->m_},
+                [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
+              );
           }
 
           return n;
