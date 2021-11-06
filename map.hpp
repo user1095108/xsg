@@ -64,7 +64,7 @@ public:
 
       key_type k(std::forward<decltype(a)>(a));
 
-      auto const create_node([&](auto const p)
+      auto const create_node([&](decltype(q) const p)
         {
           node* q;
 
@@ -176,7 +176,7 @@ public:
       }
       else
       {
-        s = (r = q = create_node(nullptr));
+        s = (r = q = create_node({}));
         qp = {};
       }
 

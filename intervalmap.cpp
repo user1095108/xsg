@@ -1,8 +1,6 @@
 #include <iostream>
 
-#include "map.hpp"
-
-using namespace std::literals::string_literals;
+#include "intervalmap.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 void dump(auto n, decltype(n) p)
@@ -26,7 +24,7 @@ void dump(auto n, decltype(n) p)
           }
         );
 
-        std::cout << '(' << n->kv_.first << ',' << n->kv_.second << ')';
+        std::cout << '(' << n->key() << ',' << n->m_ << ')';
       }
       else
       {
@@ -45,38 +43,36 @@ void dump(auto n, decltype(n) p)
 //////////////////////////////////////////////////////////////////////////////
 int main()
 {
-  xsg::map<std::string, int> st{
-    {"a", -1},
-    {"c", 1}
-  };
+  xsg::intervalmap<std::pair<int, int>, int> st;
 
-  st.insert_or_assign("b"s, 0);
+  st.emplace(std::pair(-1, 0), -1);
+  st.insert({std::pair(0, 1), 0});
+  st.insert({{std::pair(1, 2), 1}, {std::pair(1, 4), 1}});
+  st.emplace(std::pair(2, 3), 2);
+  st.emplace(std::pair(3, 5), 3);
 
-  st.emplace("d"s, 2);
-  st.insert({"e", 3});
-  st["f"s] = 4;
-
-  /*
-  for (std::size_t i{}; 1000 != i; ++i)
-  {
-    st.emplace(std::string(rand() % 9 + 1, 48 + rand() % (123 - 48)), i);
-  }
-  */
-
+  //st.root().reset(st.root().release()->rebuild());
   dump(st.root(), {});
 
   std::cout << "height: " << xsg::detail::height(st.root(), {}) << std::endl;
   std::cout << "size: " << st.size() << std::endl;
-  std::cout << (st == st) << std::endl;
-
-  st.erase(st.cbegin());
+  std::cout << "any: " << st.any(std::pair(0, 1)) << std::endl;
 
   std::for_each(
     st.crbegin(),
     st.crend(),
     [](auto&& p) noexcept
     {
-      std::cout << "(" << p.first << " " << p.second << ")" << std::endl;
+      std::cout << '(' << p.first.first << ',' << p.first.second << ')' << std::endl;
+    }
+  );
+
+  st.all(
+    std::pair(2, 4),
+    [](auto&& p)
+    {
+      std::cout << '(' << p.first.first << ',' << p.first.second << ") " <<
+        p.second << std::endl;
     }
   );
 
