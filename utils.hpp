@@ -255,7 +255,7 @@ inline auto erase(auto& r0, auto&& k)
               fnp->l_ = conv(rn, fnpp);
             }
 
-            // convert and attach r
+            // convert and attach r to fnn
             r->l_ ^= conv(n, fnn); r->r_ ^= conv(n, fnn);
             fnn->r_ = conv(r, p);
           }
