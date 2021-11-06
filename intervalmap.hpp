@@ -228,7 +228,7 @@ public:
       }
       else if (auto const it(i.iterator()); std::next(it) == n->v_.end())
       {
-        auto const nn(std::next(i).node());
+        auto const nn(std::next(i));
 
         n->v_.erase(it);
 
@@ -236,7 +236,7 @@ public:
       }
       else
       {
-        return {&r, n, n->v_.erase(it)};
+        return {&r, n, p, n->v_.erase(it)};
       }
     }
 
