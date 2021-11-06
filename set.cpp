@@ -66,8 +66,8 @@ int main()
   dump(s.root(), {});
 
   std::for_each(
-    s.crbegin(),
-    s.crend(),
+    s.cbegin(),
+    s.cend(),
     [](auto&& p) noexcept
     {
       std::cout << p << std::endl;
