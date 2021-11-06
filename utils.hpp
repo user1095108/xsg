@@ -252,7 +252,7 @@ inline auto erase(auto& r0, auto&& k)
 
           if (q)
           {
-            *q = conv(pp, fnn);
+            *q = conv(fnn, pp);
           }
           else
           {
@@ -291,7 +291,7 @@ inline auto erase(auto& r0, auto&& k)
 
           if (q)
           {
-            *q = conv(pp, lnn);
+            *q = conv(lnn, pp);
           }
           else
           {
