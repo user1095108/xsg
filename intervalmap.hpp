@@ -306,6 +306,7 @@ public:
                   }
 
                   fnp->l_ = conv(rn, fnpp);
+
                 }
 
                 // convert and attach r to fnn
@@ -446,6 +447,8 @@ public:
           if (r == fnn)
           {
             fnn->r_ ^= conv(n, p);
+
+            node::reset_max(r0, fnn->key());
           }
           else
           {
@@ -465,6 +468,8 @@ public:
             // convert and attach r to fnn
             r->l_ ^= conv(n, fnn); r->r_ ^= conv(n, fnn);
             fnn->r_ = conv(r, p);
+
+            node::reset_max(r0, fnp->key());
           }
 
           if (q)
@@ -492,6 +497,8 @@ public:
           if (l == lnn)
           {
             lnn->l_ ^= conv(n, p);
+
+            node::reset_max(r0, lnn->key());
           }
           else
           {
@@ -510,6 +517,8 @@ public:
             // convert and attach l to lnn
             l->l_ ^= conv(n, lnn); l->r_ ^= conv(n, lnn);
             lnn->l_ = conv(l, p);
+
+            node::reset_max(r0, lnp->key());
           }
 
           if (q)
@@ -540,6 +549,8 @@ public:
         if (q)
         {
           *q = conv(lr, pp);
+
+          node::reset_max(r0, p->key());
         }
         else
         {
@@ -569,7 +580,7 @@ public:
       return m;
     }
 
-    static void reset_max(auto const n, decltype(n) p, auto&& key) noexcept
+    static void reset_max(auto const r0, auto&& key) noexcept
     {
       auto const f([&](auto&& f, auto const n, decltype(n) p) noexcept ->
         decltype(node::m_)
@@ -615,7 +626,7 @@ public:
         }
       );
 
-      f(f, n, p);
+      f(f, r0, {});
     }
 
     static auto rebuild(auto const n, decltype(n) p, auto& q, auto& qp)
