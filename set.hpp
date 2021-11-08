@@ -131,10 +131,9 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (p)
+            if (auto const nn(rebuild(n, p, q, qp)); p)
             {
-              if (auto const nn(rebuild(n, p, q, qp));
-                cmp(n->key(), p->key()) < 0)
+              if (cmp(n->key(), p->key()) < 0)
               {
                 p->l_ = detail::conv(nn, detail::left_node(p, n));
               }
