@@ -171,8 +171,7 @@ public:
       }
       else
       {
-        qp = {};
-        s = (r = q = create_node({}));
+        s = (r = q = create_node(qp = {}));
       }
 
       return std::tuple(q, qp, s);
