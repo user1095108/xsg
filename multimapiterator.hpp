@@ -127,8 +127,10 @@ public:
   {
     if (i_ = std::next(i_); n_->v_.end() == i_)
     {
-      std::tie(n_, p_) = detail::next_node(nullptr, n_, p_);
-      i_ = n_ ? n_->v_.begin() : decltype(i_){};
+      if (std::tie(n_, p_) = detail::next_node(nullptr, n_, p_); n_)
+      {
+        i_ = n_->v_.begin();
+      }
     }
 
     return *this;
@@ -136,13 +138,19 @@ public:
 
   auto& operator--() noexcept
   {
-    if (!n_ || (n_->v_.begin() == i_))
+    if (!n_)
     {
-      std::tie(n_, p_) = n_ ?
-        detail::prev_node(nullptr, n_, p_) :
-        detail::last_node(*r_, {});
-
-      i_ = n_ ? std::prev(n_->v_.end()) : decltype(i_){};
+      if (std::tie(n_, p_) = detail::last_node(*r_, {}); n_)
+      {
+        i_ = std::prev(n_->v_.end());
+      }
+    }
+    else if (n_->v_.begin() == i_)
+    {
+      if (std::tie(n_, p_) = detail::prev_node(nullptr, n_, p_); n_)
+      {
+        i_ = std::prev(n_->v_.end());
+      }
     }
     else
     {
@@ -156,8 +164,29 @@ public:
   auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
 
   // member access
-  auto& operator->() const noexcept { return i_; }
-  auto& operator*() const noexcept { return *i_; }
+  auto& operator->() const noexcept
+  {
+    if constexpr(is_const_v<T>)
+    {
+      return decltype(n_->v_)::const_iterator(i_);
+    }
+    else
+    {
+      return i_;
+    }
+  }
+
+  auto& operator*() const noexcept
+  {
+    if constexpr(is_const_v<T>)
+    {
+      return std::as_const(*i_);
+    }
+    else
+    {
+      return *i_;
+    }
+  }
 
   //
   auto& iterator() const noexcept { return i_; }
