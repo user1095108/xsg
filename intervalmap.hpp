@@ -98,8 +98,10 @@ public:
               {
                 return {};
               }
-
-              sl = sz;
+              else
+              {
+                sl = sz;
+              }
             }
             else
             {
@@ -121,8 +123,10 @@ public:
               {
                 return {};
               }
-
-              sr = sz;
+              else
+              {
+                sr = sz;
+              }
             }
             else
             {
