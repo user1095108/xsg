@@ -91,13 +91,13 @@ public:
           {
             if (auto const l(detail::left_node(n, p)); l)
             {
-              if (auto const sz(f(f, l, n)); !sz)
+              if (auto const sz(f(f, l, n)); sz)
               {
-                return {};
+                sl = sz;
               }
               else
               {
-                sl = sz;
+                return {};
               }
             }
             else
@@ -116,13 +116,13 @@ public:
           {
             if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const sz(f(f, r, n)); !sz)
+              if (auto const sz(f(f, r, n)); sz)
               {
-                return {};
+                sr = sz;
               }
               else
               {
-                sr = sz;
+                return {};
               }
             }
             else
@@ -149,9 +149,10 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebuild(n, p, q, qp)); p)
+            if (p)
             {
-              if (cmp(n->key(), p->key()) < 0)
+              if (auto const nn(rebuild(n, p, q, qp));
+                cmp(n->key(), p->key()) < 0)
               {
                 p->l_ = detail::conv(nn, detail::left_node(p, n));
               }
