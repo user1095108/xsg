@@ -83,8 +83,7 @@ public:
         }
       );
 
-      auto const f([&](auto&& f, auto const n, decltype(n) p) ->
-        std::tuple<node*, size_type>
+      auto const f([&](auto&& f, auto const n, decltype(n) p) -> size_type
         {
           size_type sl, sr;
 
@@ -92,15 +91,9 @@ public:
           {
             if (auto const l(detail::left_node(n, p)); l)
             {
-              if (auto const [nn, sz](f(f, l, n)); nn)
+              if (auto const sz(f(f, l, n)); !sz)
               {
-                n->l_ = detail::conv(nn, p);
-
-                return {nullptr, {}};
-              }
-              else if (!sz)
-              {
-                return {nullptr, {}};
+                return {};
               }
               else
               {
@@ -109,12 +102,12 @@ public:
             }
             else
             {
+              sl = 1;
+
+              qp = n;
               s = (q = create_node(n));
 
               n->l_ = detail::conv(q, p);
-
-              qp = n;
-              sl = 1;
             }
 
             sr = detail::size(detail::right_node(n, p), n);
@@ -123,15 +116,9 @@ public:
           {
             if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const [nn, sz](f(f, r, n)); nn)
+              if (auto const sz(f(f, r, n)); !sz)
               {
-                n->r_ = detail::conv(nn, p);
-
-                return {nullptr, {}};
-              }
-              else if (!sz)
-              {
-                return {nullptr, {}};
+                return {};
               }
               else
               {
@@ -140,44 +127,61 @@ public:
             }
             else
             {
+              sr = 1;
+
+              qp = n;
               s = (q = create_node(n));
 
               n->r_ = detail::conv(q, p);
-
-              qp = n;
-              sr = 1;
             }
 
             sl = detail::size(detail::left_node(n, p), n);
           }
           else
           {
-            q = n;
             qp = p;
+            q = n;
 
-            return {nullptr, {}};
+            return {};
           }
 
           //
-          auto const s(1 + sl + sr), S(2 * s);
+          if (auto const s(1 + sl + sr), S(2 * s);
+            (3 * sl > S) || (3 * sr > S))
+          {
+            if (auto const nn(rebuild(n, p, q, qp)); p)
+            {
+              if (cmp(n->key(), p->key()) < 0)
+              {
+                p->l_ = detail::conv(nn, detail::left_node(p, n));
+              }
+              else
+              {
+                p->r_ = detail::conv(nn, detail::right_node(p, n));
+              }
+            }
+            else
+            {
+              r = nn;
+            }
 
-          return (3 * sl > S) || (3 * sr > S) ?
-            std::tuple(rebuild(n, p, q, qp), std::size_t{}) :
-            std::tuple(nullptr, s);
+            return {};
+          }
+          else
+          {
+            return s;
+          }
         }
       );
 
       if (r)
       {
-        if (auto const [nn, sz](f(f, r, {})); nn)
-        {
-          r = nn;
-        }
+        f(f, r, {});
       }
       else
       {
-        s = (r = q = create_node({}));
         qp = {};
+        s = (r = q = create_node({}));
       }
 
       return std::tuple(q, qp, s);
