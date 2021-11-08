@@ -164,29 +164,8 @@ public:
   auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
 
   // member access
-  auto& operator->() const noexcept
-  {
-    if constexpr(std::is_const_v<T>)
-    {
-      return std::remove_cvref_t<decltype(n_->v_)>::const_iterator(i_);
-    }
-    else
-    {
-      return i_;
-    }
-  }
-
-  auto& operator*() const noexcept
-  {
-    if constexpr(std::is_const_v<T>)
-    {
-      return std::as_const(*i_);
-    }
-    else
-    {
-      return *i_;
-    }
-  }
+  auto& operator->() const noexcept { return i_; }
+  auto& operator*() const noexcept { return *i_; }
 
   //
   auto& iterator() const noexcept { return i_; }
