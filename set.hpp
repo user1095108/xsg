@@ -84,12 +84,10 @@ public:
             }
             else
             {
-              sl = 1;
-
-              qp = n;
-              s = (q = create_node(n));
-
+              s = (q = create_node(qp = n));
               n->l_ = detail::conv(q, p);
+
+              sl = 1;
             }
 
             sr = detail::size(detail::right_node(n, p), n);
@@ -109,12 +107,10 @@ public:
             }
             else
             {
-              sr = 1;
-
-              qp = n;
-              s = (q = create_node(n));
-
+              s = (q = create_node(qp = n));
               n->r_ = detail::conv(q, p);
+
+              sr = 1;
             }
 
             sl = detail::size(detail::left_node(n, p), n);
