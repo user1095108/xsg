@@ -133,14 +133,9 @@ public:
           {
             if (auto const nn(rebuild(n, p, q, qp)); p)
             {
-              if (cmp(n->key(), p->key()) < 0)
-              {
-                p->l_ = detail::conv(nn, detail::left_node(p, n));
-              }
-              else
-              {
+              cmp(n->key(), p->key()) < 0 ?
+                p->l_ = detail::conv(nn, detail::left_node(p, n)) :
                 p->r_ = detail::conv(nn, detail::right_node(p, n));
-              }
             }
             else
             {
