@@ -68,6 +68,12 @@ public:
     //
     static auto emplace(auto& r, auto&& a, auto&& v)
     {
+      enum Direction: bool
+      {
+        LEFT,
+        RIGHT
+      };
+
       key_type k(std::forward<decltype(a)>(a));
       auto const& [mink, maxk](k);
 
@@ -82,7 +88,8 @@ public:
         }
       );
 
-      auto const f([&](auto&& f, auto const n, decltype(n) p) -> size_type
+      auto const f([&](auto&& f, auto const n, decltype(n) p,
+        enum Direction const d) -> size_type
         {
           //
           n->m_ = cmp(n->m_, maxk) < 0 ? maxk : n->m_;
@@ -92,7 +99,7 @@ public:
 
           if (auto const c(cmp(mink, n->key())); c < 0)
           {
-            if (auto const l(detail::left_node(n, p)); l)
+            if (auto const l(detail::left_node(n, p, LEFT)); l)
             {
               if (auto const sz(f(f, l, n)); sz)
               {
@@ -115,7 +122,7 @@ public:
           }
           else if (c > 0)
           {
-            if (auto const r(detail::right_node(n, p)); r)
+            if (auto const r(detail::right_node(n, p, RIGHT)); r)
             {
               if (auto const sz(f(f, r, n)); sz)
               {
@@ -152,9 +159,9 @@ public:
           {
             if (auto const nn(rebuild(n, p, q, qp)); p)
             {
-              cmp(n->key(), p->key()) < 0 ?
-                p->l_ = detail::conv(nn, detail::left_node(p, n)) :
-                p->r_ = detail::conv(nn, detail::right_node(p, n));
+              d ?
+                p->r_ = detail::conv(nn, detail::left_node(p, n)) :
+                p->l_ = detail::conv(nn, detail::right_node(p, n));
             }
             else
             {
@@ -172,7 +179,7 @@ public:
 
       if (r)
       {
-        f(f, r, {});
+        f(f, r, {}, {});
       }
       else
       {

@@ -59,6 +59,12 @@ public:
     //
     static auto emplace(auto& r, auto&& a, auto&& v)
     {
+      enum Direction: bool
+      {
+        LEFT,
+        RIGHT
+      };
+
       node* q, *qp;
       bool s{}; // success
 
@@ -83,7 +89,8 @@ public:
         }
       );
 
-      auto const f([&](auto&& f, auto const n, decltype(n) p) -> size_type
+      auto const f([&](auto&& f, auto const n, decltype(n) p,
+        enum Direction const d) -> size_type
         {
           size_type sl, sr;
 
@@ -91,7 +98,7 @@ public:
           {
             if (auto const l(detail::left_node(n, p)); l)
             {
-              if (auto const sz(f(f, l, n)); sz)
+              if (auto const sz(f(f, l, n, LEFT)); sz)
               {
                 sl = sz;
               }
@@ -114,7 +121,7 @@ public:
           {
             if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const sz(f(f, r, n)); sz)
+              if (auto const sz(f(f, r, n, RIGHT)); sz)
               {
                 sr = sz;
               }
@@ -147,9 +154,9 @@ public:
           {
             if (auto const nn(rebuild(n, p, q, qp)); p)
             {
-              cmp(n->key(), p->key()) < 0 ?
-                p->l_ = detail::conv(nn, detail::left_node(p, n)) :
-                p->r_ = detail::conv(nn, detail::right_node(p, n));
+              d ?
+                p->r_ = detail::conv(nn, detail::right_node(p, n)) :
+                p->l_ = detail::conv(nn, detail::left_node(p, n));
             }
             else
             {
@@ -167,7 +174,7 @@ public:
 
       if (r)
       {
-        f(f, r, {});
+        f(f, r, {}, {});
       }
       else
       {
