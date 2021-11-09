@@ -68,11 +68,7 @@ public:
     //
     static auto emplace(auto& r, auto&& a, auto&& v)
     {
-      enum Direction: bool
-      {
-        LEFT,
-        RIGHT
-      };
+      enum Direction: bool { LEFT, RIGHT };
 
       key_type k(std::forward<decltype(a)>(a));
       auto const& [mink, maxk](k);

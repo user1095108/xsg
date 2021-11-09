@@ -59,11 +59,7 @@ public:
     //
     static auto emplace(auto& r, auto&& a, auto&& v)
     {
-      enum Direction: bool
-      {
-        LEFT,
-        RIGHT
-      };
+      enum Direction: bool { LEFT, RIGHT };
 
       node* q, *qp;
       bool s{}; // success
