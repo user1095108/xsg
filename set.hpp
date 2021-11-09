@@ -52,8 +52,8 @@ public:
     {
       enum Direction: bool { LEFT, RIGHT };
 
-      node* q, *qp;
       bool s{}; // success
+      node* q, *qp;
 
       key_type k(std::forward<decltype(a)>(a)...);
 
