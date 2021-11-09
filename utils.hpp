@@ -75,35 +75,6 @@ inline auto next_node(auto n, decltype(n) p) noexcept
   return std::tuple(pointer{}, pointer{});
 }
 
-inline auto prev_node(auto n, decltype(n) p) noexcept
-{
-  using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
-  using pointer = std::remove_cvref_t<decltype(n)>;
-
-  if (auto const l(left_node(n, p)); l)
-  {
-    return last_node(l, n);
-  }
-  else
-  {
-    for (auto&& key(n->key()); p;)
-    {
-      if (node::cmp(key, p->key()) > 0)
-      {
-        return std::tuple(p, right_node(p, n));
-      }
-      else
-      {
-        auto const tmp(p);
-        p = left_node(p, n);
-        n = tmp;
-      }
-    }
-  }
-
-  return std::tuple(pointer{}, pointer{});
-}
-
 inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
 {
   using pointer = std::remove_cvref_t<decltype(n)>;
@@ -133,7 +104,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
   return std::tuple(pointer{}, pointer{});
 }
 
-inline auto prev_node(auto const r0, auto n, decltype(n) p) noexcept
+inline auto prev_node(auto n, decltype(n) p) noexcept
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
   using pointer = std::remove_cvref_t<decltype(n)>;
@@ -144,7 +115,7 @@ inline auto prev_node(auto const r0, auto n, decltype(n) p) noexcept
   }
   else
   {
-    for (auto&& key(n->key()); p && (r0 != n);)
+    for (auto&& key(n->key()); p;)
     {
       if (node::cmp(key, p->key()) > 0)
       {
