@@ -262,7 +262,7 @@ public:
         }
         else
         {
-          auto [nnn, nnp](next_node(nullptr, n, p));
+          auto [nnn, nnp](next_node(n, p));
           auto const s(n->v_.size());
 
           // pp - p - n - lr
@@ -417,7 +417,7 @@ public:
         }
       }
 
-      auto [nnn, nnp](next_node(nullptr, n, p));
+      auto [nnn, nnp](next_node(n, p));
       auto const s(n->v_.size());
 
       // pp - p - n - lr

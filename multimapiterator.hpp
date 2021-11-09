@@ -127,7 +127,7 @@ public:
   {
     if (i_ = std::next(i_); n_->v_.end() == i_)
     {
-      if (std::tie(n_, p_) = detail::next_node(nullptr, n_, p_); n_)
+      if (std::tie(n_, p_) = detail::next_node(n_, p_); n_)
       {
         i_ = n_->v_.begin();
       }
@@ -147,7 +147,7 @@ public:
     }
     else if (n_->v_.begin() == i_)
     {
-      if (std::tie(n_, p_) = detail::prev_node(nullptr, n_, p_); n_)
+      if (std::tie(n_, p_) = detail::prev_node(n_, p_); n_)
       {
         i_ = std::prev(n_->v_.end());
       }
