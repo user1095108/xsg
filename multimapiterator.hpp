@@ -72,7 +72,7 @@ public:
   }
 
   multimapiterator(node_t* const* const r,
-    std::tuple<node_t*, node_t*> const& t) noexcept:
+    std::pair<node_t*, node_t*> const& t) noexcept:
     n_(std::get<0>(t)),
     p_(std::get<1>(t)),
     r_(r)

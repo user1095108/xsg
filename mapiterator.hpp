@@ -45,7 +45,7 @@ public:
   }
 
   mapiterator(T* const* const r,
-    std::tuple<std::remove_const_t<T>*,
+    std::pair<std::remove_const_t<T>*,
     std::remove_const_t<T>*> const& t) noexcept:
     r_(r)
   {

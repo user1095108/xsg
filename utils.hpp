@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <compare>
 
-#include <iostream>
+#include <utility>
 
 namespace xsg
 {
@@ -35,14 +35,14 @@ inline auto first_node(auto n, decltype(n) p) noexcept
 {
   for (decltype(n) l; (l = left_node(n, p)); p = n, n = l);
 
-  return std::tuple(n, p);
+  return std::pair(n, p);
 }
 
 inline auto last_node(auto n, decltype(n) p) noexcept
 {
   for (decltype(n) r; (r = right_node(n, p)); p = n, n = r);
 
-  return std::tuple(n, p);
+  return std::pair(n, p);
 }
 
 //
@@ -61,7 +61,7 @@ inline auto next_node(auto n, decltype(n) p) noexcept
     {
       if (node::cmp(key, p->key()) < 0)
       {
-        return std::tuple(p, left_node(p, n));
+        return std::pair(p, left_node(p, n));
       }
       else
       {
@@ -72,7 +72,7 @@ inline auto next_node(auto n, decltype(n) p) noexcept
     }
   }
 
-  return std::tuple(pointer{}, pointer{});
+  return std::pair(pointer{}, pointer{});
 }
 
 inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
@@ -90,7 +90,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
     {
       if (node::cmp(key, p->key()) < 0)
       {
-        return std::tuple(p, left_node(p, n));
+        return std::pair(p, left_node(p, n));
       }
       else
       {
@@ -101,7 +101,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
     }
   }
 
-  return std::tuple(pointer{}, pointer{});
+  return std::pair(pointer{}, pointer{});
 }
 
 inline auto prev_node(auto n, decltype(n) p) noexcept
@@ -119,7 +119,7 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
     {
       if (node::cmp(key, p->key()) > 0)
       {
-        return std::tuple(p, right_node(p, n));
+        return std::pair(p, right_node(p, n));
       }
       else
       {
@@ -130,7 +130,7 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
     }
   }
 
-  return std::tuple(pointer{}, pointer{});
+  return std::pair(pointer{}, pointer{});
 }
 
 //
@@ -188,7 +188,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
     }
   }
 
-  return std::tuple(std::tuple(n, p), std::tuple(gn, gp));
+  return std::pair(std::pair(n, p), std::pair(gn, gp));
 }
 
 inline auto find(auto n, decltype(n) p, auto&& k) noexcept
@@ -215,7 +215,7 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
     }
   }
 
-  return std::tuple(n, p);
+  return std::pair(n, p);
 }
 
 inline auto erase(auto& r0, auto&& k)
@@ -371,11 +371,11 @@ inline auto erase(auto& r0, auto&& k)
 
       delete n;
 
-      return std::tuple(nnn, nnp);
+      return std::pair(nnn, nnp);
     }
   }
 
-  return std::tuple(pointer{}, pointer{});
+  return std::pair(pointer{}, pointer{});
 }
 
 inline auto erase(auto& r0, auto const n, decltype(n) p)
@@ -523,7 +523,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
 
   delete n;
 
-  return std::tuple(nnn, nnp);
+  return std::pair(nnn, nnp);
 }
 
 }
