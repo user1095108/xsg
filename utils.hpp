@@ -252,7 +252,7 @@ inline auto erase(auto& r0, auto&& k)
       // pp - p - n - lr
       if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
       {
-        if (size(r, n) > size(l, n))
+        if (size(l, n) < size(r, n)) // erase from right side?
         {
           auto const [fnn, fnp](first_node(r, n));
 
@@ -298,7 +298,7 @@ inline auto erase(auto& r0, auto&& k)
             r0 = fnn;
           }
         }
-        else
+        else // erase from the left side
         {
           auto const [lnn, lnp](last_node(l, n));
 
