@@ -169,8 +169,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      gn = n; gp = p;
-      assign(n, p)(left_node(n, p), n);
+      assign(gn, gp, n, p)(n, p, left_node(n, p), n);
     }
     else if (c > 0)
     {
@@ -224,17 +223,11 @@ inline auto erase(auto& r0, auto&& k)
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      pp = p;
-      q = &n->l_;
-
-      assign(n, p)(left_node(n, p), n);
+      assign(pp, q, n, p)(p, &n->l_, left_node(n, p), n);
     }
     else if (c > 0)
     {
-      pp = p;
-      q = &n->r_;
-
-      assign(n, p)(right_node(n, p), n);
+      assign(pp, q, n, p)(p, &n->r_, right_node(n, p), n);
     }
     else
     {
