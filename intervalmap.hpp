@@ -244,21 +244,11 @@ public:
       {
         if (auto const c(node::cmp(mink, n->key())); c < 0)
         {
-          pp = p;
-
-          auto const tmp(n);
-          q = &n->l_;
-          n = left_node(n, p);
-          p = tmp;
+          assign(pp, q, n, p)(p, &n->l_, left_node(n, p), n);
         }
         else if (c > 0)
         {
-          pp = p;
-
-          auto const tmp(n);
-          q = &n->r_;
-          n = right_node(n, p);
-          p = tmp;
+          assign(pp, q, n, p)(p, &n->r_, right_node(n, p), n);
         }
         else
         {
