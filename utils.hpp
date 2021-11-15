@@ -15,6 +15,11 @@ namespace xsg
 namespace detail
 {
 
+constexpr auto assign(auto& ...a) noexcept
+{
+  return [&](auto const ...v) noexcept { ((a = v), ...); };
+}
+
 constexpr auto conv(auto const ...n) noexcept
 {
   return (std::uintptr_t(n) ^ ...);
@@ -65,9 +70,7 @@ inline auto next_node(auto n, decltype(n) p) noexcept
       }
       else
       {
-        auto const tmp(p);
-        p = right_node(p, n);
-        n = tmp;
+        assign(n, p)(p, right_node(p, n));
       }
     }
   }
@@ -94,9 +97,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
       }
       else
       {
-        auto const tmp(p);
-        p = right_node(p, n);
-        n = tmp;
+        assign(n, p)(p, right_node(p, n));
       }
     }
   }
@@ -123,9 +124,7 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
       }
       else
       {
-        auto const tmp(p);
-        p = left_node(p, n);
-        n = tmp;
+        assign(n, p)(p, left_node(p, n));
       }
     }
   }
@@ -171,11 +170,11 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
       gn = n; gp = p;
-      auto const tmp(n); n = left_node(n, p); p = tmp;
+      assign(n, p)(left_node(n, p), n);
     }
     else if (c > 0)
     {
-      auto const tmp(n); n = right_node(n, p); p = tmp;
+      assign(n, p)(right_node(n, p), n);
     }
     else
     {
@@ -199,15 +198,11 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      auto const tmp(n);
-      n = left_node(n, p);
-      p = tmp;
+      assign(n, p)(left_node(n, p), n);
     }
     else if (c > 0)
     {
-      auto const tmp(n);
-      n = right_node(n, p);
-      p = tmp;
+      assign(n, p)(right_node(n, p), n);
     }
     else
     {
@@ -230,20 +225,16 @@ inline auto erase(auto& r0, auto&& k)
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
       pp = p;
-
-      auto const tmp(n);
       q = &n->l_;
-      n = left_node(n, p);
-      p = tmp;
+
+      assign(n, p)(left_node(n, p), n);
     }
     else if (c > 0)
     {
       pp = p;
-
-      auto const tmp(n);
       q = &n->r_;
-      n = right_node(n, p);
-      p = tmp;
+
+      assign(n, p)(right_node(n, p), n);
     }
     else
     {
