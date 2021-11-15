@@ -16,7 +16,7 @@ namespace detail
 {
 
 constexpr auto assign(auto& ...a) noexcept
-{
+{ // assign idiom
   return [&](auto const ...v) noexcept { ((a = v), ...); };
 }
 
