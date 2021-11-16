@@ -95,9 +95,9 @@ public:
 
           if (auto const c(cmp(mink, n->key())); c < 0)
           {
-            if (auto const l(detail::left_node(n, p, LEFT)); l)
+            if (auto const l(detail::left_node(n, p)); l)
             {
-              if (auto const sz(f(f, l, n)); sz)
+              if (auto const sz(f(f, l, n, LEFT)); sz)
               {
                 sl = sz;
               }
@@ -116,9 +116,9 @@ public:
           }
           else if (c > 0)
           {
-            if (auto const r(detail::right_node(n, p, RIGHT)); r)
+            if (auto const r(detail::right_node(n, p)); r)
             {
-              if (auto const sz(f(f, r, n)); sz)
+              if (auto const sz(f(f, r, n, RIGHT)); sz)
               {
                 sr = sz;
               }
@@ -178,7 +178,7 @@ public:
         r = q = create_node(qp = {});
       }
 
-      return std::tuple(q, qp);
+      return std::pair(q, qp);
     }
 
     inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
