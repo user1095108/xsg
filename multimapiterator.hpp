@@ -45,6 +45,8 @@ private:
   node_t* const* r_;
 
 public:
+  multimapiterator() = default;
+
   multimapiterator(node_t* const* const r) noexcept:
     r_(r)
   {

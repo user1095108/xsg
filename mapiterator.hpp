@@ -37,6 +37,8 @@ public:
   using reference = value_type&;
 
 public:
+  mapiterator() = default;
+
   mapiterator(T* const* const r) noexcept:
     r_(r)
   {
