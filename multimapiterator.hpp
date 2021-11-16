@@ -35,7 +35,7 @@ public:
   using reference = value_type&;
 
 private:
-  node_t* n_{};
+  node_t* n_;
   node_t* p_;
   std::conditional_t<
     std::is_const_v<T>,
@@ -48,6 +48,7 @@ public:
   multimapiterator() = default;
 
   multimapiterator(node_t* const* const r) noexcept:
+    n_(),
     r_(r)
   {
   }

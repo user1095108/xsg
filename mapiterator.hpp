@@ -20,7 +20,7 @@ class mapiterator
 
   friend inverse_const_t;
 
-  T* n_{};
+  T* n_;
   T* p_;
   T* const* r_;
 
@@ -40,6 +40,7 @@ public:
   mapiterator() = default;
 
   mapiterator(T* const* const r) noexcept:
+    n_(),
     r_(r)
   {
   }
