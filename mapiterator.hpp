@@ -21,8 +21,8 @@ class mapiterator
   friend inverse_const_t;
 
   T* n_{};
-  T* p_{};
-  T* const* r_{};
+  T* p_;
+  T* const* r_;
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
@@ -37,8 +37,6 @@ public:
   using reference = value_type&;
 
 public:
-  mapiterator() = default;
-
   mapiterator(T* const* const r) noexcept:
     r_(r)
   {
@@ -47,9 +45,10 @@ public:
   mapiterator(T* const* const r,
     std::pair<std::remove_const_t<T>*,
     std::remove_const_t<T>*> const& t) noexcept:
+    n_(std::get<0>(t)),
+    p_(std::get<1>(t)),
     r_(r)
   {
-    std::tie(n_, p_) = t;
   }
 
   mapiterator(T* const* const r, T* const n, T* const p) noexcept:

@@ -36,17 +36,15 @@ public:
 
 private:
   node_t* n_{};
-  node_t* p_{};
+  node_t* p_;
   std::conditional_t<
     std::is_const_v<T>,
     typename std::list<std::remove_const_t<value_type>>::const_iterator,
     typename std::list<std::remove_const_t<value_type>>::iterator
-  > i_{};
-  node_t* const* r_{};
+  > i_;
+  node_t* const* r_;
 
 public:
-  multimapiterator() = default;
-
   multimapiterator(node_t* const* const r) noexcept:
     r_(r)
   {
