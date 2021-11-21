@@ -45,9 +45,7 @@ public:
   {
   }
 
-  mapiterator(T* const* const r,
-    std::pair<std::remove_const_t<T>*,
-    std::remove_const_t<T>*> const& t) noexcept:
+  mapiterator(T* const* const r, auto&& t) noexcept:
     n_(std::get<0>(t)),
     p_(std::get<1>(t)),
     r_(r)
