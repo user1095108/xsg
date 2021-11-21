@@ -38,14 +38,14 @@ inline auto right_node(auto const n, decltype(n) p) noexcept
 
 inline auto first_node(auto n, decltype(n) p) noexcept
 {
-  for (decltype(n) l; (l = left_node(n, p)); p = n, n = l);
+  for (decltype(n) l; (l = left_node(n, p)); assign(p, n)(n, l));
 
   return std::pair(n, p);
 }
 
 inline auto last_node(auto n, decltype(n) p) noexcept
 {
-  for (decltype(n) r; (r = right_node(n, p)); p = n, n = r);
+  for (decltype(n) r; (r = right_node(n, p)); assign(p, n)(n, r));
 
   return std::pair(n, p);
 }
@@ -179,7 +179,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
     {
       if (auto const r(right_node(n, p)); r)
       {
-        auto const [gn, gp] = first_node(r, n);
+        std::tie(gn, gp) = first_node(r, n);
       }
 
       break;
@@ -393,13 +393,11 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
   {
     if (node::cmp(n->key(), p->key()) < 0)
     {
-      pp = left_node(p, n);
-      q = &p->l_;
+      assign(pp, q)(left_node(p, n), &p->l_);
     }
     else
     {
-      pp = right_node(p, n);
-      q = &p->r_;
+      assign(pp, q)(right_node(p, n), &p->r_);
     }
   }
 
