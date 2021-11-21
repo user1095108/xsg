@@ -9,5 +9,6 @@ Left and right node addresses of each node are XORed with the parent node addres
 Since rebalancing can change node parent-child relations, almost all iterators are invalidated after inserting or erasing.
 
 # build instructions
+    git submodule update --init
     g++ -std=c++20 -Ofast set.cpp -o s
     g++ -std=c++20 -Ofast map.cpp -o m
