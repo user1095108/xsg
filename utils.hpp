@@ -169,7 +169,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      assign(gn, gp, n, p)(n, p, left_node(n, p), n);
+      assign(gn, gp, p, n)(n, p, n, left_node(n, p));
     }
     else if (c > 0)
     {
@@ -212,7 +212,8 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
   return std::pair(n, p);
 }
 
-inline auto erase(auto& r0, auto const n, decltype(n) p, decltype(n) pp, std::uintptr_t* q)
+inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
+  std::uintptr_t* const q)
 {
   auto [nnn, nnp](next_node(n, p));
 
@@ -366,15 +367,15 @@ inline auto erase(auto& r0, auto&& k)
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      assign(pp, q, n, p)(p, &n->l_, left_node(n, p), n);
+      assign(pp, p, n, q)(p, n, left_node(n, p), &n->l_);
     }
     else if (c > 0)
     {
-      assign(pp, q, n, p)(p, &n->r_, right_node(n, p), n);
+      assign(pp, p, n, q)(p, n, right_node(n, p), &n->r_);
     }
     else
     {
-      return erase(r0, n, p, pp, q);
+      return erase(r0, pp, p, n, q);
     }
   }
 
@@ -401,7 +402,7 @@ inline auto erase(auto& r0, auto const n, decltype(n) p)
     }
   }
 
-  return erase(r0, n, p, pp, q);
+  return erase(r0, pp, p, n, q);
 }
 
 }
