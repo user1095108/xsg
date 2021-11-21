@@ -159,17 +159,33 @@ iterator erase(const_iterator a, const_iterator const b)
 }
 
 //
-const_iterator find(Key const& k) const noexcept
-{
-  return const_iterator(&root_, detail::find(root_, {}, k));
-}
-
 iterator find(Key const& k) noexcept
 {
-  return iterator(&root_, detail::find(root_, {}, k));
+  return {&root_, detail::find(root_, {}, k)};
 }
 
-// these may always throw
+const_iterator find(Key const& k) const noexcept
+{
+  return {&root_, detail::find(root_, {}, k)};
+}
+
+iterator find(auto&& k) noexcept
+{
+  return {
+    &root_,
+    detail::find(root_, {}, std::forward<decltype(k)>(k))
+  };
+}
+
+const_iterator find(auto&& k) const noexcept
+{
+  return {
+    &root_,
+    detail::find(root_, {}, std::forward<decltype(k)>(k))
+  };
+}
+
+//
 void insert(std::initializer_list<value_type> il)
   requires(std::is_copy_constructible_v<value_type>)
 {

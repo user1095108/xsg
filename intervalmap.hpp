@@ -714,7 +714,7 @@ public:
 
     return std::pair(
       iterator(&root_, std::get<0>(e) ? e : g),
-      iterator(root_, g)
+      iterator(&root_, g)
     );
   }
 
