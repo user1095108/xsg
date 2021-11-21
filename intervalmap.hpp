@@ -736,7 +736,7 @@ public:
 
   size_type erase(Key const& k)
   {
-    return std::get<1>(node::erase(root_, k));
+    return std::get<2>(node::erase(root_, k));
   }
 
   //
