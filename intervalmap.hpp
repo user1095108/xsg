@@ -379,7 +379,10 @@ public:
         {
           *q = detail::conv(lr, pp);
 
-          node::reset_max(r0, p->key());
+          if (p)
+          {
+            node::reset_max(r0, p->key());
+          }
         }
         else
         {
