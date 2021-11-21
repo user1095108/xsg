@@ -49,14 +49,14 @@ private:
 public:
   multimapiterator() = default;
 
-  multimapiterator(node_t* const* const r) noexcept:
+  multimapiterator(decltype(r_) const r) noexcept:
     n_(),
     r_(r)
   {
   }
 
-  multimapiterator(node_t* const* const r, node_t* const n,
-    node_t* const p) noexcept:
+  multimapiterator(decltype(r_) const r, decltype(n_) const n,
+    decltype(n) const p) noexcept:
     n_(n),
     p_(p),
     r_(r)
@@ -74,8 +74,7 @@ public:
     }
   }
 
-  multimapiterator(node_t* const* const r,
-    std::pair<node_t*, node_t*> const& t) noexcept:
+  multimapiterator(decltype(r_) const r, auto&& t) noexcept:
     n_(std::get<0>(t)),
     p_(std::get<1>(t)),
     r_(r)
@@ -93,7 +92,7 @@ public:
     }
   }
 
-  multimapiterator(node_t* const* const r, node_t* const n,
+  multimapiterator(decltype(r_) const r, decltype(n_) const n,
     decltype(n) p, decltype(i_) const i) noexcept:
     n_(n),
     p_(p),
@@ -171,8 +170,8 @@ public:
   auto& operator*() const noexcept { return *i_; }
 
   //
-  auto& iterator() const noexcept { return i_; }
-  auto node() const noexcept { return n_; }
+  auto& i() const noexcept { return i_; }
+  auto n() const noexcept { return n_; }
 };
 
 }

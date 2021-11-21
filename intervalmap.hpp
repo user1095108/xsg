@@ -216,13 +216,13 @@ public:
       {
         return {&r, std::get<0>(node::erase(r, std::get<0>(*i)))};
       }
-      else if (auto const it(i.iterator()); std::next(it) == n->v_.end())
+      else if (auto const it(i.i()); std::next(it) == n->v_.end())
       {
-        auto const nn(std::next(i));
+        auto const ni(std::next(i));
 
         n->v_.erase(it);
 
-        return {&r, nn};
+        return {&r, ni};
       }
       else
       {
