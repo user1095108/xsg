@@ -381,7 +381,7 @@ public:
 
           if (p)
           {
-            node::reset_max(r0, p->key());
+            reset_max(r0, p->key());
           }
         }
         else
