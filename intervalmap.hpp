@@ -828,14 +828,12 @@ public:
         if (auto const l(detail::left_node(n, p));
           l && (node::cmp(mink, l->m_) < 0))
         {
-          p = n;
-          n = l;
+          detail::assign(n, p)(l, n);
         }
         else if (auto const r(detail::right_node(n, p));
           cg0 && r && (node::cmp(mink, r->m_) < 0))
         {
-          p = n;
-          n = r;
+          detail::assign(n, p)(r, n);
         }
         else
         {
