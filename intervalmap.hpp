@@ -691,52 +691,36 @@ public:
   auto equal_range(Key const& k) noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
-
-    return std::pair(
-      iterator(&root_, std::get<0>(e) ? e : g),
-      iterator(&root_, g)
-    );
+    return std::pair(iterator(&root_, e), iterator(&root_, g));
   }
 
   auto equal_range(Key const& k) const noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
-
-    return std::pair(
-      const_iterator(&root_, std::get<0>(e) ? e : g),
-      const_iterator(&root_, g)
-    );
+    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
-
-    return std::pair(
-      iterator(&root_, std::get<0>(e) ? e : g),
-      iterator(&root_, g)
-    );
+    return std::pair(iterator(&root_, e), iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) const noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
-
-    return std::pair(
-      const_iterator(&root_, std::get<0>(e) ? e : g),
-      const_iterator(&root_, g)
-    );
+    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
   }
 
   //
-  iterator erase(const_iterator const i)
-  {
-    return node::erase(root_, i);
-  }
-
   size_type erase(Key const& k)
   {
     return std::get<2>(node::erase(root_, k));
+  }
+
+  iterator erase(const_iterator const i)
+  {
+    return node::erase(root_, i);
   }
 
   //
