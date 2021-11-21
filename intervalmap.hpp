@@ -191,25 +191,24 @@ public:
       {
         if (auto const c(node::cmp(k, n->key())); c < 0)
         {
-          gn = n; gp = p;
-          auto const tmp(n); n = left_node(n, p); p = tmp;
+          assign(gn, gp, n, p)(n, p, left_node(n, p), n);
         }
         else if (c > 0)
         {
-          auto const tmp(n); n = right_node(n, p); p = tmp;
+          assign(n, p)(right_node(n, p), n);
         }
         else
         {
           if (auto const r(right_node(n, p)); r)
           {
-            auto const [gn, gp] = first_node(r, n);
+            std::tie(gn, gp) = first_node(r, n);
           }
 
           break;
         }
       }
 
-      return std::tuple(std::tuple(n, p), std::tuple(gn, gp));
+      return std::pair(std::pair(n, p), std::pair(gn, gp));
     }
 
     static iterator erase(auto& r, const_iterator const i)
@@ -232,188 +231,16 @@ public:
       }
     }
 
-    static auto erase(auto& r0, auto&& k)
+    static inline auto erase(auto& r0, auto const pp, decltype(pp) p,
+      decltype(pp) n, std::uintptr_t* const q)
     {
-      using pointer = std::remove_cvref_t<decltype(r0)>;
-      using node = std::remove_pointer_t<pointer>;
-
-      auto const& [mink, maxk](k);
-      std::uintptr_t* q{};
-
-      for (pointer n(r0), p{}, pp{}; n;)
-      {
-        if (auto const c(node::cmp(mink, n->key())); c < 0)
-        {
-          assign(pp, q, n, p)(p, &n->l_, left_node(n, p), n);
-        }
-        else if (c > 0)
-        {
-          assign(pp, q, n, p)(p, &n->r_, right_node(n, p), n);
-        }
-        else
-        {
-          auto [nnn, nnp](next_node(n, p));
-          auto const s(n->v_.size());
-
-          // pp - p - n - lr
-          if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
-          {
-            if (size(l, n) < size(r, n))
-            {
-              auto const [fnn, fnp](first_node(r, n));
-
-              if (fnn == nnn)
-              {
-                nnp = p;
-              }
-
-              // convert and attach l to fnn
-              l->l_ ^= conv(n, fnn); l->r_ ^= conv(n, fnn);
-              fnn->l_ = conv(l, p); 
-
-              if (r == fnn)
-              {
-                fnn->r_ ^= conv(n, p);
-              }
-              else
-              {
-                // attach right node of fnn to parent left
-                {
-                  auto const fnpp(left_node(fnp, fnn));
-                  auto const rn(right_node(fnn, fnp));
-
-                  if (rn)
-                  {
-                    rn->l_ ^= conv(fnn, fnp); rn->r_ ^= conv(fnn, fnp);
-                  }
-
-                  fnp->l_ = conv(rn, fnpp);
-
-                }
-
-                // convert and attach r to fnn
-                r->l_ ^= conv(n, fnn); r->r_ ^= conv(n, fnn);
-                fnn->r_ = conv(r, p);
-              }
-
-              if (q)
-              {
-                *q = conv(fnn, pp);
-              }
-              else
-              {
-                r0 = fnn;
-              }
-            }
-            else
-            {
-              auto const [lnn, lnp](last_node(l, n));
-
-              if (r == nnn)
-              {
-                nnp = lnn;
-              }
-
-              // convert and attach r to lnn
-              r->l_ ^= conv(n, lnn); r->r_ ^= conv(n, lnn);
-              lnn->r_ = conv(r, p); 
-
-              if (l == lnn)
-              {
-                lnn->l_ ^= conv(n, p);
-              }
-              else
-              {
-                {
-                  auto const lnpp(right_node(lnp, lnn));
-                  auto const ln(left_node(lnn, lnp));
-
-                  if (ln)
-                  {
-                    ln->l_ ^= conv(lnn, lnp); ln->r_ ^= conv(lnn, lnp);
-                  }
-
-                  lnp->r_ = conv(ln, lnpp);
-                }
-
-                // convert and attach l to lnn
-                l->l_ ^= conv(n, lnn); l->r_ ^= conv(n, lnn);
-                lnn->l_ = conv(l, p);
-              }
-
-              if (q)
-              {
-                *q = conv(lnn, pp);
-              }
-              else
-              {
-                r0 = lnn;
-              }
-            }
-          }
-          else
-          {
-            auto const lr(l ? l : r);
-
-            if (lr)
-            {
-              auto const np(conv(n, p));
-              lr->l_ ^= np; lr->r_ ^= np;
-
-              if (lr == nnn)
-              {
-                nnp = p;
-              }
-            }
-
-            if (q)
-            {
-              *q = conv(lr, pp);
-            }
-            else
-            {
-              r0 = lr;
-            }
-          }
-
-          delete n;
-
-          return std::tuple(nnn, nnp, s);
-        }
-      }
-
-      return std::tuple(pointer{}, pointer{}, std::size_t{});
-    }
-
-    static auto erase(auto& r0, auto const n, decltype(n) const p)
-    {
-      using pointer = std::remove_cvref_t<decltype(r0)>;
-      using node = std::remove_pointer_t<pointer>;
-
-      pointer pp;
-      std::uintptr_t* q{};
-
-      if (p)
-      {
-        if (node::cmp(n->key(), p->key()) < 0)
-        {
-          pp = left_node(p, n);
-          q = &p->l_;
-        }
-        else
-        {
-          pp = right_node(p, n);
-          q = &p->r_;
-        }
-      }
-
-      auto [nnn, nnp](next_node(n, p));
       auto const s(n->v_.size());
+      auto [nnn, nnp](next_node(n, p));
 
       // pp - p - n - lr
       if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
       {
-        if (size(r, n) > size(l, n))
+        if (size(l, n) < size(r, n)) // erase from right side?
         {
           auto const [fnn, fnp](first_node(r, n));
 
@@ -423,14 +250,16 @@ public:
           }
 
           // convert and attach l to fnn
-          l->l_ ^= conv(n, fnn); l->r_ ^= conv(n, fnn);
           fnn->l_ = conv(l, p); 
+
+          {
+            auto const nfnn(conv(n, fnn));
+            l->l_ ^= nfnn; l->r_ ^= nfnn;
+          }
 
           if (r == fnn)
           {
-            fnn->r_ ^= conv(n, p);
-
-            node::reset_max(r0, fnn->key());
+            r->r_ ^= conv(n, p);
           }
           else
           {
@@ -439,19 +268,20 @@ public:
               auto const fnpp(left_node(fnp, fnn));
               auto const rn(right_node(fnn, fnp));
 
+              fnp->l_ = conv(rn, fnpp);
+
               if (rn)
               {
-                rn->l_ ^= conv(fnn, fnp); rn->r_ ^= conv(fnn, fnp);
+                auto const fnnfnp(conv(fnn, fnp));
+                rn->l_ ^= fnnfnp; rn->r_ ^= fnnfnp;
               }
-
-              fnp->l_ = conv(rn, fnpp);
             }
 
             // convert and attach r to fnn
-            r->l_ ^= conv(n, fnn); r->r_ ^= conv(n, fnn);
             fnn->r_ = conv(r, p);
 
-            node::reset_max(r0, fnp->key());
+            auto const nfnn(conv(n, fnn));
+            r->l_ ^= nfnn; r->r_ ^= nfnn;
           }
 
           if (q)
@@ -463,7 +293,7 @@ public:
             r0 = fnn;
           }
         }
-        else
+        else // erase from the left side
         {
           auto const [lnn, lnp](last_node(l, n));
 
@@ -473,14 +303,16 @@ public:
           }
 
           // convert and attach r to lnn
-          r->l_ ^= conv(n, lnn); r->r_ ^= conv(n, lnn);
           lnn->r_ = conv(r, p); 
+
+          {
+            auto const nlnn(conv(n, lnn));
+            r->l_ ^= nlnn; r->r_ ^= nlnn;
+          }
 
           if (l == lnn)
           {
-            lnn->l_ ^= conv(n, p);
-
-            node::reset_max(r0, lnn->key());
+            l->l_ ^= conv(n, p);
           }
           else
           {
@@ -488,19 +320,20 @@ public:
               auto const lnpp(right_node(lnp, lnn));
               auto const ln(left_node(lnn, lnp));
 
+              lnp->r_ = conv(ln, lnpp);
+
               if (ln)
               {
-                ln->l_ ^= conv(lnn, lnp); ln->r_ ^= conv(lnn, lnp);
+                auto const lnnlnp(conv(lnn, lnp));
+                ln->l_ ^= lnnlnp; ln->r_ ^= lnnlnp;
               }
-
-              lnp->r_ = conv(ln, lnpp);
             }
 
             // convert and attach l to lnn
-            l->l_ ^= conv(n, lnn); l->r_ ^= conv(n, lnn);
             lnn->l_ = conv(l, p);
 
-            node::reset_max(r0, lnp->key());
+            auto const nlnn(conv(n, lnn));
+            l->l_ ^= nlnn; l->r_ ^= nlnn;
           }
 
           if (q)
@@ -519,20 +352,18 @@ public:
 
         if (lr)
         {
-          auto const np(conv(n, p));
-          lr->l_ ^= np; lr->r_ ^= np;
-
           if (lr == nnn)
           {
             nnp = p;
           }
+
+          auto const np(conv(n, p));
+          lr->l_ ^= np; lr->r_ ^= np;
         }
 
         if (q)
         {
           *q = conv(lr, pp);
-
-          node::reset_max(r0, p->key());
         }
         else
         {
@@ -543,6 +374,56 @@ public:
       delete n;
 
       return std::tuple(nnn, nnp, s);
+    }
+
+    static auto erase(auto& r0, auto&& k)
+    {
+      using pointer = std::remove_cvref_t<decltype(r0)>;
+      using node = std::remove_pointer_t<pointer>;
+
+      auto const& [mink, maxk](k);
+      std::uintptr_t* q{};
+
+      for (pointer pp{}, p{}, n(r0); n;)
+      {
+        if (auto const c(node::cmp(mink, n->key())); c < 0)
+        {
+          assign(pp, p, n, q)(p, n, left_node(n, p), &n->l_);
+        }
+        else if (c > 0)
+        {
+          assign(pp, p, n, q)(p, n, right_node(n, p), &n->r_);
+        }
+        else
+        {
+          return erase(r0, pp, p, n, q);
+        }
+      }
+
+      return std::tuple(pointer{}, pointer{}, std::size_t{});
+    }
+
+    static auto erase(auto& r0, auto const n, decltype(n) const p)
+    {
+      using pointer = std::remove_cvref_t<decltype(r0)>;
+      using node = std::remove_pointer_t<pointer>;
+
+      pointer pp{};
+      std::uintptr_t* q{};
+
+      if (p)
+      {
+        if (node::cmp(n->key(), p->key()) < 0)
+        {
+          detail::assign(pp, q)(left_node(p, n), &p->l_);
+        }
+        else
+        {
+          detail::assign(pp, q)(right_node(p, n), &p->r_);
+        }
+      }
+
+      return erase(r0, pp, p, n, q);
     }
 
     static auto node_max(auto const n) noexcept
