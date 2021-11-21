@@ -55,6 +55,24 @@ public:
   {
   }
 
+  multimapiterator(decltype(r_) const r, auto&& t) noexcept:
+    n_(std::get<0>(t)),
+    p_(std::get<1>(t)),
+    r_(r)
+  {
+    if (n_)
+    {
+      if constexpr(std::is_const_v<T>)
+      {
+        i_ = n_->v_.cbegin();
+      }
+      else
+      {
+        i_ = n_->v_.begin();
+      }
+    }
+  }
+
   multimapiterator(decltype(r_) const r, decltype(n_) const n,
     decltype(n) const p) noexcept:
     n_(n),
@@ -70,24 +88,6 @@ public:
       else
       {
         i_ = n->v_.begin();
-      }
-    }
-  }
-
-  multimapiterator(decltype(r_) const r, auto&& t) noexcept:
-    n_(std::get<0>(t)),
-    p_(std::get<1>(t)),
-    r_(r)
-  {
-    if (n_)
-    {
-      if constexpr(std::is_const_v<T>)
-      {
-        i_ = n_->v_.cbegin();
-      }
-      else
-      {
-        i_ = n_->v_.begin();
       }
     }
   }
@@ -172,6 +172,7 @@ public:
   //
   auto& i() const noexcept { return i_; }
   auto n() const noexcept { return n_; }
+  auto p() const noexcept { return p_; }
 };
 
 }

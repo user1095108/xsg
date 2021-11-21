@@ -222,7 +222,7 @@ public:
 
         n->v_.erase(it);
 
-        return {&r, ni};
+        return {&r, ni.n(), ni.p()};
       }
       else
       {
