@@ -81,11 +81,11 @@ int main()
     }
   );
 
-  std::srand(time(nullptr));
+  srandom(time(nullptr));
 
   while (st.size())
   {
-    st.erase(std::next(st.begin(), std::rand() % st.size()));
+    st.erase(std::next(st.begin(), random() % st.size()));
   }
 
   return 0;
