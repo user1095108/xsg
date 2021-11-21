@@ -215,6 +215,7 @@ public:
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
       {
         auto const [nn, np, s](node::erase(r, std::get<0>(*i)));
+
         return {&r, nn, np};
       }
       else if (auto const it(i.i()); std::next(it) == n->v_.end())
