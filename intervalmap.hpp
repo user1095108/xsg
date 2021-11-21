@@ -214,7 +214,8 @@ public:
     {
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
       {
-        return {&r, std::get<0>(node::erase(r, std::get<0>(*i)))};
+        auto const [nn, np, s](node::erase(r, std::get<0>(*i)));
+        return {&r, nn, np};
       }
       else if (auto const it(i.i()); std::next(it) == n->v_.end())
       {
@@ -234,14 +235,15 @@ public:
       decltype(pp) n, std::uintptr_t* const q)
     {
       auto const s(n->v_.size());
-      auto [nnn, nnp](next_node(n, p));
+      auto [nnn, nnp](detail::next_node(n, p));
 
       // pp - p - n - lr
-      if (auto const l(left_node(n, p)), r(right_node(n, p)); l && r)
+      if (auto const l(detail::left_node(n, p)),
+        r(detail::right_node(n, p)); l && r)
       {
-        if (size(l, n) < size(r, n)) // erase from right side?
+        if (detail::size(l, n) < detail::size(r, n)) // erase from right side?
         {
-          auto const [fnn, fnp](first_node(r, n));
+          auto const [fnn, fnp](detail::first_node(r, n));
 
           if (fnn == nnn)
           {
@@ -249,43 +251,43 @@ public:
           }
 
           // convert and attach l to fnn
-          fnn->l_ = conv(l, p); 
+          fnn->l_ = detail::conv(l, p); 
 
           {
-            auto const nfnn(conv(n, fnn));
+            auto const nfnn(detail::conv(n, fnn));
             l->l_ ^= nfnn; l->r_ ^= nfnn;
           }
 
           if (r == fnn)
           {
-            r->r_ ^= conv(n, p);
+            r->r_ ^= detail::conv(n, p);
           }
           else
           {
             // attach right node of fnn to parent left
             {
-              auto const fnpp(left_node(fnp, fnn));
-              auto const rn(right_node(fnn, fnp));
+              auto const fnpp(detail::left_node(fnp, fnn));
+              auto const rn(detail::right_node(fnn, fnp));
 
-              fnp->l_ = conv(rn, fnpp);
+              fnp->l_ = detail::conv(rn, fnpp);
 
               if (rn)
               {
-                auto const fnnfnp(conv(fnn, fnp));
+                auto const fnnfnp(detail::conv(fnn, fnp));
                 rn->l_ ^= fnnfnp; rn->r_ ^= fnnfnp;
               }
             }
 
             // convert and attach r to fnn
-            fnn->r_ = conv(r, p);
+            fnn->r_ = detail::conv(r, p);
 
-            auto const nfnn(conv(n, fnn));
+            auto const nfnn(detail::conv(n, fnn));
             r->l_ ^= nfnn; r->r_ ^= nfnn;
           }
 
           if (q)
           {
-            *q = conv(fnn, pp);
+            *q = detail::conv(fnn, pp);
           }
           else
           {
@@ -294,7 +296,7 @@ public:
         }
         else // erase from the left side
         {
-          auto const [lnn, lnp](last_node(l, n));
+          auto const [lnn, lnp](detail::last_node(l, n));
 
           if (r == nnn)
           {
@@ -302,42 +304,42 @@ public:
           }
 
           // convert and attach r to lnn
-          lnn->r_ = conv(r, p); 
+          lnn->r_ = detail::conv(r, p); 
 
           {
-            auto const nlnn(conv(n, lnn));
+            auto const nlnn(detail::conv(n, lnn));
             r->l_ ^= nlnn; r->r_ ^= nlnn;
           }
 
           if (l == lnn)
           {
-            l->l_ ^= conv(n, p);
+            l->l_ ^= detail::conv(n, p);
           }
           else
           {
             {
-              auto const lnpp(right_node(lnp, lnn));
-              auto const ln(left_node(lnn, lnp));
+              auto const lnpp(detail::right_node(lnp, lnn));
+              auto const ln(detail::left_node(lnn, lnp));
 
-              lnp->r_ = conv(ln, lnpp);
+              lnp->r_ = detail::conv(ln, lnpp);
 
               if (ln)
               {
-                auto const lnnlnp(conv(lnn, lnp));
+                auto const lnnlnp(detail::conv(lnn, lnp));
                 ln->l_ ^= lnnlnp; ln->r_ ^= lnnlnp;
               }
             }
 
             // convert and attach l to lnn
-            lnn->l_ = conv(l, p);
+            lnn->l_ = detail::conv(l, p);
 
-            auto const nlnn(conv(n, lnn));
+            auto const nlnn(detail::conv(n, lnn));
             l->l_ ^= nlnn; l->r_ ^= nlnn;
           }
 
           if (q)
           {
-            *q = conv(lnn, pp);
+            *q = detail::conv(lnn, pp);
           }
           else
           {
@@ -356,13 +358,13 @@ public:
             nnp = p;
           }
 
-          auto const np(conv(n, p));
+          auto const np(detail::conv(n, p));
           lr->l_ ^= np; lr->r_ ^= np;
         }
 
         if (q)
         {
-          *q = conv(lr, pp);
+          *q = detail::conv(lr, pp);
         }
         else
         {
@@ -387,11 +389,11 @@ public:
       {
         if (auto const c(node::cmp(mink, n->key())); c < 0)
         {
-          assign(pp, p, n, q)(p, n, left_node(n, p), &n->l_);
+          detail::assign(pp, p, n, q)(p, n, detail::left_node(n, p), &n->l_);
         }
         else if (c > 0)
         {
-          assign(pp, p, n, q)(p, n, right_node(n, p), &n->r_);
+          detail::assign(pp, p, n, q)(p, n, detail::right_node(n, p), &n->r_);
         }
         else
         {
@@ -414,11 +416,11 @@ public:
       {
         if (node::cmp(n->key(), p->key()) < 0)
         {
-          detail::assign(pp, q)(left_node(p, n), &p->l_);
+          detail::assign(pp, q)(detail::left_node(p, n), &p->l_);
         }
         else
         {
-          detail::assign(pp, q)(right_node(p, n), &p->r_);
+          detail::assign(pp, q)(detail::right_node(p, n), &p->r_);
         }
       }
 
