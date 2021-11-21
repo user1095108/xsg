@@ -82,7 +82,6 @@ public:
   auto& operator++() noexcept
   {
     std::tie(n_, p_) = detail::next_node(n_, p_);
-
     return *this;
   }
 
@@ -91,7 +90,6 @@ public:
     std::tie(n_, p_) = n_ ?
       detail::prev_node(n_, p_) :
       detail::last_node(*r_, {});
-
     return *this;
   }
 
