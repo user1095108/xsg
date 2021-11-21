@@ -149,6 +149,16 @@ bool contains(auto&& k) const noexcept
 }
 
 //
+iterator erase(const_iterator a, const_iterator const b)
+{
+  iterator i(b);
+
+  for (; a != b; i = erase(a), a = i);
+
+  return i;
+}
+
+//
 const_iterator find(Key const& k) const noexcept
 {
   return const_iterator(&root_, detail::find(root_, {}, k));

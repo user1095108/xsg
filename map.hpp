@@ -383,16 +383,6 @@ public:
     return bool(detail::erase(root_, k));
   }
 
-  iterator erase(const_iterator a, const_iterator const b)
-  {
-    iterator i(b);
-
-    for (; a != b;
-      i = {&root_, detail::erase(root_, std::get<0>(*a))}, a = i);
-
-    return i;
-  }
-
   iterator erase(std::initializer_list<const_iterator> il)
   {
     iterator r;
