@@ -169,7 +169,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
   {
     if (auto const c(node::cmp(k, n->key())); c < 0)
     {
-      assign(gn, gp, p, n)(n, p, n, left_node(n, p));
+      assign(gn, gp, n, p)(n, p, left_node(n, p), n);
     }
     else if (c > 0)
     {
