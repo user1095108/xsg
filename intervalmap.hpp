@@ -251,6 +251,15 @@ public:
             nnp = p;
           }
 
+          if (q)
+          {
+            *q = detail::conv(fnn, pp);
+          }
+          else
+          {
+            r0 = fnn;
+          }
+
           // convert and attach l to fnn
           fnn->l_ = detail::conv(l, p); 
 
@@ -291,15 +300,6 @@ public:
 
             reset_max(r0, fnp->key());
           }
-
-          if (q)
-          {
-            *q = detail::conv(fnn, pp);
-          }
-          else
-          {
-            r0 = fnn;
-          }
         }
         else // erase from the left side
         {
@@ -308,6 +308,15 @@ public:
           if (r == nnn)
           {
             nnp = lnn;
+          }
+
+          if (q)
+          {
+            *q = detail::conv(lnn, pp);
+          }
+          else
+          {
+            r0 = lnn;
           }
 
           // convert and attach r to lnn
@@ -348,15 +357,6 @@ public:
             }
 
             reset_max(r0, lnp->key());
-          }
-
-          if (q)
-          {
-            *q = detail::conv(lnn, pp);
-          }
-          else
-          {
-            r0 = lnn;
           }
         }
       }
