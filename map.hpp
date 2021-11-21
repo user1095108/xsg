@@ -368,7 +368,6 @@ public:
   //
   iterator erase(const_iterator const i)
   {
-    //return {&root_, detail::erase(root_, std::get<0>(*i))};
     return {
       &root_,
       detail::erase(
@@ -384,7 +383,6 @@ public:
     return bool(detail::erase(root_, k));
   }
 
-  // these may always throw, because of tree rebalancing
   iterator erase(const_iterator a, const_iterator const b)
   {
     iterator i(b);
@@ -399,7 +397,6 @@ public:
   {
     iterator r;
 
-    // must be sequential
     std::for_each(
       il.begin(),
       il.end(),

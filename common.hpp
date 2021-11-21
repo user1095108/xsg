@@ -149,14 +149,14 @@ bool contains(auto&& k) const noexcept
 }
 
 //
-iterator find(Key const& k) noexcept
-{
-  return iterator(&root_, detail::find(root_, {}, k));
-}
-
 const_iterator find(Key const& k) const noexcept
 {
   return const_iterator(&root_, detail::find(root_, {}, k));
+}
+
+iterator find(Key const& k) noexcept
+{
+  return iterator(&root_, detail::find(root_, {}, k));
 }
 
 // these may always throw
