@@ -51,6 +51,7 @@ public:
 
   multimapiterator(decltype(r_) const r) noexcept:
     n_(),
+    i_(),
     r_(r)
   {
   }
