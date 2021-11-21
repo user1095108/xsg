@@ -262,6 +262,8 @@ public:
           if (r == fnn)
           {
             r->r_ ^= detail::conv(n, p);
+
+            reset_max(r0, r->key());
           }
           else
           {
@@ -282,8 +284,12 @@ public:
             // convert and attach r to fnn
             fnn->r_ = detail::conv(r, p);
 
-            auto const nfnn(detail::conv(n, fnn));
-            r->l_ ^= nfnn; r->r_ ^= nfnn;
+            {
+              auto const nfnn(detail::conv(n, fnn));
+              r->l_ ^= nfnn; r->r_ ^= nfnn;
+            }
+
+            reset_max(r0, fnp->key());
           }
 
           if (q)
@@ -315,6 +321,8 @@ public:
           if (l == lnn)
           {
             l->l_ ^= detail::conv(n, p);
+
+            reset_max(r0, l->key());
           }
           else
           {
@@ -334,8 +342,12 @@ public:
             // convert and attach l to lnn
             lnn->l_ = detail::conv(l, p);
 
-            auto const nlnn(detail::conv(n, lnn));
-            l->l_ ^= nlnn; l->r_ ^= nlnn;
+            {
+              auto const nlnn(detail::conv(n, lnn));
+              l->l_ ^= nlnn; l->r_ ^= nlnn;
+            }
+
+            reset_max(r0, lnp->key());
           }
 
           if (q)
@@ -366,6 +378,8 @@ public:
         if (q)
         {
           *q = detail::conv(lr, pp);
+
+          node::reset_max(r0, p->key());
         }
         else
         {
