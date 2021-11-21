@@ -229,6 +229,15 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
         nnp = p;
       }
 
+      if (q)
+      {
+        *q = conv(fnn, pp);
+      }
+      else
+      {
+        r0 = fnn;
+      }
+
       // convert and attach l to fnn
       fnn->l_ = conv(l, p); 
 
@@ -263,15 +272,6 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
         auto const nfnn(conv(n, fnn));
         r->l_ ^= nfnn; r->r_ ^= nfnn;
       }
-
-      if (q)
-      {
-        *q = conv(fnn, pp);
-      }
-      else
-      {
-        r0 = fnn;
-      }
     }
     else // erase from the left side
     {
@@ -280,6 +280,15 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
       if (r == nnn)
       {
         nnp = lnn;
+      }
+
+      if (q)
+      {
+        *q = conv(lnn, pp);
+      }
+      else
+      {
+        r0 = lnn;
       }
 
       // convert and attach r to lnn
@@ -314,15 +323,6 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
 
         auto const nlnn(conv(n, lnn));
         l->l_ ^= nlnn; l->r_ ^= nlnn;
-      }
-
-      if (q)
-      {
-        *q = conv(lnn, pp);
-      }
-      else
-      {
-        r0 = lnn;
       }
     }
   }
