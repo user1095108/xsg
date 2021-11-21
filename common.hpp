@@ -42,7 +42,7 @@ friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
   return std::equal(
     lhs.begin(), lhs.end(),
     rhs.begin(), rhs.end(),
-    [](auto&& a, auto && b) noexcept
+    [](auto&& a, auto&& b) noexcept
     {
       return std::remove_cvref_t<decltype(lhs)>::node::cmp(a, b) == 0;
     }
@@ -143,9 +143,9 @@ bool contains(Key const& k) const noexcept
   return std::get<0>(detail::find(root_, {}, k));
 }
 
-bool contains(auto&& k) const noexcept
+bool contains(auto const& k) const noexcept
 {
-  return std::get<0>(detail::find(root_, {}, std::forward<decltype(k)>(k)));
+  return std::get<0>(detail::find(root_, {}, k));
 }
 
 //
