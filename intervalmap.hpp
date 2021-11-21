@@ -611,7 +611,7 @@ public:
       f(f, r0, {});
     }
 
-    static auto rebuild(auto const n, decltype(n) p, auto& q, auto& qp)
+    static auto rebuild(auto const n, decltype(n) p, decltype(n) q, auto& qp)
     {
       std::vector<node*> l;
       l.reserve(1024);
