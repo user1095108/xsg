@@ -4,7 +4,6 @@
 
 #include <cassert>
 
-#include <list>
 #include <vector>
 
 #include "utils.hpp"
@@ -44,7 +43,7 @@ public:
     std::uintptr_t l_, r_;
 
     typename std::tuple_element_t<1, Key> m_;
-    std::list<value_type> v_;
+    xl::list<value_type> v_;
 
     explicit node(auto&& k, auto&& v)
     {
@@ -678,7 +677,7 @@ public:
 
     return std::pair(
       iterator(&root_, std::get<0>(e) ? e : g),
-      iterator(root_, g)
+      iterator(&root_, g)
     );
   }
 

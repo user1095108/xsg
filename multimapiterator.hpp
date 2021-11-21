@@ -6,6 +6,8 @@
 
 #include <type_traits>
 
+#include "xl/xl.hpp"
+
 namespace xsg
 {
 
@@ -39,8 +41,8 @@ private:
   node_t* p_;
   std::conditional_t<
     std::is_const_v<T>,
-    typename std::list<std::remove_const_t<value_type>>::const_iterator,
-    typename std::list<std::remove_const_t<value_type>>::iterator
+    typename xl::list<std::remove_const_t<value_type>>::const_iterator,
+    typename xl::list<std::remove_const_t<value_type>>::iterator
   > i_;
   node_t* const* r_;
 
