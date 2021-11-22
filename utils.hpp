@@ -28,12 +28,12 @@ constexpr auto conv(auto const ...n) noexcept
 //
 inline auto left_node(auto const n, decltype(n) p) noexcept
 {
-  return std::remove_const_t<decltype(n)>(conv(p) ^ n->l_);
+  return std::remove_const_t<decltype(n)>(n->l_ ^ conv(p));
 }
 
 inline auto right_node(auto const n, decltype(n) p) noexcept
 {
-  return std::remove_const_t<decltype(n)>(conv(p) ^ n->r_);
+  return std::remove_const_t<decltype(n)>(n->r_ ^ conv(p));
 }
 
 inline auto first_node(auto n, decltype(n) p) noexcept
