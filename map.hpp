@@ -181,22 +181,9 @@ public:
       std::vector<node*> l;
       l.reserve(1024);
 
-      /*
-      {
-        auto t(detail::first_node(n, p));
-
-        do
-        {
-          l.emplace_back(std::get<0>(t));
-        }
-        while (std::get<0>(t =
-          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
-      }
-      */
-
       {
         auto const f([&](auto&& f, auto const n, decltype(n) const p) -> void
-          { // why not logN steps, instead of N steps?
+          {
             if (n)
             {
               f(f, detail::left_node(n, p), n);
