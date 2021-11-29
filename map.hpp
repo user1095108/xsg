@@ -198,7 +198,6 @@ public:
         f(f, n, p);
       }
 
-
       auto const f([&](auto&& f, auto const p,
         auto const a, auto const b) noexcept -> node*
         {
