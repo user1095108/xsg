@@ -164,14 +164,20 @@ public:
       l.reserve(1024);
 
       {
-        auto t(detail::first_node(n, p));
+        auto const f([&](auto&& f, auto const n, decltype(n) const p) -> void
+          {
+            if (n)
+            {
+              f(f, detail::left_node(n, p), n);
 
-        do
-        {
-          l.emplace_back(std::get<0>(t));
-        }
-        while (std::get<0>(t =
-          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
+              l.emplace_back(n);
+
+              f(f, detail::right_node(n, p), n);
+            }
+          }
+        );
+
+        f(f, n, p);
       }
 
       auto const f([&](auto&& f, auto const p,
