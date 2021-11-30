@@ -34,7 +34,7 @@ public:
   {
     using value_type = set::value_type;
 
-    static constinit inline Compare const cmp{};
+    static constinit inline Compare const cmp;
 
     std::uintptr_t l_, r_;
     Key const kv_;

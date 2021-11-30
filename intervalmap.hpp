@@ -38,7 +38,7 @@ public:
   {
     using value_type = intervalmap::value_type;
 
-    static constinit inline Compare const cmp{};
+    static constinit inline Compare const cmp;
 
     std::uintptr_t l_, r_;
 
