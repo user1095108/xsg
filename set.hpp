@@ -162,11 +162,10 @@ public:
       size_type const sz)
     {
 //    auto const l(std::make_unique<node*[]>(sz)); // good way
-      node* vla[sz];
-      auto const l(&*vla); // bad way
+      node* vla[sz]; // bad way
 
       {
-        auto f([i(size_type{}), &l](auto&& f, auto const n,
+        auto f([i(size_type{}), l(&*vla)](auto&& f, auto const n,
           decltype(n) const p) mutable noexcept -> void
           {
             if (n)
@@ -183,7 +182,7 @@ public:
         f(f, n, p);
       }
 
-      auto const f([&](auto&& f, auto const p,
+      auto const f([l(&*vla), q, &qp](auto&& f, auto const p,
         auto const a, auto const b) noexcept -> node*
         {
           auto const i((a + b) / 2);
