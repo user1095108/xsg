@@ -134,7 +134,7 @@ void clear() noexcept(noexcept(delete root_))
   root_ = {};
 }
 
-auto empty() const noexcept { return !size(); }
+bool empty() const noexcept { return root_; }
 auto max_size() const noexcept { return ~size_type{} / 3; }
 
 //
