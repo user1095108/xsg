@@ -201,7 +201,7 @@ public:
       }
 
       auto const f([l(&*vla), q, &qp](auto&& f, auto const p,
-        auto const a, auto const b) noexcept -> node*
+        size_type const a, decltype(a) b) noexcept -> node*
         {
           auto const i((a + b) / 2);
           auto const n(l[i]);
