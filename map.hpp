@@ -38,7 +38,7 @@ public:
 
     struct empty_t{};
 
-    static constinit inline auto const cmp{Compare{}};
+    static constinit inline Compare const cmp{};
 
     std::uintptr_t l_, r_;
     value_type kv_;
