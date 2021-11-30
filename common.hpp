@@ -31,12 +31,6 @@ auto& operator=(std::initializer_list<value_type> il)
 void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
 //
-friend bool operator!=(this_class const&, this_class const&) = default;
-friend bool operator<(this_class const&, this_class const&) = default;
-friend bool operator<=(this_class const&, this_class const&) = default;
-friend bool operator>(this_class const&, this_class const&) = default;
-friend bool operator>=(this_class const&, this_class const&) = default;
-
 friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
 {
   return std::equal(
@@ -57,6 +51,12 @@ friend auto operator<=>(this_class const& lhs, this_class const& rhs) noexcept
     std::remove_cvref_t<decltype(lhs)>::node::cmp
   );
 }
+
+friend bool operator!=(this_class const&, this_class const&) = default;
+friend bool operator<(this_class const&, this_class const&) = default;
+friend bool operator<=(this_class const&, this_class const&) = default;
+friend bool operator>(this_class const&, this_class const&) = default;
+friend bool operator>=(this_class const&, this_class const&) = default;
 
 // iterators
 iterator begin() noexcept
