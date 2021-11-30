@@ -28,8 +28,6 @@ auto& operator=(std::initializer_list<value_type> il)
   return *this;
 }
 
-void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
-
 //
 friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
 {
@@ -136,6 +134,7 @@ void clear() noexcept(noexcept(delete root_))
 
 bool empty() const noexcept { return root_; }
 auto max_size() const noexcept { return ~size_type{} / 3; }
+void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
 //
 bool contains(Key const& k) const noexcept
