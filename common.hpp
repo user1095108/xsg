@@ -248,7 +248,7 @@ friend auto erase_if(this_class& c, auto pred)
   return r;
 }
 
-friend void swap(auto& lhs, decltype(lhs) rhs) noexcept
+friend void swap(this_class& lhs, decltype(lhs) rhs) noexcept
 {
   lhs.swap(rhs);
 }
