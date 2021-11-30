@@ -176,21 +176,21 @@ public:
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p, decltype(n) q, auto& qp,
-      size_type const sz)
+    static auto rebuild(auto const n, decltype(n) p,
+      decltype(n) q, auto& qp, size_type const sz)
     {
 //    auto const l(std::make_unique<node*[]>(sz)); // good way
-      node* vla[sz];
+      node* vla[sz]; // bad way
 
       {
-        auto f([i(size_type{}), l(&*vla)](auto&& f, auto const n,
+        auto f([l(&*vla)](auto&& f, auto const n,
           decltype(n) const p) mutable noexcept -> void
           {
             if (n)
             {
               f(f, detail::left_node(n, p), n);
 
-              l[i++] = n;
+              *l++ = n;
 
               f(f, detail::right_node(n, p), n);
             }
@@ -199,6 +199,20 @@ public:
 
         f(f, n, p);
       }
+
+/*
+      {
+        auto l(&*vla);
+        auto t(detail::first_node(n, p));
+
+        do
+        {
+          *l++ = std::get<0>(t);
+        }
+        while (std::get<0>(t =
+          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
+      }
+*/
 
       auto const f([l(&*vla), q, &qp](auto&& f, auto const p,
         size_type const a, decltype(a) b) noexcept -> node*
