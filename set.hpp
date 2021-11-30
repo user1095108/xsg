@@ -226,7 +226,7 @@ public:
       );
 
       //
-      return f(f, p, 0, sz - 1);
+      return f(f, p, {}, sz - 1);
     }
   };
 

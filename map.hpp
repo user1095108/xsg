@@ -182,6 +182,20 @@ public:
 //    auto const l(std::make_unique<node*[]>(sz)); // good way
       node* vla[sz]; // bad way
 
+/*
+      {
+        auto l(&*vla);
+        auto t(detail::first_node(n, p));
+
+        do
+        {
+          *l++ = std::get<0>(t);
+        }
+        while (std::get<0>(t =
+          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
+      }
+*/
+
       {
         auto f([l(&*vla)](auto&& f, auto const n,
           decltype(n) const p) mutable noexcept -> void
@@ -199,20 +213,6 @@ public:
 
         f(f, n, p);
       }
-
-/*
-      {
-        auto l(&*vla);
-        auto t(detail::first_node(n, p));
-
-        do
-        {
-          *l++ = std::get<0>(t);
-        }
-        while (std::get<0>(t =
-          detail::next_node(n, std::get<0>(t), std::get<1>(t))));
-      }
-*/
 
       auto const f([l(&*vla), q, &qp](auto&& f, auto const p,
         size_type const a, decltype(a) b) noexcept -> node*
@@ -258,7 +258,7 @@ public:
       );
 
       //
-      return f(f, p, 0, sz - 1);
+      return f(f, p, {}, sz - 1);
     }
   };
 

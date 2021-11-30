@@ -512,7 +512,7 @@ public:
       decltype(n) q, auto& qp, size_type const sz)
     {
 //    auto const l(std::make_unique<node*[]>(sz)); // good way
-      node* vla[sz]; // bad way
+      decltype(this) vla[sz]; // bad way
 
       {
         auto f([l(&*vla)](auto&& f, auto const n,
@@ -589,7 +589,7 @@ public:
       );
 
       //
-      return f(f, p, 0, sz - 1);
+      return f(f, p, {}, sz - 1);
     }
   };
 
