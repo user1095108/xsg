@@ -2,7 +2,7 @@
 # define XSG_SET_HPP
 # pragma once
 
-#include <vector>
+#include <memory>
 
 #include "utils.hpp"
 
@@ -126,7 +126,7 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebuild(n, p, q, qp)); p)
+            if (auto const nn(rebuild(n, p, q, qp, s)); p)
             {
               d ?
                 p->r_ = detail::conv(nn, detail::right_node(p, n)) :
@@ -158,19 +158,21 @@ public:
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p, decltype(n) q, auto& qp)
+    static auto rebuild(auto const n, decltype(n) p, decltype(n) q, auto& qp,
+      size_type const sz)
     {
-      std::vector<node*> l;
-      l.reserve(1024);
+      auto const l(std::make_unique<node*[]>(sz));
 
       {
+        size_type i{};
+
         auto const f([&](auto&& f, auto const n, decltype(n) const p) -> void
           {
             if (n)
             {
               f(f, detail::left_node(n, p), n);
 
-              l.emplace_back(n);
+              l[i++] = n;
 
               f(f, detail::right_node(n, p), n);
             }
@@ -224,7 +226,7 @@ public:
       );
 
       //
-      return f(f, p, 0, l.size() - 1);
+      return f(f, p, 0, sz - 1);
     }
   };
 

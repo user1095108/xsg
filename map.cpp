@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include "xl/xl.hpp"
 
 #include "map.hpp"
 
@@ -8,7 +9,7 @@ using namespace std::literals::string_literals;
 //////////////////////////////////////////////////////////////////////////////
 void dump(auto n, decltype(n) p)
 {
-  std::vector<std::pair<decltype(n), decltype(n)>> q{{n, p}};
+  xl::list<std::pair<decltype(n), decltype(n)>> q{{n, p}};
 
   do
   {
