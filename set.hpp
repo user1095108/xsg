@@ -165,11 +165,9 @@ public:
       node* vla[sz];
       auto const l(&*vla); // bad way
 
-
       {
-        size_type i{};
-
-        auto const f([&](auto&& f, auto const n, decltype(n) const p) -> void
+        auto f([i(size_type{}), &l](auto&& f, auto const n,
+          decltype(n) const p) mutable noexcept -> void
           {
             if (n)
             {
