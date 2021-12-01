@@ -328,7 +328,6 @@ public:
   auto emplace(auto&& ...a)
   {
     auto const [n, p, s](node::emplace(root_, std::forward<decltype(a)>(a)...));
-
     return std::tuple(iterator(&root_, n, p), s);
   }
 
@@ -397,7 +396,6 @@ public:
     auto const [n, p, s](
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
-
     return std::tuple(iterator(&root_, n, p), s);
   }
 
@@ -406,7 +404,6 @@ public:
     auto const [n, p, s](
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
-
     return std::tuple(iterator(&root_, n, p), s);
   }
 

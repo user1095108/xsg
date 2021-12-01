@@ -237,7 +237,7 @@ friend auto erase(this_class& c, auto const& k)
 friend auto erase_if(this_class& c, auto pred)
   noexcept(noexcept(delete root_))
 {
-  std::size_t r{};
+  size_type r{};
 
   for (auto i(c.begin()); i.node();)
   {

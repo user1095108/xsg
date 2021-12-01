@@ -735,15 +735,8 @@ public:
   }
 
   //
-  size_type erase(Key const& k)
-  {
-    return std::get<2>(node::erase(root_, k));
-  }
-
-  iterator erase(const_iterator const i)
-  {
-    return node::erase(root_, i);
-  }
+  size_type erase(Key const& k) { return std::get<2>(node::erase(root_, k)); }
+  iterator erase(const_iterator const i) { return node::erase(root_, i); }
 
   //
   iterator insert(value_type const& v)
