@@ -2,10 +2,6 @@
 # define XSG_INTERVALMAP_HPP
 # pragma once
 
-#include <cassert>
-
-#include <vector>
-
 #include "utils.hpp"
 
 #include "multimapiterator.hpp"

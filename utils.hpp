@@ -2,10 +2,13 @@
 #define XSG_UTILS_HPP
 # pragma once
 
+#include <cassert>
 #include <cstdint>
 
 #include <algorithm>
 #include <compare>
+
+#include <memory>
 
 #include <utility>
 
