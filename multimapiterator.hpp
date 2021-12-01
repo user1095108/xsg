@@ -2,8 +2,6 @@
 # define XSG_MULTIMAPITERATOR_HPP
 # pragma once
 
-#include <iterator>
-
 #include <type_traits>
 
 #include "xl/xl.hpp"
@@ -37,8 +35,7 @@ public:
   using reference = value_type&;
 
 private:
-  node_t* n_;
-  node_t* p_;
+  node_t* n_, *p_;
   std::conditional_t<
     std::is_const_v<T>,
     typename xl::list<std::remove_const_t<value_type>>::const_iterator,
