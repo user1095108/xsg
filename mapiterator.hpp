@@ -20,8 +20,7 @@ class mapiterator
 
   friend inverse_const_t;
 
-  T* n_;
-  T* p_;
+  T* n_, *p_;
   T* const* r_;
 
 public:
