@@ -132,7 +132,7 @@ void clear() noexcept(noexcept(delete root_))
   root_ = {};
 }
 
-bool empty() const noexcept { return root_; }
+bool empty() const noexcept { return !root_; }
 auto max_size() const noexcept { return ~size_type{} / 3; }
 void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
