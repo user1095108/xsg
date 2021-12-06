@@ -85,7 +85,6 @@ int main()
   srandom(time(nullptr));
 
   using timer_t = std::chrono::high_resolution_clock;
-
   auto t0(timer_t::now());
 
   for (std::size_t i{}; 10000 != i; ++i)
@@ -94,11 +93,13 @@ int main()
   }
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
+  std::size_t S(st.size());
   t0 = timer_t::now();
 
-  while (st.size())
+  while (S)
   {
-    st.erase(std::next(st.begin(), random() % st.size()));
+    st.erase(std::next(st.begin(), random() % S));
+    --S;
   }
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
