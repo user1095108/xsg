@@ -159,11 +159,11 @@ public:
     static auto rebuild(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz)
     {
-//    auto const l(std::make_unique<node*[]>(sz)); // good way
-      node* vla[sz]; // bad way
+//    auto const l(std::make_unique<node*[]>(sz)); // good
+      auto const l(static_cast<node**>(ALLOCA(sizeof(node*) * sz))); // bad
 
       {
-        auto f([l(&*vla)](auto&& f, auto const n,
+        auto f([l(l)](auto&& f, auto const n,
           decltype(n) const p) mutable noexcept -> void
           {
             if (n)
@@ -180,7 +180,7 @@ public:
         f(f, n, p);
       }
 
-      auto const f([l(&*vla), q, &qp](auto&& f, auto const p,
+      auto const f([&l, q, &qp](auto&& f, auto const p,
         size_type const a, decltype(a) b) noexcept -> node*
         {
           auto const i((a + b) / 2);
