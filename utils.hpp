@@ -19,8 +19,6 @@
 #include <algorithm>
 #include <compare>
 
-#include <memory>
-
 #include <utility>
 
 namespace xsg::detail

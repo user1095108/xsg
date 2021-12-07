@@ -507,17 +507,16 @@ public:
     static auto rebuild(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz)
     {
-//    auto const l(std::make_unique<node*[]>(sz)); // good
-      auto const l(static_cast<node**>(ALLOCA(sizeof(node*) * sz))); // bad
+      auto const l(static_cast<node**>(ALLOCA(sizeof(node*) * sz)));
 
 /*
       {
-        auto l(&*vla);
+        auto k(l);
         auto t(detail::first_node(n, p));
 
         do
         {
-          *l++ = std::get<0>(t);
+          *k++ = std::get<0>(t);
         }
         while (std::get<0>(t =
           detail::next_node(n, std::get<0>(t), std::get<1>(t))));
