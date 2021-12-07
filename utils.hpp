@@ -8,13 +8,10 @@
 #if defined(_WIN32)
 # include <malloc.h>
 # define ALLOCA(x) _alloca(x)
-#elif defined(__linux__) || defined(__CYGWIN__)
-# include <alloca.h>
-# define ALLOCA(x) alloca(x)
 #else
 # include <stdlib.h>
 # define ALLOCA(x) alloca(x)
-#endif //
+#endif // ALLOCA
 
 #include <algorithm>
 #include <compare>
