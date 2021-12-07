@@ -180,7 +180,7 @@ public:
         f(f, n, p);
       }
 
-      auto const f([&l, q, &qp](auto&& f, auto const p,
+      auto const f([l, q, &qp](auto&& f, auto const p,
         size_type const a, decltype(a) b) noexcept -> node*
         {
           auto const i((a + b) / 2);
@@ -215,8 +215,10 @@ public:
               break;
 
             default:
-              n->l_ = detail::conv(f(f, n, a, i - 1), p);
-              n->r_ = detail::conv(f(f, n, i + 1, b), p);
+              detail::assign(n->l_, n->r_)(
+                detail::conv(f(f, n, a, i - 1), p),
+                detail::conv(f(f, n, i + 1, b), p)
+              );
           }
 
           return n;

@@ -542,7 +542,7 @@ public:
         f(f, n, p);
       }
 
-      auto const f([&l, q, &qp](auto&& f, auto const p,
+      auto const f([l, q, &qp](auto&& f, auto const p,
         size_type const a, decltype(a) b) noexcept -> node*
         {
           auto const i((a + b) / 2);
@@ -583,11 +583,8 @@ public:
               break;
 
             default:
-              auto const l(f(f, n, a, i - 1));
-              n->l_ = detail::conv(l, p);
-
-              auto const r(f(f, n, i + 1, b));
-              n->r_ = detail::conv(r, p);
+              auto const l(f(f, n, a, i - 1)), r(f(f, n, i + 1, b));
+              detail::assign(n->l_, n->r_)(detail::conv(l, p), detail::conv(r, p));
 
               n->m_ = std::max({node_max(n), l->m_, r->m_},
                 [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
