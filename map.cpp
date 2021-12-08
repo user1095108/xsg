@@ -98,8 +98,7 @@ int main()
 
   while (S)
   {
-    st.erase(std::next(st.begin(), rand() % S));
-    --S;
+    st.erase(std::next(st.begin(), rand() % S--));
   }
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
