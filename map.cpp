@@ -82,14 +82,14 @@ int main()
     }
   );
 
-  srandom(time(nullptr));
+  srand(time(nullptr));
 
   using timer_t = std::chrono::high_resolution_clock;
   auto t0(timer_t::now());
 
   for (std::size_t i{}; 10000 != i; ++i)
   {
-    st.emplace(std::string(random() % 9 + 1, 48 + random() % (123 - 48)), i);
+    st.emplace(std::string(rand() % 9 + 1, 48 + rand() % (123 - 48)), i);
   }
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
@@ -98,7 +98,7 @@ int main()
 
   while (S)
   {
-    st.erase(std::next(st.begin(), random() % S));
+    st.erase(std::next(st.begin(), rand() % S));
     --S;
   }
 
