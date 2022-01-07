@@ -82,7 +82,6 @@ public:
       auto const f([&](auto&& f, auto const n, decltype(n) p,
         enum Direction const d) -> size_type
         {
-          //
           n->m_ = cmp(n->m_, maxk) < 0 ? maxk : n->m_;
 
           //
@@ -184,7 +183,7 @@ public:
 
       for (auto const& [mink, maxk](k); n;)
       {
-        if (auto const c(node::cmp(k, n->key())); c < 0)
+        if (auto const c(node::cmp(mink, n->key())); c < 0)
         {
           assign(gn, gp, n, p)(n, p, left_node(n, p), n);
         }
@@ -658,33 +657,32 @@ public:
   }
 
   //
-  size_type count(Key const& k) const noexcept
+  size_type count(auto const& k) const noexcept
   {
-    if (auto n(root_); n)
+    auto& [mink, maxk](k);
+
+    for (decltype(root_) n(root_), p{}; n;)
     {
-      for (auto& [mink, maxk](k);;)
+      if (node::cmp(mink, n->m_) < 0)
       {
-        if (node::cmp(mink, n->m_) < 0)
+        if (auto const c(node::cmp(mink, n->key())); c < 0)
         {
-          if (auto const c(node::cmp(mink, n->key())); c < 0)
-          {
-            n = detail::left_node(n);
-          }
-          else if (c > 0)
-          {
-            n = detail::right_node(n);
-          }
-          else
-          {
-            return std::count(
-              n->v_.cbegin(),
-              n->v_.cend(),
-              [&](auto&& p) noexcept
-              {
-                return node::cmp(k, std::get<0>(p)) == 0;
-              }
-            );
-          }
+          assign(n, p)(detail::left_node(n, p), n);
+        }
+        else if (c > 0)
+        {
+          assign(n, p)(detail::right_node(n, p), n);
+        }
+        else
+        {
+          return std::count_if(
+            n->v_.cbegin(),
+            n->v_.cend(),
+            [&](auto&& p) noexcept
+            {
+              return node::cmp(k, std::get<0>(p)) == 0;
+            }
+          );
         }
       }
     }
@@ -752,10 +750,7 @@ public:
     std::for_each(
       i,
       j,
-      [&](auto&& v)
-      {
-        emplace(std::get<0>(v), std::get<1>(v));
-      }
+      [&](auto&& v) { emplace(std::get<0>(v), std::get<1>(v)); }
     );
   }
 

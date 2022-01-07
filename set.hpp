@@ -271,7 +271,7 @@ public:
   auto size() const noexcept { return detail::size(root_, {}); }
 
   //
-  size_type count(Key const& k) const noexcept
+  size_type count(auto const& k) const noexcept
   {
     return bool(detail::find(root_, {}, k));
   }

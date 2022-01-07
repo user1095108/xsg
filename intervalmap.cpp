@@ -3,9 +3,9 @@
 #include "intervalmap.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-void dump(auto n, decltype(n) p)
+void dump(auto n, decltype(n) p = {})
 {
-  std::vector<std::pair<decltype(n), decltype(n)>> q{{n, p}};
+  xl::list<std::pair<decltype(n), decltype(n)>> q{{n, p}};
 
   do
   {
