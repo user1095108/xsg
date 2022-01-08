@@ -63,7 +63,8 @@ int main()
 
   std::cout << "eq: " << (s == xsg::set<int>{1, 2, 3, 4}) << std::endl;
   //s.erase(std::next(s.cbegin()));
-  s.erase({std::next(s.cbegin()), std::prev(s.cend())});
+  s.erase(std::next(s.cbegin()));
+  s.erase(std::prev(s.cend()));
 
   dump(s.root(), {});
 
