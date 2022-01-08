@@ -254,11 +254,11 @@ private:
 public:
   map() = default;
 
-  map(std::initializer_list<value_type> il)
-    noexcept(noexcept(*this = il))
+  map(std::initializer_list<value_type> const l)
+    noexcept(noexcept(*this = l))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    *this = il;
+    *this = l;
   }
 
   map(map const& o)

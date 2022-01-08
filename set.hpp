@@ -235,16 +235,16 @@ private:
 public:
   set() = default;
 
-  set(std::initializer_list<Key> il)
-    noexcept(noexcept(*this = il))
-    requires(std::is_copy_constructible_v<Key>)
+  set(std::initializer_list<value_type> const l)
+    noexcept(noexcept(*this = l))
+    requires(std::is_copy_constructible_v<value_type>)
   {
-    *this = il;
+    *this = l;
   }
 
   set(set const& o) 
     noexcept(noexcept(*this = o))
-    requires(std::is_copy_constructible_v<Key>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     *this = o;
   }
@@ -322,22 +322,6 @@ public:
         const_cast<node*>(i.p())
       )
     };
-  }
-
-  iterator erase(std::initializer_list<const_iterator> const l)
-  {
-    iterator r;
-
-    std::for_each(
-      l.begin(),
-      l.end(),
-      [&](auto const i)
-      {
-        r = {&root_, detail::erase(root_, *i)};
-      }
-    );
-
-    return r;
   }
 
   //
