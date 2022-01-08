@@ -67,7 +67,6 @@ public:
       auto const f([&](auto&& f, auto const n, decltype(n) p,
         enum Direction const d) -> size_type
         {
-          //
           size_type sl, sr;
 
           if (auto const c(cmp(k, n->key())); c < 0)
