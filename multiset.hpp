@@ -512,10 +512,7 @@ public:
     insert(i, j);
   }
 
-  ~multiset() noexcept(noexcept(delete root_))
-  {
-    detail::destroy(root_, {});
-  }
+  ~multiset() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
 
 # include "common.hpp"
 
