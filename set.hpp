@@ -307,12 +307,6 @@ public:
   }
 
   //
-  size_type erase(auto const& k)
-    requires(!std::is_convertible_v<decltype(k), const_iterator>)
-  {
-    return bool(std::get<0>(detail::erase(root_, k)));
-  }
-
   iterator erase(const_iterator const i)
   {
     return {
@@ -323,6 +317,12 @@ public:
         const_cast<node*>(i.p())
       )
     };
+  }
+
+  size_type erase(auto const& k)
+    requires(!std::is_convertible_v<decltype(k), const_iterator>)
+  {
+    return bool(std::get<0>(detail::erase(root_, k)));
   }
 
   //

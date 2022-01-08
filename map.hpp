@@ -349,12 +349,6 @@ public:
   }
 
   //
-  size_type erase(auto const& k)
-    requires(!std::is_convertible_v<decltype(k), const_iterator>)
-  {
-    return bool(std::get<0>(detail::erase(root_, k)));
-  }
-
   iterator erase(const_iterator const i)
   {
     return {
@@ -367,20 +361,10 @@ public:
     };
   }
 
-  iterator erase(std::initializer_list<const_iterator> const l)
+  size_type erase(auto const& k)
+    requires(!std::is_convertible_v<decltype(k), const_iterator>)
   {
-    iterator r;
-
-    std::for_each(
-      l.begin(),
-      l.end(),
-      [&](auto const i)
-      {
-        r = {&root_, detail::erase(root_, std::get<0>(*i))};
-      }
-    );
-
-    return r;
+    return bool(std::get<0>(detail::erase(root_, k)));
   }
 
   //

@@ -589,15 +589,15 @@ public:
   }
 
   //
+  iterator erase(const_iterator const i)
+  {
+    return node::erase(root_, i);
+  }
+
   size_type erase(auto const& k)
     requires(!std::is_convertible_v<decltype(k), const_iterator>)
   {
     return std::get<1>(node::erase(root_, k));
-  }
-
-  iterator erase(const_iterator const i)
-  {
-    return node::erase(root_, i);
   }
 
   //
