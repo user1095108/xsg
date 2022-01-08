@@ -326,32 +326,25 @@ public:
   //
   auto emplace(auto&& ...a)
   {
-    auto const [n, p, s](node::emplace(root_, std::forward<decltype(a)>(a)...));
+    auto const [n, p, s](
+      node::emplace(root_, std::forward<decltype(a)>(a)...)
+    );
+
     return std::tuple(iterator(&root_, n, p), s);
   }
 
   //
-  auto equal_range(Key const& k) noexcept
-  {
-    auto const [e, g](detail::equal_range(root_, k));
-    return std::pair(iterator(&root_, e), iterator(&root_, g));
-  }
-
-  auto equal_range(Key const& k) const noexcept
-  {
-    auto const [e, g](detail::equal_range(root_, k));
-    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
-  }
-
   auto equal_range(auto const& k) noexcept
   {
     auto const [e, g](detail::equal_range(root_, k));
+
     return std::pair(iterator(&root_, e), iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) const noexcept
   {
     auto const [e, g](detail::equal_range(root_, k));
+
     return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
   }
 
@@ -373,13 +366,13 @@ public:
     };
   }
 
-  iterator erase(std::initializer_list<const_iterator> il)
+  iterator erase(std::initializer_list<const_iterator> const l)
   {
     iterator r;
 
     std::for_each(
-      il.begin(),
-      il.end(),
+      l.begin(),
+      l.end(),
       [&](auto const i)
       {
         r = {&root_, detail::erase(root_, std::get<0>(*i))};
@@ -395,6 +388,7 @@ public:
     auto const [n, p, s](
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
+
     return std::tuple(iterator(&root_, n, p), s);
   }
 
@@ -403,6 +397,7 @@ public:
     auto const [n, p, s](
       node::emplace(root_, std::get<0>(v), std::get<1>(v))
     );
+
     return std::tuple(iterator(&root_, n, p), s);
   }
 

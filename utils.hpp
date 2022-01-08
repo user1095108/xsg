@@ -220,6 +220,7 @@ inline auto find(auto n, decltype(n) p, auto&& k) noexcept
 
 inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
   std::uintptr_t* const q)
+  noexcept(noexcept(delete r0))
 {
   auto [nnn, nnp](next_node(n, p));
 
@@ -363,6 +364,7 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
 }
 
 inline auto erase(auto& r0, auto&& k)
+  noexcept(noexcept(delete r0))
 {
   using pointer = std::remove_cvref_t<decltype(r0)>;
   using node = std::remove_pointer_t<pointer>;
@@ -389,6 +391,7 @@ inline auto erase(auto& r0, auto&& k)
 }
 
 inline auto erase(auto& r0, auto const n, decltype(n) p)
+  noexcept(noexcept(delete r0))
 {
   using pointer = std::remove_cvref_t<decltype(r0)>;
   using node = std::remove_pointer_t<pointer>;

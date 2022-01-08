@@ -262,12 +262,18 @@ public:
     insert(i, j);
   }
 
-  ~set() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
+  ~set() noexcept(noexcept(delete root_))
+  {
+    detail::destroy(root_, {});
+  }
 
 # include "common.hpp"
 
   //
-  auto size() const noexcept { return detail::size(root_, {}); }
+  auto size() const noexcept
+  {
+    return detail::size(root_, {});
+  }
 
   //
   size_type count(auto const& k) const noexcept
@@ -278,32 +284,25 @@ public:
   //
   auto emplace(auto&& ...a)
   {
-    auto const [n, p, s](node::emplace(root_, std::forward<decltype(a)>(a)...));
+    auto const [n, p, s](
+      node::emplace(root_, std::forward<decltype(a)>(a)...)
+    );
+
     return std::tuple(iterator(&root_, n, p), s);
   }
 
   //
-  auto equal_range(Key const& k) noexcept
-  {
-    auto const [e, g](detail::equal_range(root_, k));
-    return std::pair(iterator(&root_, e), iterator(&root_, g));
-  }
-
-  auto equal_range(Key const& k) const noexcept
-  {
-    auto const [e, g](detail::equal_range(root_, k));
-    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
-  }
-
   auto equal_range(auto const& k) noexcept
   {
     auto const [e, g](detail::equal_range(root_, k));
+
     return std::pair(iterator(&root_, e), iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) const noexcept
   {
     auto const [e, g](detail::equal_range(root_, k));
+
     return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
   }
 
@@ -325,13 +324,13 @@ public:
     };
   }
 
-  iterator erase(std::initializer_list<const_iterator> il)
+  iterator erase(std::initializer_list<const_iterator> const l)
   {
     iterator r;
 
     std::for_each(
-      il.begin(),
-      il.end(),
+      l.begin(),
+      l.end(),
       [&](auto const i)
       {
         r = {&root_, detail::erase(root_, *i)};
@@ -351,6 +350,7 @@ public:
   auto insert(value_type&& v)
   {
     auto const [n, p, s](node::emplace(root_, std::move(v)));
+
     return std::tuple(iterator(&root_, n, p), s);
   }
 

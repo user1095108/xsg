@@ -605,11 +605,11 @@ private:
 public:
   intervalmap() = default;
 
-  intervalmap(std::initializer_list<value_type> const il)
-    noexcept(noexcept(*this = il))
+  intervalmap(std::initializer_list<value_type> const l)
+    noexcept(noexcept(*this = l))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    *this = il;
+    *this = l;
   }
 
   intervalmap(intervalmap const& o)
@@ -700,33 +700,30 @@ public:
   }
 
   //
-  auto equal_range(Key const& k) noexcept
-  {
-    auto const [e, g](node::equal_range(root_, k));
-    return std::pair(iterator(&root_, e), iterator(&root_, g));
-  }
-
-  auto equal_range(Key const& k) const noexcept
-  {
-    auto const [e, g](node::equal_range(root_, k));
-    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
-  }
-
   auto equal_range(auto const& k) noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
+
     return std::pair(iterator(&root_, e), iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) const noexcept
   {
     auto const [e, g](node::equal_range(root_, k));
+
     return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
   }
 
   //
-  size_type erase(Key const& k) { return std::get<2>(node::erase(root_, k)); }
-  iterator erase(const_iterator const i) { return node::erase(root_, i); }
+  size_type erase(Key const& k)
+  {
+    return std::get<2>(node::erase(root_, k));
+  }
+
+  iterator erase(const_iterator const i)
+  {
+    return node::erase(root_, i);
+  }
 
   //
   iterator insert(value_type const& v)
@@ -750,12 +747,15 @@ public:
     std::for_each(
       i,
       j,
-      [&](auto&& v) { emplace(std::get<0>(v), std::get<1>(v)); }
+      [&](auto&& v)
+      {
+        emplace(std::get<0>(v), std::get<1>(v));
+      }
     );
   }
 
   //
-  void all(Key const& k, auto g) const
+  void all(auto const& k, auto g) const
   {
     auto& [mink, maxk](k);
     auto const eq(node::cmp(mink, maxk) == 0);
@@ -794,7 +794,7 @@ public:
     f(f, root_, {});
   }
 
-  bool any(Key const& k) const noexcept
+  bool any(auto const& k) const noexcept
   {
     auto& [mink, maxk](k);
     auto const eq(node::cmp(mink, maxk) == 0);
