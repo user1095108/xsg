@@ -307,7 +307,8 @@ public:
   }
 
   //
-  size_type erase(Key const& k)
+  size_type erase(auto const& k)
+    requires(!std::is_convertible_v<decltype(k), const_iterator>)
   {
     return bool(std::get<0>(detail::erase(root_, k)));
   }
