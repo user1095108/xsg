@@ -476,7 +476,6 @@ public:
       //
       return f(f, p, {}, sz - 1);
     }
-
   };
 
 private:
