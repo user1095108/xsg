@@ -424,14 +424,9 @@ public:
 
       if (p)
       {
-        if (node::cmp(n->key(), p->key()) < 0)
-        {
-          detail::assign(pp, q)(detail::left_node(p, n), &p->l_);
-        }
-        else
-        {
+        node::cmp(n->key(), p->key()) < 0 ?
+          detail::assign(pp, q)(detail::left_node(p, n), &p->l_) :
           detail::assign(pp, q)(detail::right_node(p, n), &p->r_);
-        }
       }
 
       return erase(r0, pp, p, n, q);
