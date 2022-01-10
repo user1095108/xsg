@@ -19,11 +19,11 @@ auto& operator=(this_class&& o)
   return *this;
 }
 
-auto& operator=(std::initializer_list<value_type> il)
+auto& operator=(std::initializer_list<value_type> const l)
   requires(std::is_copy_constructible_v<value_type>)
 {
   clear();
-  insert(il.begin(), il.end());
+  insert(l.begin(), l.end());
 
   return *this;
 }
@@ -180,10 +180,10 @@ const_iterator find(auto const& k) const noexcept
 }
 
 // these may always throw
-void insert(std::initializer_list<value_type> il)
+void insert(std::initializer_list<value_type> const l)
   requires(std::is_copy_constructible_v<value_type>)
 {
-  insert(il.begin(), il.end());
+  insert(l.begin(), l.end());
 }
 
 //
