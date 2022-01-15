@@ -1,5 +1,5 @@
 # xsg
-All [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree) implementations are related to linked list implementations, as both data structures make use of links between nodes. What links are and how they are implemented is an implementation detail. Sometimes links are implicit, such as in a heap-ordered array, or in a circular buffer.
+All [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree) implementations are related to linked list implementations, as both data structures make use of links between nodes. What links are, how they are implemented, is an implementation detail. Sometimes links are implicit, such as in a heap-ordered array, or in a circular buffer.
 
 XOR [BST](https://en.wikipedia.org/wiki/Binary_search_tree) implementations are related to the [XOR linked list](https://en.wikipedia.org/wiki/XOR_linked_list), a [doubly linked list](https://en.wikipedia.org/wiki/Doubly_linked_list) variant, from where we borrow the idea about how links between nodes should be implemented. Modest resource requirements and simplicity make XOR [scapegoat trees](https://en.wikipedia.org/wiki/Scapegoat_tree) stand out of the [BST](https://en.wikipedia.org/wiki/Binary_search_tree) crowd.
 
