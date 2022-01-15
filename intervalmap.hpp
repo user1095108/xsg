@@ -560,17 +560,17 @@ public:
                 // n - nb
                 auto const nb(l[b]);
 
+                if (nb == q)
+                {
+                  qp = n;
+                }
+
                 nb->l_ = nb->r_ = detail::conv(n);
                 n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
 
                 n->m_ = std::max(node_max(n), nb->m_ = node_max(nb),
                   [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
                 );
-
-                if (nb == q)
-                {
-                  qp = n;
-                }
               }
 
               break;

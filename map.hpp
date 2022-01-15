@@ -220,13 +220,13 @@ public:
                 // n - nb
                 auto const nb(l[b]);
 
-                nb->l_ = nb->r_ = detail::conv(n);
-                n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
-
                 if (nb == q)
                 {
                   qp = n;
                 }
+
+                nb->l_ = nb->r_ = detail::conv(n);
+                n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
               }
 
               break;
