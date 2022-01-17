@@ -1,6 +1,4 @@
 # xsg
-All [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree) implementations are related to linked list implementations, as both data structures make use of links between nodes. What links are, how they are implemented, is an implementation detail.
-
 XOR [BST](https://en.wikipedia.org/wiki/Binary_search_tree) implementations are related to the [XOR linked list](https://en.wikipedia.org/wiki/XOR_linked_list), a [doubly linked list](https://en.wikipedia.org/wiki/Doubly_linked_list) variant, from where we borrow the idea about how links between nodes are to be implemented.
 
 Modest resource requirements and simplicity make XOR [scapegoat trees](https://en.wikipedia.org/wiki/Scapegoat_tree) stand out of the [BST](https://en.wikipedia.org/wiki/Binary_search_tree) crowd. All iterators (except `end()` iterators), but not references and pointers, are invalidated, after inserting or erasing from this XOR [scapegoat tree](https://en.wikipedia.org/wiki/Scapegoat_tree) implementation. You can dereference invalidated iterators, except the erased iterator, but you cannot iterate with them. `end()` iterators are constant and always valid, but dereferencing them results in undefined behavior.
