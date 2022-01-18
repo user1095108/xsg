@@ -41,10 +41,22 @@ public:
     typename std::tuple_element_t<1, Key> m_;
     xl::list<value_type> v_;
 
-    explicit node(auto&& ...a)
-      noexcept(noexcept(v_.emplace_back(std::forward<decltype(a)>(a)...)))
+    explicit node(auto&& k, auto&& ...a)
+    noexcept(
+      noexcept(
+        v_.emplace_back(
+          std::piecewise_construct_t{},
+          std::forward_as_tuple(std::forward<decltype(k)>(k)),
+          std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+        )
+      )
+    )
     {
-      v_.emplace_back(std::forward<decltype(a)>(a)...);
+      v_.emplace_back(
+        std::piecewise_construct_t{},
+        std::forward_as_tuple(std::forward<decltype(k)>(k)),
+        std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+      );
 
       assert(std::get<0>(std::get<0>(v_.back())) <=
         std::get<1>(std::get<0>(v_.back())));
@@ -132,8 +144,9 @@ public:
           else
           {
             (qp = p, q = n)->v_.emplace_back(
-              std::move(k),
-              std::forward<decltype(v)>(v)...
+              std::piecewise_construct_t{},
+              std::forward_as_tuple(std::move(k)),
+              std::forward_as_tuple(std::forward<decltype(v)>(v)...)
             );
 
             return {};
