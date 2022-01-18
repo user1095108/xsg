@@ -37,10 +37,10 @@ public:
     std::uintptr_t l_, r_;
     xl::list<value_type> v_;
 
-    explicit node(auto&& k)
-      noexcept(noexcept(v_.emplace_back(std::forward<decltype(k)>(k))))
+    explicit node(auto&& ...a)
+      noexcept(noexcept(v_.emplace_back(std::forward<decltype(a)>(a)...)))
     {
-      v_.emplace_back(std::forward<decltype(k)>(k));
+      v_.emplace_back(std::forward<decltype(a)>(a)...);
     }
 
     //

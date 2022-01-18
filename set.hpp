@@ -37,7 +37,8 @@ public:
     std::uintptr_t l_, r_;
     Key const kv_;
 
-    explicit node(auto&& ...a) noexcept(noexcept(Key())):
+    explicit node(auto&& ...a)
+      noexcept(noexcept(Key(std::forward<decltype(a)>(a)...))):
       kv_(std::forward<decltype(a)>(a)...)
     {
     }

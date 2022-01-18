@@ -41,12 +41,10 @@ public:
     typename std::tuple_element_t<1, Key> m_;
     xl::list<value_type> v_;
 
-    explicit node(auto&& k, auto&& v)
+    explicit node(auto&& ...a)
+      noexcept(noexcept(v_.emplace_back(std::forward<decltype(a)>(a)...)))
     {
-      v_.emplace_back(
-        std::forward<decltype(k)>(k),
-        std::forward<decltype(v)>(v)
-      );
+      v_.emplace_back(std::forward<decltype(a)>(a)...);
 
       assert(std::get<0>(std::get<0>(v_.back())) <=
         std::get<1>(std::get<0>(v_.back())));
@@ -61,7 +59,7 @@ public:
     }
 
     //
-    static auto emplace(auto& r, auto&& a, auto&& v)
+    static auto emplace(auto& r, auto&& a, auto&& ...v)
     {
       enum Direction: bool { LEFT, RIGHT };
 
@@ -72,7 +70,9 @@ public:
 
       auto const create_node([&](decltype(q) const p)
         {
-          auto const q(new node(std::move(k), std::forward<decltype(v)>(v)));
+          auto const q(
+            new node(std::move(k), std::forward<decltype(v)>(v)...)
+          );
           q->l_ = q->r_ = detail::conv(p);
 
           return q;
@@ -133,7 +133,7 @@ public:
           {
             (qp = p, q = n)->v_.emplace_back(
               std::move(k),
-              std::forward<decltype(v)>(v)
+              std::forward<decltype(v)>(v)...
             );
 
             return {};

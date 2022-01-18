@@ -41,13 +41,15 @@ public:
     std::uintptr_t l_, r_;
     value_type kv_;
 
-    explicit node(auto&& k) noexcept(noexcept(Key())):
+    explicit node(auto&& k)
+      noexcept(noexcept(new value_type(std::forward<decltype(k)>(k), Value()))):
       kv_(std::forward<decltype(k)>(k), Value())
     {
     }
 
-    explicit node(auto&& k, auto&& v) noexcept(noexcept(Key(), Value())):
-      kv_(std::forward<decltype(k)>(k), std::forward<decltype(v)>(v))
+    explicit node(auto&& ...a)
+      noexcept(noexcept(value_type(std::forward<decltype(a)>(a)...))):
+      kv_(std::forward<decltype(a)>(a)...)
     {
     }
 
