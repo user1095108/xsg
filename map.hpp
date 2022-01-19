@@ -92,7 +92,8 @@ public:
       );
 
       auto const f([&](auto&& f, auto const n, decltype(n) p,
-        enum Direction const d) -> size_type
+        enum Direction const d)
+        noexcept(noexcept(create_node(nullptr)))  -> size_type
         {
           size_type sl, sr;
 
