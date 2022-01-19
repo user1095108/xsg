@@ -699,15 +699,6 @@ public:
   }
 
   //
-  iterator emplace(auto&& ...a)
-    noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
-  {
-    return {
-      &root_,
-      node::emplace(root_, std::forward<decltype(a)>(a)...)
-    };
-  }
-
   iterator emplace(Key&& k, auto&& ...a)
     noexcept(
       noexcept(
@@ -722,6 +713,15 @@ public:
     return {
       &root_,
       node::emplace(root_, std::move(k), std::forward<decltype(a)>(a)...)
+    };
+  }
+
+  iterator emplace(auto&& ...a)
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
+  {
+    return {
+      &root_,
+      node::emplace(root_, std::forward<decltype(a)>(a)...)
     };
   }
 
