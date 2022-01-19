@@ -48,6 +48,7 @@ public:
 
     //
     static auto emplace(auto& r, auto&& ...a)
+      noexcept(noexcept(new node(key_type(std::forward<decltype(a)>(a)...))))
     {
       enum Direction: bool { LEFT, RIGHT };
 
@@ -56,6 +57,7 @@ public:
       node* q, *qp;
 
       auto const create_node([&](decltype(q) const p)
+        noexcept(noexcept(new node(std::move(k))))
         {
           auto const q(new node(std::move(k)));
           q->l_ = q->r_ = detail::conv(p);
@@ -65,7 +67,8 @@ public:
       );
 
       auto const f([&](auto&& f, auto const n, decltype(n) p,
-        enum Direction const d) -> size_type
+        enum Direction const d)
+        noexcept(noexcept(create_node(nullptr))) -> size_type
         {
           size_type sl, sr;
 
