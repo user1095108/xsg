@@ -32,9 +32,6 @@ public:
 
   struct node
   {
-    template <std::size_t I, typename ...T>
-    using at_t = std::tuple_element_t<I, std::tuple<T...>>;
-
     using value_type = map::value_type;
 
     struct empty_t{};
@@ -44,8 +41,8 @@ public:
     std::uintptr_t l_, r_;
     value_type kv_;
 
-    explicit node(auto&& k)
-      noexcept(noexcept(new value_type(std::forward<decltype(k)>(k), Value()))):
+    explicit node(auto&& k, empty_t&&)
+      noexcept(noexcept(value_type(std::forward<decltype(k)>(k), Value()))):
       kv_(std::forward<decltype(k)>(k), Value())
     {
     }
@@ -71,16 +68,9 @@ public:
 
       auto const create_node([&](decltype(q) const p)
         {
-          node* q;
-
-          if constexpr(std::is_same_v<at_t<0, decltype(v)...>, empty_t&&>)
-          {
-            q = new node(std::move(k));
-          }
-          else
-          {
-            q = new node(std::move(k), std::forward<decltype(v)>(v)...);
-          }
+          auto const q(
+            new node(std::move(k), std::forward<decltype(v)>(v)...)
+          );
 
           q->l_ = q->r_ = detail::conv(p);
 
