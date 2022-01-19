@@ -75,6 +75,11 @@ public:
       key_type k(std::forward<decltype(a)>(a));
 
       auto const create_node([&](decltype(q) const p)
+        noexcept(
+          noexcept(
+            new node(std::move(k), std::forward<decltype(v)>(v)...)
+          )
+        )
         {
           auto const q(
             new node(std::move(k), std::forward<decltype(v)>(v)...)
@@ -178,7 +183,7 @@ public:
     }
 
     static auto rebuild(auto const n, decltype(n) p,
-      decltype(n) q, auto& qp, size_type const sz)
+      decltype(n) q, auto& qp, size_type const sz) noexcept
     {
       auto const l(static_cast<node**>(ALLOCA(sizeof(node*) * sz)));
 
