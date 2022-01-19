@@ -58,6 +58,14 @@ public:
 
     //
     static auto emplace(auto& r, auto&& a, auto&& ...v)
+      noexcept(
+        noexcept(
+          new node(
+            key_type(std::forward<decltype(a)>(a)),
+            std::forward<decltype(v)>(v)...
+          )
+        )
+      )
     {
       enum Direction: bool { LEFT, RIGHT };
 
