@@ -286,6 +286,7 @@ public:
 
   //
   auto emplace(auto&& ...a)
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
   {
     auto const [n, p, s](
       node::emplace(root_, std::forward<decltype(a)>(a)...)
