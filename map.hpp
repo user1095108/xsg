@@ -32,6 +32,9 @@ public:
 
   struct node
   {
+    template <std::size_t I, typename ...T>
+    using at_t = std::tuple_element_t<I, std::tuple<T...>>;
+
     using value_type = map::value_type;
 
     struct empty_t{};
@@ -57,7 +60,7 @@ public:
     auto&& key() const noexcept { return std::get<0>(kv_); }
 
     //
-    static auto emplace(auto& r, auto&& a, auto&& v)
+    static auto emplace(auto& r, auto&& a, auto&& ...v)
     {
       enum Direction: bool { LEFT, RIGHT };
 
@@ -70,13 +73,13 @@ public:
         {
           node* q;
 
-          if constexpr(std::is_same_v<decltype(v), empty_t&&>)
+          if constexpr(std::is_same_v<at_t<0, decltype(v)...>, empty_t&&>)
           {
             q = new node(std::move(k));
           }
           else
           {
-            q = new node(std::move(k), std::forward<decltype(v)>(v));
+            q = new node(std::move(k), std::forward<decltype(v)>(v)...);
           }
 
           q->l_ = q->r_ = detail::conv(p);
