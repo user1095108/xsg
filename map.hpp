@@ -47,9 +47,20 @@ public:
     {
     }
 
-    explicit node(auto&& ...a)
-      noexcept(noexcept(value_type(std::forward<decltype(a)>(a)...))):
-      kv_(std::forward<decltype(a)>(a)...)
+    explicit node(auto&& k, auto&& ...a)
+      noexcept(noexcept(
+          value_type(
+            std::piecewise_construct_t{},
+            std::forward_as_tuple(std::forward<decltype(k)>(k)),
+            std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+          )
+        )
+      ):
+      kv_(
+        std::piecewise_construct_t{},
+        std::forward_as_tuple(std::forward<decltype(k)>(k)),
+        std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+      )
     {
     }
 
