@@ -381,14 +381,20 @@ public:
   {
     auto const [e, g](detail::equal_range(root_, k));
 
-    return std::pair(iterator(&root_, e), iterator(&root_, g));
+    return std::pair(
+      iterator(&root_, std::get<0>(e) ? e : g),
+      iterator(&root_, g)
+    );
   }
 
   auto equal_range(auto const& k) const noexcept
   {
     auto const [e, g](detail::equal_range(root_, k));
 
-    return std::pair(const_iterator(&root_, e), const_iterator(&root_, g));
+    return std::pair(
+      const_iterator(&root_, std::get<0>(e) ? e : g),
+      const_iterator(&root_, g)
+    );
   }
 
   //

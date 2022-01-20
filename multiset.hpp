@@ -157,36 +157,6 @@ public:
       return std::pair(q, qp);
     }
 
-    inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
-    {
-      using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
-
-      decltype(n) gn{}, gp{};
-
-      for (; n;)
-      {
-        if (auto const c(node::cmp(k, n->key())); c < 0)
-        {
-          assign(gn, gp, n, p)(n, p, left_node(n, p), n);
-        }
-        else if (c > 0)
-        {
-          assign(n, p)(right_node(n, p), n);
-        }
-        else
-        {
-          if (auto const r(right_node(n, p)); r)
-          {
-            std::tie(gn, gp) = first_node(r, n);
-          }
-
-          break;
-        }
-      }
-
-      return std::pair(std::pair(n, p), std::pair(gn, gp));
-    }
-
     static iterator erase(auto& r, const_iterator const i)
     {
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
@@ -571,7 +541,7 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      iterator(&root_, e ? e : g),
+      iterator(&root_, std::get<0>(e) ? e : g),
       iterator(&root_, g)
     );
   }
@@ -581,7 +551,7 @@ public:
     auto const [e, g](detail::equal_range(root_, k));
 
     return std::pair(
-      const_iterator(&root_, e ? e : g),
+      const_iterator(&root_, std::get<0>(e) ? e : g),
       const_iterator(&root_, g)
     );
   }

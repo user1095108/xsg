@@ -192,9 +192,7 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
     }
   }
 
-  return std::pair(
-    n ? std::pair(n, p) : std::pair(gn, gp), std::pair(gn, gp)
-  );
+  return std::pair(std::pair(n, p), std::pair(gn, gp));
 }
 
 inline auto find(auto n, decltype(n) p, auto&& k) noexcept
