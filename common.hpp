@@ -189,23 +189,23 @@ void insert(std::initializer_list<value_type> const l)
 //
 iterator lower_bound(auto const& k) noexcept
 {
-  return {&root_, std::get<0>(detail::equal_range(root_, {}, k))};
+  return std::get<0>(equal_range(k));
 }
 
 const_iterator lower_bound(auto const& k) const noexcept
 {
-  return {&root_, std::get<0>(detail::equal_range(root_, {}, k))};
+  return std::get<0>(equal_range(k));
 }
 
 //
 iterator upper_bound(auto const& k) noexcept
 {
-  return {&root_, std::get<1>(detail::equal_range(root_, k))};
+  return std::get<1>(equal_range(k));
 }
 
 const_iterator upper_bound(auto const& k) const noexcept
 {
-  return {&root_, std::get<1>(detail::equal_range(root_, k))};
+  return std::get<1>(equal_range(k));
 }
 
 //
