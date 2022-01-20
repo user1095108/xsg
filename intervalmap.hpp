@@ -42,15 +42,14 @@ public:
     xl::list<value_type> v_;
 
     explicit node(auto&& k, auto&& ...a)
-    noexcept(
-      noexcept(
-        v_.emplace_back(
-          std::piecewise_construct_t{},
-          std::forward_as_tuple(std::forward<decltype(k)>(k)),
-          std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+      noexcept(noexcept(
+          v_.emplace_back(
+            std::piecewise_construct_t{},
+            std::forward_as_tuple(std::forward<decltype(k)>(k)),
+            std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+          )
         )
       )
-    )
     {
       v_.emplace_back(
         std::piecewise_construct_t{},
