@@ -161,7 +161,7 @@ public:
     static auto rebuild(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz) noexcept
     {
-      auto const l(static_cast<node**>(ALLOCA(sizeof(node*) * sz)));
+      auto const l(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
 
       {
         auto f([l(l)](auto&& f, auto const n,

@@ -7,11 +7,11 @@
 
 #if defined(_WIN32)
 # include <malloc.h>
-# define ALLOCA(x) _alloca(x)
+# define XSG_ALLOCA(x) _alloca(x)
 #else
 # include <stdlib.h>
-# define ALLOCA(x) alloca(x)
-#endif // ALLOCA
+# define XSG_ALLOCA(x) alloca(x)
+#endif // XSG_ALLOCA
 
 #include <algorithm>
 #include <compare>
