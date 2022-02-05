@@ -2,9 +2,6 @@
 #define XSG_UTILS_HPP
 # pragma once
 
-#include <cassert>
-#include <cstdint>
-
 #if defined(_WIN32)
 # include <malloc.h>
 # define XSG_ALLOCA(x) _alloca(x)
@@ -12,6 +9,9 @@
 # include <stdlib.h>
 # define XSG_ALLOCA(x) alloca(x)
 #endif // XSG_ALLOCA
+
+#include <cassert>
+#include <cstdint>
 
 #include <algorithm>
 #include <compare>
