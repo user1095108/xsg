@@ -9,7 +9,7 @@ Left and right node addresses of each node are XORed with the parent node addres
 Since tree rebalancing can alter node parent-child relations, all iterators, except `end()` iterators, are invalidated, after inserting or erasing a node.
 
 # evaluation of the XOR scapegoat BST
-Important advantages of scapegoat BSTs over other [BST](https://en.wikipedia.org/wiki/Binary_search_tree)s are simplicity and reduced memory consumption. XOR scapegoat BSTs introduce additional complexity with an associated performance hit, compared to plain scapegoat BSTs; insertion and erasure by key can perform worse than when using a plain scapegoat BST. This leaves tree traversal and erasure by iterator as the only advantages the XOR scapegoat BST offers over the plain scapegoat BST.
+Important advantages of scapegoat BSTs over other [BST](https://en.wikipedia.org/wiki/Binary_search_tree)s are simplicity and reduced memory consumption. XOR scapegoat BSTs introduce additional complexity with an associated performance hit, compared to [plain scapegoat BSTs](https://github.com/user1095108/sg); insertion and erasure by key can perform worse than when using a plain scapegoat BST. This leaves tree traversal and erasure by iterator as the only advantages the XOR scapegoat BST can offer.
 
 # build instructions
     git submodule update --init
