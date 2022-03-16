@@ -298,14 +298,14 @@ public:
   //
   auto equal_range(auto const& k) noexcept
   {
-    auto const [nl, g](detail::equal_range(root_, k));
+    auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(iterator(&root_, nl), iterator(&root_, g));
   }
 
   auto equal_range(auto const& k) const noexcept
   {
-    auto const [nl, g](detail::equal_range(root_, k));
+    auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
   }
