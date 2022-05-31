@@ -120,7 +120,7 @@ const_reverse_iterator crend() const noexcept
 auto root() const noexcept { return root_; }
 
 //
-static auto max_size() noexcept { return ~size_type{} / 3; }
+static constexpr size_type max_size() noexcept { return ~size_type{} / 3; }
 
 void clear() noexcept(noexcept(delete root_))
 {
