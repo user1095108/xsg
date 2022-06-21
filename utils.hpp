@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <compare>
 
+#include <tuple>
 #include <utility>
 
 namespace xsg::detail
