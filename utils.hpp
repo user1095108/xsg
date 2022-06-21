@@ -21,6 +21,8 @@
 namespace xsg::detail
 {
 
+using size_type = std::uintmax_t;
+
 constexpr auto assign(auto& ...a) noexcept
 { // assign idiom
   return [&](auto const ...v) noexcept { ((a = v), ...); };
@@ -139,15 +141,15 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
 }
 
 //
-inline std::size_t height(auto const n, decltype(n) p) noexcept
+inline size_type height(auto const n, decltype(n) p) noexcept
 {
   return n ?
     (left_node(n, p) || right_node(n, p)) +
     std::max(height(left_node(n, p), n), height(right_node(n, p), n)) :
-    std::size_t{};
+    size_type{};
 }
 
-inline std::size_t size(auto const n, decltype(n) p) noexcept
+inline size_type size(auto const n, decltype(n) p) noexcept
 {
   return n ? 1 + size(left_node(n, p), n) + size(right_node(n, p), n) : 0;
 }
