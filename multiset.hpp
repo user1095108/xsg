@@ -352,7 +352,7 @@ public:
         }
       }
 
-      return std::tuple(pointer{}, pointer{}, std::size_t{});
+      return std::tuple(pointer{}, pointer{}, size_type{});
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)
@@ -497,7 +497,7 @@ public:
           n->v_.size() +
           f(f, detail::left_node(n, p), n) +
           f(f, detail::right_node(n, p), n) :
-          std::size_t{};
+          size_type{};
       }
     );
 

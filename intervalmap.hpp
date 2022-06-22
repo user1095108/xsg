@@ -245,7 +245,7 @@ public:
     static inline auto erase(auto& r0, auto const pp, decltype(pp) p,
       decltype(pp) n, std::uintptr_t* const q)
     {
-      auto const s(n->v_.size());
+      size_type const s(n->v_.size());
       auto [nnn, nnp](detail::next_node(n, p));
 
       // pp - p - n - lr
@@ -426,7 +426,7 @@ public:
         }
       }
 
-      return std::tuple(pointer{}, pointer{}, std::size_t{});
+      return std::tuple(pointer{}, pointer{}, size_type{});
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)
@@ -659,7 +659,7 @@ public:
           n->v_.size() +
           f(f, detail::left_node(n, p), n) +
           f(f, detail::right_node(n, p), n) :
-          std::size_t{};
+          size_type{};
       }
     );
 
