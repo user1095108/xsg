@@ -58,10 +58,7 @@ iterator begin() noexcept
     iterator(&root_);
 }
 
-iterator end() noexcept
-{
-  return iterator(&root_);
-}
+iterator end() noexcept { return iterator(&root_); }
 
 // const iterators
 const_iterator begin() const noexcept
@@ -71,10 +68,7 @@ const_iterator begin() const noexcept
     const_iterator(&root_);
 }
 
-const_iterator end() const noexcept
-{
-  return const_iterator(&root_);
-}
+const_iterator end() const noexcept { return const_iterator(&root_); }
 
 const_iterator cbegin() const noexcept
 {
@@ -83,10 +77,7 @@ const_iterator cbegin() const noexcept
     const_iterator(&root_);
 }
 
-const_iterator cend() const noexcept
-{
-  return const_iterator(&root_);
-}
+const_iterator cend() const noexcept { return const_iterator(&root_); }
 
 // reverse iterators
 reverse_iterator rbegin() noexcept
@@ -174,7 +165,7 @@ const_iterator find(auto const& k) const noexcept
 }
 
 // these may always throw
-void insert(std::initializer_list<value_type> const l)
+void insert(std::initializer_list<value_type> l)
   requires(std::is_copy_constructible_v<value_type>)
 {
   insert(l.begin(), l.end());
