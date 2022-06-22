@@ -11,7 +11,7 @@ auto& operator=(this_class const& o)
 auto& operator=(this_class&& o)
   noexcept(noexcept(delete root_))
 {
-  delete root_;
+  detail::destroy(root_, {});
 
   root_ = o.root_;
   o.root_ = {};
@@ -19,7 +19,7 @@ auto& operator=(this_class&& o)
   return *this;
 }
 
-auto& operator=(std::initializer_list<value_type> const l)
+auto& operator=(std::initializer_list<value_type> l)
   requires(std::is_copy_constructible_v<value_type>)
 {
   clear();
