@@ -312,6 +312,14 @@ public:
 
   //
   iterator erase(const_iterator const i)
+    noexcept(noexcept(
+        detail::erase(
+          root_,
+          const_cast<node*>(i.n()),
+          const_cast<node*>(i.p())
+        )
+      )
+    )
   {
     return {
       &root_,
@@ -324,6 +332,7 @@ public:
   }
 
   size_type erase(auto const& k)
+    noexcept(noexcept(detail::erase(root_, k)))
     requires(!std::is_convertible_v<decltype(k), const_iterator>)
   {
     return bool(std::get<0>(detail::erase(root_, k)));

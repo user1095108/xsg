@@ -29,11 +29,11 @@ void dump(auto n, decltype(n) p)
           }
         );
 
-        std::cout << '(' << n->kv_.first << ',' << n->kv_.second << ')';
+        std::cout << '{' << n->kv_.first << ',' << n->kv_.second << '}';
       }
       else
       {
-        std::cout << "(null)";
+        std::cout << "{null}";
       }
 
       std::cout << ' ';
