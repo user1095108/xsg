@@ -24,7 +24,7 @@ void dump(auto n, decltype(n) p = {})
           }
         );
 
-        std::cout << '(' << n->key() << ')';
+        std::cout << '{' << n->key() << '}';
       }
       else
       {
