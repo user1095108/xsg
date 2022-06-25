@@ -28,7 +28,7 @@ void dump(auto n, decltype(n) p = {})
       }
       else
       {
-        std::cout << "(null)";
+        std::cout << "{null}";
       }
 
       std::cout << ' ';
