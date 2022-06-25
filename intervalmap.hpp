@@ -220,13 +220,17 @@ public:
       );
     }
 
-    static iterator erase(auto& r, const_iterator const i)
+    static iterator erase(auto& r0, const_iterator const i)
+      noexcept(
+        noexcept(std::declval<node>().v_.erase(i.i())) &&
+        noexcept(node::erase(r0, i.n(), i.p()))
+      )
     {
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
       {
-        auto const [nn, np, s](node::erase(r, std::get<0>(*i)));
+        auto const [nn, np, s](node::erase(r0, n, p));
 
-        return {&r, nn, np};
+        return {&r0, nn, np};
       }
       else if (auto const it(i.i()); std::next(it) == n->v_.end())
       {
@@ -234,16 +238,17 @@ public:
 
         n->v_.erase(it);
 
-        return {&r, ni.n(), ni.p()};
+        return {&r0, ni.n(), ni.p()};
       }
       else
       {
-        return {&r, n, p, n->v_.erase(it)};
+        return {&r0, n, p, n->v_.erase(it)};
       }
     }
 
     static inline auto erase(auto& r0, auto const pp, decltype(pp) p,
       decltype(pp) n, std::uintptr_t* const q)
+      noexcept(noexcept(delete r0))
     {
       size_type const s(n->v_.size());
       auto [nnn, nnp](detail::next_node(n, p));
@@ -403,6 +408,7 @@ public:
     }
 
     static auto erase(auto& r0, auto&& k)
+      noexcept(noexcept(erase(r0, r0, r0, r0, {})))
     {
       using pointer = std::remove_cvref_t<decltype(r0)>;
       using node = std::remove_pointer_t<pointer>;
@@ -430,6 +436,7 @@ public:
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)
+      noexcept(noexcept(erase(r0, r0, r0, r0, {})))
     {
       using pointer = std::remove_cvref_t<decltype(r0)>;
       using node = std::remove_pointer_t<pointer>;

@@ -157,17 +157,17 @@ public:
       return std::pair(q, qp);
     }
 
-    static iterator erase(auto& r, const_iterator const i)
+    static iterator erase(auto& r0, const_iterator const i)
       noexcept(
         noexcept(std::declval<node>().v_.erase(i.i())) &&
-        noexcept(node::erase(r, i.n(), i.p()))
+        noexcept(node::erase(r0, i.n(), i.p()))
       )
     {
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
       {
-        auto const [nn, np, s](node::erase(r, n, p));
+        auto const [nn, np, s](node::erase(r0, n, p));
 
-        return {&r, nn, np};
+        return {&r0, nn, np};
       }
       else if (auto const it(i.i()); std::next(it) == n->v_.end())
       {
@@ -175,11 +175,11 @@ public:
 
         n->v_.erase(it);
 
-        return {&r, ni.n(), ni.p()};
+        return {&r0, ni.n(), ni.p()};
       }
       else
       {
-        return {&r, n, p, n->v_.erase(it)};
+        return {&r0, n, p, n->v_.erase(it)};
       }
     }
 
