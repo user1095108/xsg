@@ -24,11 +24,11 @@ void dump(auto n, decltype(n) p = {})
           }
         );
 
-        std::cout << '(' << n->key() << ',' << n->m_ << ')';
+        std::cout << '{' << n->key() << ',' << n->m_ << '}';
       }
       else
       {
-        std::cout << "(null)";
+        std::cout << "{null}";
       }
 
       std::cout << ' ';
