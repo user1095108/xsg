@@ -751,11 +751,13 @@ public:
 
   //
   iterator erase(const_iterator const i)
+    noexcept(noexcept(node::erase(root_, i)))
   {
     return node::erase(root_, i);
   }
 
   size_type erase(auto const& k)
+    noexcept(noexcept(node::erase(root_, k)))
     requires(!std::is_convertible_v<decltype(k), const_iterator>)
   {
     return std::get<2>(node::erase(root_, k));
