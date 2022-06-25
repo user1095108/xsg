@@ -9,14 +9,16 @@
 namespace xsg
 {
 
-template <typename Key, class Compare = std::compare_three_way>
-class multiset
+template <typename Key, typename Value,
+  class Compare = std::compare_three_way>
+class multimap
 {
 public:
   struct node;
 
   using key_type = Key;
-  using value_type = Key;
+  using mapped_type = Value;
+  using value_type = std::pair<Key const, Value>;
 
   using difference_type = std::ptrdiff_t;
   using size_type = detail::size_type;
@@ -30,36 +32,57 @@ public:
 
   struct node
   {
-    using value_type = multiset::value_type;
+    using value_type = multimap::value_type;
 
     static constinit inline Compare const cmp;
 
     std::uintptr_t l_, r_;
     xl::list<value_type> v_;
 
-    explicit node(auto&& ...a)
-      noexcept(noexcept(v_.emplace_back(std::forward<decltype(a)>(a)...)))
+    explicit node(auto&& k, auto&& ...a)
+      noexcept(noexcept(
+          v_.emplace_back(
+            std::piecewise_construct_t{},
+            std::forward_as_tuple(std::forward<decltype(k)>(k)),
+            std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+          )
+        )
+      )
     {
-      v_.emplace_back(std::forward<decltype(a)>(a)...);
+      v_.emplace_back(
+        std::piecewise_construct_t{},
+        std::forward_as_tuple(std::forward<decltype(k)>(k)),
+        std::forward_as_tuple(std::forward<decltype(a)>(a)...)
+      );
     }
 
     //
-    auto&& key() const noexcept { return v_.front(); }
+    auto&& key() const noexcept { return std::get<0>(v_.front()); }
 
     //
-    static auto emplace(auto& r, auto&& ...a)
-      noexcept(noexcept(new node(key_type(std::forward<decltype(a)>(a)...))))
+    static auto emplace(auto& r, auto&& a, auto&& ...b)
+      noexcept(
+        noexcept(
+          new node(
+            key_type(std::forward<decltype(a)>(a)),
+            std::forward<decltype(b)>(b)...
+          )
+        )
+      )
     {
       enum Direction: bool { LEFT, RIGHT };
 
-      key_type k(std::forward<decltype(a)>(a)...);
+      key_type k(std::forward<decltype(a)>(a));
 
       node* q, *qp;
 
       auto const create_node([&](decltype(q) const p)
-        noexcept(noexcept(new node(std::move(k))))
+        noexcept(noexcept(
+            new node(std::move(k), std::forward<decltype(b)>(b)...)
+          )
+        )
         {
-          auto const q(new node(std::move(k)));
+          auto const q(new node(std::move(k), std::forward<decltype(b)>(b)...));
           q->l_ = q->r_ = detail::conv(p);
 
           return q;
@@ -116,7 +139,10 @@ public:
           }
           else
           {
-            (qp = p, q = n)->v_.emplace_back(std::move(k));
+            (qp = p, q = n)->v_.emplace_back(
+              std::move(k),
+              std::forward<decltype(b)>(b)...
+            );
 
             return {};
           }
@@ -444,43 +470,44 @@ public:
       //
       return f(f, p, {}, sz - 1);
     }
+
   };
 
 private:
-  using this_class = multiset;
+  using this_class = multimap;
   node* root_{};
 
 public:
-  multiset() = default;
+  multimap() = default;
 
-  multiset(std::initializer_list<value_type> const l)
+  multimap(std::initializer_list<value_type> l)
     noexcept(noexcept(*this = l))
     requires(std::is_copy_constructible_v<value_type>)
   {
     *this = l;
   }
 
-  multiset(multiset const& o)
+  multimap(multimap const& o)
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
   {
     *this = o;
   }
 
-  multiset(multiset&& o)
+  multimap(multimap&& o)
     noexcept(noexcept(*this = std::move(o)))
   {
     *this = std::move(o);
   }
 
-  multiset(std::input_iterator auto const i, decltype(i) j)
+  multimap(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(insert(i, j)))
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     insert(i, j);
   }
 
-  ~multiset() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
+  ~multimap() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
 
 # include "common.hpp"
 
@@ -504,19 +531,22 @@ public:
   //
   size_type count(auto const& k) const noexcept
   {
-    for (decltype(root_) p{}, n(root_); n;)
+    if (auto n(root_); n)
     {
-      if (auto const c(node::cmp(k, n->key())); c < 0)
+      for (;;)
       {
-        detail::assign(n, p)(detail::left_node(n, p), n);
-      }
-      else if (c > 0)
-      {
-        detail::assign(n, p)(detail::right_node(n, p), n);
-      }
-      else
-      {
-        return n->v_.size();
+        if (auto const c(node::cmp(k, n->key())); c < 0)
+        {
+          n = detail::left_node(n);
+        }
+        else if (c > 0)
+        {
+          n = detail::right_node(n);
+        }
+        else
+        {
+          return n->v_.size();
+        }
       }
     }
 
@@ -524,12 +554,31 @@ public:
   }
 
   //
-  iterator emplace(auto&& ...a)
+  iterator emplace(Key&& k, auto&& ...a)
+    noexcept(
+      noexcept(
+        node::emplace(
+          root_,
+          std::move(k),
+          std::forward<decltype(a)>(a)...
+        )
+      )
+    )
   {
     return {
       &root_,
-      node::emplace(root_, std::forward<decltype(a)>(a)...)
+      node::emplace(
+        root_,
+        std::move(k),
+        std::forward<decltype(a)>(a)...
+      )
     };
+  }
+
+  iterator emplace(auto&& ...a)
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
+  {
+    return {&root_, node::emplace(root_, std::forward<decltype(a)>(a)...)};
   }
 
   //
@@ -564,27 +613,24 @@ public:
   //
   iterator insert(value_type const& v)
   {
-    return {
-      &root_,
-      node::emplace(root_, v.first)
-    };
+    return {&root_, node::emplace(root_, std::get<0>(v), std::get<1>(v))};
   }
 
   iterator insert(value_type&& v)
   {
-    return {
-      &root_,
-      node::emplace(root_, std::move(v))
-    };
+    return {&root_, node::emplace(root_, std::get<0>(v), std::get<1>(v))};
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
-    requires(std::is_copy_constructible_v<value_type>)
   {
-    std::for_each(i, j, [&](auto&& v) { emplace(v); });
+    std::for_each(
+      i,
+      j,
+      [&](auto&& v) { emplace(std::get<0>(v), std::get<1>(v)); }
+    );
   }
 };
 
 }
 
-#endif // XSG_MULTISET_HPP
+#endif // XSG_MULTIMAP_HPP

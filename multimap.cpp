@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "multiset.hpp"
+#include "multimap.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 void dump(auto n, decltype(n) p = {})
@@ -43,27 +43,39 @@ void dump(auto n, decltype(n) p = {})
 //////////////////////////////////////////////////////////////////////////////
 int main()
 {
-  xsg::multiset<int> st;
+  xsg::multimap<int, int> st;
 
-  st.emplace(-1);
-  st.insert(0);
-  st.insert({1, 1});
-  st.emplace(2);
-  st.emplace(3);
-  st.emplace(4);
+  st.emplace(-1, 0);
+  st.insert({0, 1});
+  st.insert({{1, 2}, {1, 3}});
+  st.emplace(2, 3);
+  st.emplace(3, 4);
 
+  //st.root().reset(st.root().release()->rebuild());
   dump(st.root());
 
-  std::cout << "count: " << st.count(1) << std::endl;
   std::cout << "height: " << xsg::detail::height(st.root(), {}) << std::endl;
   std::cout << "size: " << st.size() << std::endl;
 
   std::for_each(
     st.cbegin(),
     st.cend(),
-    [](auto&& k) noexcept
+    [](auto&& p) noexcept
     {
-      std::cout << '(' << k << ')' << std::endl;
+      std::cout << '(' << p.first << ',' << p.second << ')' << std::endl;
+    }
+  );
+
+  erase(st, 1);
+
+  dump(st.root());
+
+  std::for_each(
+    st.cbegin(),
+    st.cend(),
+    [](auto&& p) noexcept
+    {
+      std::cout << '(' << p.first << ',' << p.second << ')' << std::endl;
     }
   );
 
