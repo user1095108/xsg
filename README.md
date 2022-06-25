@@ -11,7 +11,7 @@ Since tree rebalancing can alter node parent-child relations, all iterators, exc
 # evaluation of the XOR scapegoat BST
 Important advantages of scapegoat BSTs over other [BST](https://en.wikipedia.org/wiki/Binary_search_tree)s are simplicity and reduced memory consumption. XOR scapegoat BSTs introduce additional complexity with an associated performance hit, compared to [plain scapegoat BSTs](https://github.com/user1095108/sg); insertion and erasure by key can perform worse than when using a plain scapegoat BST. This leaves tree traversal and erasure by iterator as the only advantages the XOR scapegoat BST can offer.
 
-This implementation is usually outperformed by `std::map`, as it trades performance for a smaller memory footprint and binary size.
+This implementation is usually outperformed by `std::` associative containers, as it trades performance for a smaller memory footprint and binary size.
 
 # build instructions
     git submodule update --init
