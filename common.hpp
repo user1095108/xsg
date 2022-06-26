@@ -1,5 +1,6 @@
 // self-assign neglected
 auto& operator=(this_class const& o)
+  noexcept(noexcept(clear()) && noexcept(insert(o.begin(), o.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
   clear();
@@ -9,7 +10,7 @@ auto& operator=(this_class const& o)
 }
 
 auto& operator=(this_class&& o)
-  noexcept(noexcept(delete root_))
+  noexcept(noexcept(detail::destroy(root_, {})))
 {
   detail::destroy(root_, {});
 
@@ -20,6 +21,7 @@ auto& operator=(this_class&& o)
 }
 
 auto& operator=(std::initializer_list<value_type> l)
+  noexcept(noexcept(clear()) && noexcept(insert(l.begin(), l.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
   clear();
@@ -135,6 +137,7 @@ bool contains(auto const& k) const noexcept
 
 //
 iterator erase(const_iterator a, const_iterator const b)
+  noexcept(noexcept(erase(a)))
 {
   iterator i(b);
 
@@ -166,6 +169,7 @@ const_iterator find(auto const& k) const noexcept
 
 // these may always throw
 void insert(std::initializer_list<value_type> l)
+  noexcept(noexcept(insert(l.begin(), l.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
   insert(l.begin(), l.end());
