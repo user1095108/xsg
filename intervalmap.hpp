@@ -682,22 +682,19 @@ public:
       >
     )
   {
-    if (auto n(root_); n)
+    for (decltype(root_) p{}, n(root_); n;)
     {
-      for (;;)
+      if (auto const c(node::cmp(k, n->key())); c < 0)
       {
-        if (auto const c(node::cmp(k, n->key())); c < 0)
-        {
-          n = detail::left_node(n);
-        }
-        else if (c > 0)
-        {
-          n = detail::right_node(n);
-        }
-        else
-        {
-          return n->v_.size();
-        }
+        detail::assign(n, p)(detail::left_node(n, p), n);
+      }
+      else if (c > 0)
+      {
+        detail::assign(n, p)(detail::right_node(n, p), n);
+      }
+      else
+      {
+        return n->v_.size();
       }
     }
 
