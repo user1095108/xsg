@@ -417,7 +417,7 @@ public:
     };
   }
 
-  size_type erase(auto&& k)
+  size_type erase(auto&& k, char = {})
     noexcept(noexcept(detail::erase(root_, k)))
     requires(
       std::three_way_comparable_with<
@@ -431,10 +431,9 @@ public:
     );
   }
 
-  size_type erase(key_type const& k, char = {})
-    noexcept(noexcept(erase(k)))
+  size_type erase(key_type const& k) noexcept(noexcept(erase(k, {})))
   {
-    return erase(k);
+    return erase(k, {});
   }
 
   //
