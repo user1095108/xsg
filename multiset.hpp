@@ -540,6 +540,7 @@ public:
 
   //
   iterator emplace(auto&& ...a)
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
   {
     return {
       &root_,
@@ -610,22 +611,19 @@ public:
 
   //
   iterator insert(value_type const& v)
+    noexcept(noexcept(node::emplace(root_, v.first)))
   {
-    return {
-      &root_,
-      node::emplace(root_, v.first)
-    };
+    return { &root_, node::emplace(root_, v.first) };
   }
 
   iterator insert(value_type&& v)
+    noexcept(noexcept(node::emplace(root_, std::move(v))))
   {
-    return {
-      &root_,
-      node::emplace(root_, std::move(v))
-    };
+    return { &root_, node::emplace(root_, std::move(v)) };
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
+    noexcept(noexcept(emplace(*i)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     std::for_each(i, j, [&](auto&& v) { emplace(v); });

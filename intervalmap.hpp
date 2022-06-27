@@ -793,6 +793,7 @@ public:
 
   //
   iterator insert(value_type const& v)
+    noexcept(noexcept(node::emplace(root_, std::get<0>(v), std::get<1>(v))))
   {
     return {
       &root_,
@@ -801,6 +802,7 @@ public:
   }
 
   iterator insert(value_type&& v)
+    noexcept(noexcept(node::emplace(root_, std::get<0>(v), std::get<1>(v))))
   {
     return {
       &root_,
@@ -809,11 +811,15 @@ public:
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
+    noexcept(noexcept(emplace(std::get<0>(*i), std::get<1>(*i))))
   {
     std::for_each(
       i,
       j,
-      [&](auto&& v)
+      [&](auto&& v) noexcept(noexcept(
+          emplace(std::get<0>(*i), std::get<1>(*i))
+        )
+      )
       {
         emplace(std::get<0>(v), std::get<1>(v));
       }
@@ -822,6 +828,7 @@ public:
 
   //
   void all(auto const& k, auto g) const
+    noexcept(noexcept(g(std::declval<value_type>())))
   {
     auto& [mink, maxk](k);
     auto const eq(node::cmp(mink, maxk) == 0);
