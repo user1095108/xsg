@@ -279,10 +279,18 @@ public:
   }
 
   //
-  size_type count(auto const& k) const noexcept
+  size_type count(auto&& k, char = {}) const noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     return bool(detail::find(root_, {}, k));
   }
+
+  size_type count(key_type const& k) const noexcept { return count(k, {}); }
 
   //
   auto emplace(auto&& ...a)
