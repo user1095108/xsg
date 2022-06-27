@@ -136,10 +136,7 @@ bool contains(auto&& k) const noexcept
   return detail::find(root_, std::forward<decltype(k)>(k));
 }
 
-bool contains(key_type const& k) const noexcept
-{
-  return std::get<0>(detail::find(root_, {}, k));
-}
+bool contains(key_type const& k) const noexcept { return contains(k); }
 
 //
 iterator erase(const_iterator a, const_iterator const b)
