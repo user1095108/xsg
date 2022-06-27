@@ -367,15 +367,15 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V, class C>
-inline auto erase(set<K, V, C>& c, auto const& k)
+template <typename K, class C>
+inline auto erase(set<K, C>& c, auto const& k)
   noexcept(noexcept(c.erase(k)))
 {
   return c.erase(k);
 }
 
-template <typename K, typename V, class C>
-inline auto erase_if(set<K, V, C>& c, auto pred)
+template <typename K, class C>
+inline auto erase_if(set<K, C>& c, auto pred)
   noexcept(noexcept(c.erase(c.begin())))
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
@@ -389,8 +389,8 @@ inline auto erase_if(set<K, V, C>& c, auto pred)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V, class C>
-inline void swap(set<K, V, C>& l, decltype(l) r) noexcept { l.swap(r); }
+template <typename K, class C>
+inline void swap(set<K, C>& l, decltype(l) r) noexcept { l.swap(r); }
 
 }
 
