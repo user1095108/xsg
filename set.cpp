@@ -49,8 +49,8 @@ int main()
 
   dump(s.root(), {});
 
-  std::cout << s.contains(3) << std::endl;
-  std::cout << s.contains(100) << std::endl;
+  std::cout << s.contains(3u) << std::endl;
+  std::cout << s.contains(100ull) << std::endl;
 
   std::for_each(
     s.cbegin(),
