@@ -434,7 +434,9 @@ public:
   size_type erase(key_type const& k)
     noexcept(noexcept(detail::erase(root_, k)))
   {
-    return erase(k);
+    return bool(
+      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
+    );
   }
 
   //
