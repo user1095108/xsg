@@ -622,7 +622,7 @@ private:
 public:
   intervalmap() = default;
 
-  intervalmap(std::initializer_list<value_type> const l)
+  intervalmap(std::initializer_list<value_type> l)
     noexcept(noexcept(*this = l))
     requires(std::is_copy_constructible_v<value_type>)
   {

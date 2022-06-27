@@ -274,7 +274,7 @@ private:
 public:
   map() = default;
 
-  map(std::initializer_list<value_type> const l)
+  map(std::initializer_list<value_type> l)
     noexcept(noexcept(*this = l))
     requires(std::is_copy_constructible_v<value_type>)
   {
@@ -358,8 +358,7 @@ public:
 
   //
   auto emplace(Key&& k, auto&& ...a)
-    noexcept(
-      noexcept(
+    noexcept(noexcept(
         node::emplace(
           root_,
           std::move(k),
