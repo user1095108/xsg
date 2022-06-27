@@ -120,8 +120,6 @@ public:
     return (o.n_ == n_) && (o.i_ == i_);
   }
 
-  bool operator!=(multimapiterator const&) const = default;
-
   // increment, decrement
   auto& operator++() noexcept
   {
