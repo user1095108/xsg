@@ -536,7 +536,10 @@ public:
     return {};
   }
 
-  size_type count(key_type const& k) const noexcept { return count(k); }
+  size_type count(key_type const& k, char = {}) const noexcept
+  {
+    return count(k);
+  }
 
   //
   iterator emplace(auto&& ...a)

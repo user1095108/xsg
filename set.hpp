@@ -279,7 +279,7 @@ public:
   }
 
   //
-  size_type count(auto&& k, char = {}) const noexcept
+  size_type count(auto&& k) const noexcept
     requires(
       std::three_way_comparable_with<
         key_type,
@@ -290,7 +290,7 @@ public:
     return bool(detail::find(root_, {}, k));
   }
 
-  size_type count(key_type const& k) const noexcept { return count(k, {}); }
+  size_type count(key_type const& k, char = {}) const noexcept { return count(k); }
 
   //
   auto emplace(auto&& ...a)
@@ -351,10 +351,9 @@ public:
     return bool(std::get<0>(detail::erase(root_, k)));
   }
 
-  size_type erase(key_type const& k)
-    noexcept(noexcept(detail::erase(root_, k)))
+  size_type erase(key_type const& k, char = {}) noexcept(noexcept(erase(k)))
   {
-    return bool(std::get<0>(detail::erase(root_, k)));
+    return erase(k);
   }
 
   //

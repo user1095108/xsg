@@ -431,12 +431,10 @@ public:
     );
   }
 
-  size_type erase(key_type const& k)
-    noexcept(noexcept(detail::erase(root_, k)))
+  size_type erase(key_type const& k, char = {})
+    noexcept(noexcept(erase(k)))
   {
-    return bool(
-      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
-    );
+    return erase(k);
   }
 
   //
