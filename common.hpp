@@ -125,7 +125,18 @@ bool empty() const noexcept { return !root_; }
 void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
 //
-bool contains(Key const& k) const noexcept
+bool contains(auto&& k) const noexcept
+  requires(
+    std::three_way_comparable_with<
+      key_type,
+      std::remove_cvref_t<decltype(k)>
+    >
+  )
+{
+  return detail::find(root_, std::forward<decltype(k)>(k));
+}
+
+bool contains(key_type const& k) const noexcept
 {
   return std::get<0>(detail::find(root_, {}, k));
 }
@@ -142,6 +153,28 @@ iterator erase(const_iterator a, const_iterator const b)
 }
 
 //
+iterator find(auto&& k) noexcept
+  requires(
+    std::three_way_comparable_with<
+      key_type,
+      std::remove_cvref_t<decltype(k)>
+    >
+  )
+{
+  return {&root_, detail::find(root_, {}, std::forward<decltype(k)>(k))};
+}
+
+const_iterator find(auto&& k) const noexcept
+  requires(
+    std::three_way_comparable_with<
+      key_type,
+      std::remove_cvref_t<decltype(k)>
+    >
+  )
+{
+  return {&root_, detail::find(root_, {}, std::forward<decltype(k)>(k))};
+}
+
 iterator find(Key const& k) noexcept
 {
   return {&root_, detail::find(root_, {}, k)};

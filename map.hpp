@@ -417,9 +417,22 @@ public:
     };
   }
 
-  size_type erase(auto const& k)
+  size_type erase(auto&& k)
     noexcept(noexcept(detail::erase(root_, k)))
-    requires(!std::is_convertible_v<decltype(k), const_iterator>)
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
+  {
+    return bool(
+      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
+    );
+  }
+
+  size_type erase(key_type const& k)
+    noexcept(noexcept(detail::erase(root_, k)))
   {
     return bool(std::get<0>(detail::erase(root_, k)));
   }
