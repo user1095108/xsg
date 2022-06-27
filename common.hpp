@@ -152,16 +152,6 @@ const_iterator find(Key const& k) const noexcept
   return {&root_, detail::find(root_, {}, k)};
 }
 
-iterator find(auto const& k) noexcept
-{
-  return {&root_, detail::find(root_, {}, k)};
-}
-
-const_iterator find(auto const& k) const noexcept
-{
-  return {&root_, detail::find(root_, {}, k)};
-}
-
 // these may always throw
 void insert(std::initializer_list<value_type> l)
   noexcept(noexcept(insert(l.begin(), l.end())))
