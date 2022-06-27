@@ -674,7 +674,7 @@ public:
   }
 
   //
-  size_type count(auto&& k) const noexcept
+  size_type count(auto&& k, char = {}) const noexcept
     requires(
       std::three_way_comparable_with<
         key_type,
@@ -701,10 +701,7 @@ public:
     return {};
   }
 
-  size_type count(key_type const& k, char = {}) const noexcept
-  {
-    return count(k);
-  }
+  size_type count(key_type const& k) const noexcept { return count(k, {}); }
 
   //
   iterator emplace(Key&& k, auto&& ...a)
