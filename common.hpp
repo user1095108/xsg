@@ -196,28 +196,3 @@ const_iterator upper_bound(auto const& k) const noexcept
 {
   return std::get<1>(equal_range(k));
 }
-
-//
-friend auto erase(this_class& c, auto const& k)
-  noexcept(noexcept(node::erase(root_, k)))
-{
-  return c.erase(k);
-}
-
-friend auto erase_if(this_class& c, auto pred)
-  noexcept(noexcept(node::erase(root_, c.begin())))
-{
-  size_type r{};
-
-  for (auto i(c.begin()); i.node();)
-  {
-    i = pred(*i) ? ++r, c.erase(i) : std::next(i);
-  }
-
-  return r;
-}
-
-friend void swap(this_class& lhs, decltype(lhs) rhs) noexcept
-{
-  lhs.swap(rhs);
-}
