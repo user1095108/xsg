@@ -377,6 +377,7 @@ public:
 
   //
   auto insert(value_type const& v)
+    noexcept(noexcept(node::emplace(root_, v)))
   {
     auto const [n, p, s](node::emplace(root_, v));
 
@@ -384,6 +385,7 @@ public:
   }
 
   auto insert(value_type&& v)
+    noexcept(noexcept(node::emplace(root_, std::move(v))))
   {
     auto const [n, p, s](node::emplace(root_, std::move(v)));
 
@@ -391,11 +393,12 @@ public:
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
+    noexcept(noexcept(emplace(*i)))
   {
     std::for_each(
       i,
       j,
-      [&](auto&& v)
+      [&](auto&& v) noexcept(noexcept(emplace(std::forward<decltype(v)>(v))))
       {
         emplace(std::forward<decltype(v)>(v));
       }

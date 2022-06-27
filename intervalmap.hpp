@@ -705,8 +705,7 @@ public:
 
   //
   iterator emplace(Key&& k, auto&& ...a)
-    noexcept(
-      noexcept(
+    noexcept(noexcept(
         node::emplace(
           root_,
           std::move(k),
