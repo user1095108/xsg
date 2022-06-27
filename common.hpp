@@ -125,11 +125,6 @@ bool empty() const noexcept { return !root_; }
 void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
 //
-bool contains(Key const& k) const noexcept
-{
-  return std::get<0>(detail::find(root_, {}, k));
-}
-
 bool contains(auto const& k) const noexcept
 {
   return std::get<0>(detail::find(root_, {}, k));
