@@ -184,23 +184,23 @@ void insert(std::initializer_list<value_type> l)
 }
 
 //
-iterator lower_bound(auto const& k) noexcept
+iterator lower_bound(auto&& k) noexcept
 {
-  return std::get<0>(equal_range(k));
+  return std::get<0>(equal_range(std::forward<decltype(k)>(k)));
 }
 
-const_iterator lower_bound(auto const& k) const noexcept
+const_iterator lower_bound(auto&& k) const noexcept
 {
-  return std::get<0>(equal_range(k));
+  return std::get<0>(equal_range(std::forward<decltype(k)>(k)));
 }
 
 //
-iterator upper_bound(auto const& k) noexcept
+iterator upper_bound(auto&& k) noexcept
 {
-  return std::get<1>(equal_range(k));
+  return std::get<1>(equal_range(std::forward<decltype(k)>(k)));
 }
 
-const_iterator upper_bound(auto const& k) const noexcept
+const_iterator upper_bound(auto&& k) const noexcept
 {
-  return std::get<1>(equal_range(k));
+  return std::get<1>(equal_range(std::forward<decltype(k)>(k)));
 }
