@@ -133,7 +133,7 @@ bool contains(auto&& k, char = {}) const noexcept
     >
   )
 {
-  return detail::find(root_, std::forward<decltype(k)>(k));
+  return detail::find(root_, k);
 }
 
 bool contains(key_type const& k) const noexcept { return contains(k, {}); }
@@ -158,7 +158,7 @@ iterator find(auto&& k, char = {}) noexcept
     >
   )
 {
-  return {&root_, detail::find(root_, {}, std::forward<decltype(k)>(k))};
+  return {&root_, detail::find(root_, {}, k)};
 }
 
 const_iterator find(auto&& k, char = {}) const noexcept
@@ -169,7 +169,7 @@ const_iterator find(auto&& k, char = {}) const noexcept
     >
   )
 {
-  return {&root_, detail::find(root_, {}, std::forward<decltype(k)>(k))};
+  return {&root_, detail::find(root_, {}, k)};
 }
 
 iterator find(key_type const& k) noexcept { return find(k, {}); }
@@ -186,21 +186,21 @@ void insert(std::initializer_list<value_type> l)
 //
 iterator lower_bound(auto&& k) noexcept
 {
-  return std::get<0>(equal_range(std::forward<decltype(k)>(k)));
+  return std::get<0>(equal_range(k));
 }
 
 const_iterator lower_bound(auto&& k) const noexcept
 {
-  return std::get<0>(equal_range(std::forward<decltype(k)>(k)));
+  return std::get<0>(equal_range(k));
 }
 
 //
 iterator upper_bound(auto&& k) noexcept
 {
-  return std::get<1>(equal_range(std::forward<decltype(k)>(k)));
+  return std::get<1>(equal_range(k));
 }
 
 const_iterator upper_bound(auto&& k) const noexcept
 {
-  return std::get<1>(equal_range(std::forward<decltype(k)>(k)));
+  return std::get<1>(equal_range(k));
 }

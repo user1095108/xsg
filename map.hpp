@@ -343,10 +343,18 @@ public:
   }
 
   //
-  size_type count(auto const& k) const noexcept
+  size_type count(auto&& k, char = {}) const noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     return bool(detail::find(root_, k));
   }
+
+  size_type count(key_type const& k) const noexcept { return count(k, {}); }
 
   //
   auto emplace(Key&& k, auto&& ...a)
@@ -382,18 +390,40 @@ public:
   }
 
   //
-  auto equal_range(auto const& k) noexcept
+  auto equal_range(auto&& k, char = {}) noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(iterator(&root_, nl), iterator(&root_, g));
   }
 
-  auto equal_range(auto const& k) const noexcept
+  auto equal_range(auto&& k, char = {}) const noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
+  }
+
+  auto equal_range(key_type const& k) noexcept
+  {
+    return equal_range(k, {});
+  }
+
+  auto equal_range(key_type const& k) const noexcept
+  {
+    return equal_range(k, {});
   }
 
   //
@@ -474,11 +504,22 @@ public:
   }
 
   //
-  auto insert_or_assign(key_type const& k, auto&& v)
-    noexcept(noexcept(node::emplace(root_, k, std::forward<decltype(v)>(v))))
+  auto insert_or_assign(auto&& k, auto&& v)
+    noexcept(noexcept(
+        node::emplace(
+          root_,
+          std::forward<decltype(k)>(k),
+          std::forward<decltype(v)>(v)
+        )
+      )
+    )
   {
     auto const [n, p, s](
-      node::emplace(root_, k, std::forward<decltype(v)>(v))
+      node::emplace(
+        root_,
+        std::forward<decltype(k)>(k),
+        std::forward<decltype(v)>(v)
+      )
     );
 
     if (!s)
