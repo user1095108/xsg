@@ -346,7 +346,7 @@ public:
   size_type erase(key_type const& k)
     noexcept(noexcept(detail::erase(root_, k)))
   {
-    erase(k);
+    return erase(k);
   }
 
   //
