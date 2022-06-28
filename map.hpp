@@ -69,8 +69,7 @@ public:
 
     //
     static auto emplace(auto& r, auto&& a, auto&& ...v)
-      noexcept(
-        noexcept(
+      noexcept(noexcept(
           new node(
             key_type(std::forward<decltype(a)>(a)),
             std::forward<decltype(v)>(v)...
@@ -86,8 +85,7 @@ public:
       key_type k(std::forward<decltype(a)>(a));
 
       auto const create_node([&](decltype(q) const p)
-        noexcept(
-          noexcept(
+        noexcept(noexcept(
             new node(std::move(k), std::forward<decltype(v)>(v)...)
           )
         )
@@ -301,7 +299,10 @@ public:
     insert(i, j);
   }
 
-  ~map() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
+  ~map() noexcept(noexcept(detail::destroy(root_, {})))
+  {
+    detail::destroy(root_, {});
+  }
 
 # include "common.hpp"
 

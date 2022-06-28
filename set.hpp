@@ -265,7 +265,7 @@ public:
     insert(i, j);
   }
 
-  ~set() noexcept(noexcept(delete root_))
+  ~set() noexcept(noexcept(detail::destroy(root_, {})))
   {
     detail::destroy(root_, {});
   }
