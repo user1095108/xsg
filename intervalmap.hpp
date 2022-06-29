@@ -773,7 +773,7 @@ public:
     return node::erase(root_, i);
   }
 
-  size_type erase(auto&& k)
+  size_type erase(auto&& k, char = {})
     noexcept(noexcept(node::erase(root_, k)))
     requires(
       std::three_way_comparable_with<
@@ -785,9 +785,9 @@ public:
     return std::get<2>(node::erase(root_, k));
   }
 
-  size_type erase(key_type const& k) noexcept(noexcept(erase(k)))
+  size_type erase(key_type const& k) noexcept(noexcept(erase(k, {})))
   {
-    return erase(k);
+    return erase(k, {});
   }
 
   //
