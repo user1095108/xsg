@@ -133,7 +133,7 @@ bool contains(auto&& k, char = {}) const noexcept
     >
   )
 {
-  return detail::find(root_, k);
+  return std::get<0>(detail::find(root_, {}, k));
 }
 
 bool contains(key_type const& k) const noexcept { return contains(k, {}); }
