@@ -1,5 +1,5 @@
 digraph {
-  bgcolor="transparent"
+  bgcolor="black"
 
   g [color="yellow" fontcolor="yellow" fontname="monospace"]
   p [color="yellow" fontcolor="yellow" fontname="monospace"]
