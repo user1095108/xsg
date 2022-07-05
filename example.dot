@@ -1,0 +1,14 @@
+digraph {
+  bgcolor="transparent"
+
+  g [color="yellow" fontcolor="yellow" fontname="monospace"]
+  p [color="yellow" fontcolor="yellow" fontname="monospace"]
+  n [color="yellow" fontcolor="yellow" fontname="monospace"]
+  l [color="yellow" fontcolor="yellow" fontname="monospace"]
+  r [color="yellow" fontcolor="yellow" fontname="monospace"]
+
+  g -> p [color="yellow" fontcolor="yellow" fontname="monospace"]
+  p -> n [color="yellow" fontcolor="yellow" fontname="monospace" label="n⊕g"]
+  n -> l [color="yellow" fontcolor="yellow" fontname="monospace" label="l⊕p"]
+  n -> r [color="yellow" fontcolor="yellow" fontname="monospace" label="r⊕p"]
+}
