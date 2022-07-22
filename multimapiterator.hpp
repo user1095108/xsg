@@ -117,7 +117,7 @@ public:
 
   bool operator==(multimapiterator const& o) const noexcept
   {
-    return (o.n_ == n_) && (o.i_ == i_);
+    return (n_ == o.n_) && (i_ == o.i_);
   }
 
   // increment, decrement
