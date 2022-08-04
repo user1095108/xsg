@@ -640,7 +640,10 @@ inline auto erase(multiset<K, C>& c, auto const& k)
 
 template <typename K, class C>
 inline auto erase_if(multiset<K, C>& c, auto pred)
-  noexcept(noexcept(c.erase(c.begin())))
+  noexcept(
+    noexcept(pred(std::declval<K>())) &&
+    noexcept(c.erase(c.begin()))
+  )
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
