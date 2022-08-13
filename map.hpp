@@ -333,15 +333,31 @@ public:
     );
   }
 
-  auto& at(Key const& k) noexcept
+  auto& at(auto&& k, char = {}) noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
 
-  auto const& at(Key const& k) const noexcept
+  auto& at(key_type const& k) noexcept { return at(k, {}); }
+
+  auto const& at(auto&& k, char = {}) const noexcept
+    requires(
+      std::three_way_comparable_with<
+        key_type,
+        std::remove_cvref_t<decltype(k)>
+      >
+    )
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
+
+  auto& at(key_type const& k) const noexcept { return at(k, {}); }
 
   //
   size_type count(auto&& k, char = {}) const noexcept
