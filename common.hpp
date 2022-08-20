@@ -31,7 +31,15 @@ auto& operator=(std::initializer_list<value_type> l)
 }
 
 //
-friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
+friend bool operator==(this_class const& lhs, this_class const& rhs)
+  noexcept(noexcept(
+      std::equal(
+        lhs.begin(), lhs.end(),
+        rhs.begin(), rhs.end(),
+        [](auto&&, auto&&) noexcept { return true; }
+      )
+    )
+  )
 {
   return std::equal(
     lhs.begin(), lhs.end(),
@@ -43,7 +51,15 @@ friend bool operator==(this_class const& lhs, this_class const& rhs) noexcept
   );
 }
 
-friend auto operator<=>(this_class const& lhs, this_class const& rhs) noexcept
+friend auto operator<=>(this_class const& lhs, this_class const& rhs)
+  noexcept(noexcept(
+      std::lexicographical_compare_three_way(
+        lhs.begin(), lhs.end(),
+        rhs.begin(), rhs.end(),
+        std::remove_cvref_t<decltype(lhs)>::node::cmp
+      )
+    )
+  )
 {
   return std::lexicographical_compare_three_way(
     lhs.begin(), lhs.end(),
