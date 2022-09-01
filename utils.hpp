@@ -22,6 +22,7 @@
 namespace xsg::detail
 {
 
+using difference_type = std::intmax_t;
 using size_type = std::uintmax_t;
 
 constexpr auto assign(auto& ...a) noexcept

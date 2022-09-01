@@ -24,7 +24,7 @@ class multimapiterator
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
-  using difference_type = std::ptrdiff_t;
+  using difference_type = detail::difference_type;
   using value_type = std::conditional_t<
     std::is_const_v<T>,
     typename T::value_type const,

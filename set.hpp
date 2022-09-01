@@ -18,7 +18,7 @@ public:
   using key_type = Key;
   using value_type = Key;
 
-  using difference_type = std::ptrdiff_t;
+  using difference_type = detail::difference_type;
   using size_type = detail::size_type;
   using reference = value_type&;
   using const_reference = value_type const&;

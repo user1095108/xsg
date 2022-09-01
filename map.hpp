@@ -20,7 +20,7 @@ public:
   using mapped_type = Value;
   using value_type = std::pair<Key const, Value>;
 
-  using difference_type = std::ptrdiff_t;
+  using difference_type = detail::difference_type;
   using size_type = detail::size_type;
   using reference = value_type&;
   using const_reference = value_type const&;
