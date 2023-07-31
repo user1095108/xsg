@@ -582,10 +582,7 @@ inline auto erase_if(map<K, V, C>& c, auto pred)
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
-  for (auto i(c.begin()); i.n();)
-  {
-    i = pred(*i) ? ++r, c.erase(i) : std::next(i);
-  }
+  for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
 
   return r;
 }
