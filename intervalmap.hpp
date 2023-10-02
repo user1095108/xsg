@@ -155,7 +155,7 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebuild(n, p, q, qp, s)); p)
+            if (auto const nn(rebalance(n, p, q, qp, s)); p)
             {
               d ?
                 p->r_ = detail::conv(nn, detail::right_node(p, n)) :
@@ -520,7 +520,7 @@ public:
       f(f, r0, {});
     }
 
-    static auto rebuild(auto const n, decltype(n) p,
+    static auto rebalance(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz) noexcept
     {
       auto const l(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));

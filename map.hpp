@@ -160,7 +160,7 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebuild(n, p, q, qp, s)); p)
+            if (auto const nn(rebalance(n, p, q, qp, s)); p)
             {
               d ?
                 p->r_ = detail::conv(nn, detail::right_node(p, n)) :
@@ -192,7 +192,7 @@ public:
       return std::tuple(q, qp, s);
     }
 
-    static auto rebuild(auto const n, decltype(n) p,
+    static auto rebalance(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz) noexcept
     {
       auto const l(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
@@ -314,10 +314,10 @@ public:
     noexcept(noexcept(node::emplace(root_, k, typename node::empty_t())))
   {
     return std::get<1>(
-      std::get<0>(
-        node::emplace(root_, k, typename node::empty_t())
-      )->kv_
-    );
+        std::get<0>(
+          node::emplace(root_, k, typename node::empty_t())
+        )->kv_
+      );
   }
 
   auto& operator[](Key&& k)
@@ -327,10 +327,10 @@ public:
     )
   {
     return std::get<1>(
-      std::get<0>(
-        node::emplace(root_, std::move(k), typename node::empty_t())
-      )->kv_
-    );
+        std::get<0>(
+          node::emplace(root_, std::move(k), typename node::empty_t())
+        )->kv_
+      );
   }
 
   auto& at(auto&& k, char = {}) noexcept
@@ -429,13 +429,13 @@ public:
     )
   {
     return {
-      &root_,
-      detail::erase(
-        root_,
-        const_cast<node*>(i.n()),
-        const_cast<node*>(i.p())
-      )
-    };
+        &root_,
+        detail::erase(
+          root_,
+          const_cast<node*>(i.n()),
+          const_cast<node*>(i.p())
+        )
+      };
   }
 
   size_type erase(auto&& k, char = {})
