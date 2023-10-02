@@ -310,8 +310,13 @@ public:
   auto size() const noexcept { return detail::size(root_, {}); }
 
   //
-  auto& operator[](Key const& k)
-    noexcept(noexcept(node::emplace(root_, k, typename node::empty_t())))
+  template <int = 0>
+  auto& operator[](auto&& k)
+    noexcept(noexcept(
+        node::emplace(root_, std::forward<decltype(k)>(k),
+          typename node::empty_t())
+      )
+    )
   {
     return std::get<1>(
         std::get<0>(
@@ -320,17 +325,10 @@ public:
       );
   }
 
-  auto& operator[](Key&& k)
-    noexcept(noexcept(
-        node::emplace(root_, std::move(k), typename node::empty_t())
-      )
-    )
+  auto& operator[](key_type const& k)
+    noexcept(noexcept(operator[]<0>(k)))
   {
-    return std::get<1>(
-        std::get<0>(
-          node::emplace(root_, std::move(k), typename node::empty_t())
-        )->kv_
-      );
+    return operator[]<0>(k);
   }
 
   auto& at(auto&& k, char = {}) noexcept
