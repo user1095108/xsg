@@ -68,10 +68,10 @@ public:
     auto&& key() const noexcept { return std::get<0>(kv_); }
 
     //
-    static auto emplace(auto& r, auto&& a, auto&& ...b)
+    static auto emplace(auto& r, auto&& k, auto&& ...b)
       noexcept(noexcept(
           new node(
-            key_type(std::forward<decltype(a)>(a)),
+            std::forward<decltype(k)>(k),
             std::forward<decltype(b)>(b)...
           )
         )
@@ -82,16 +82,20 @@ public:
       bool s{}; // success
       node* q, *qp;
 
-      key_type k(std::forward<decltype(a)>(a));
-
       auto const create_node([&](decltype(q) const p)
         noexcept(noexcept(
-            new node(std::move(k), std::forward<decltype(b)>(b)...)
+            new node(
+              std::forward<decltype(k)>(k),
+              std::forward<decltype(b)>(b)...
+            )
           )
         )
         {
           auto const q(
-            new node(std::move(k), std::forward<decltype(b)>(b)...)
+            new node(
+              std::forward<decltype(k)>(k),
+              std::forward<decltype(b)>(b)...
+            )
           );
 
           q->l_ = q->r_ = detail::conv(p);
@@ -317,6 +321,7 @@ public:
           typename node::empty_t())
       )
     )
+    requires(detail::Comparable<Compare, key_type, decltype(k)>)
   {
     return std::get<1>(
         std::get<0>(
@@ -325,10 +330,10 @@ public:
       );
   }
 
-  auto& operator[](key_type const& k)
-    noexcept(noexcept(operator[]<0>(k)))
+  auto& operator[](key_type k)
+    noexcept(noexcept(operator[]<0>(std::move(k))))
   {
-    return operator[]<0>(k);
+    return operator[]<0>(std::move(k));
   }
 
   auto& at(auto&& k, char = {}) noexcept
