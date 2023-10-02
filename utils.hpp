@@ -26,12 +26,14 @@ using difference_type = std::intmax_t;
 using size_type = std::uintmax_t;
 
 template <class C, class U, class V>
-concept Comparable = requires(C&& c, U&& u, V&& v)
-{
-  {c(u, v) < 0} -> std::same_as<bool>;
-  {c(u, v) == 0} -> std::same_as<bool>;
-  {c(u, v) > 0} -> std::same_as<bool>;
-};
+concept Comparable =
+  !std::is_void_v<
+    std::common_comparison_category_t<
+      std::remove_cvref_t<
+        decltype(std::declval<C>()(std::declval<U>(), std::declval<V>()))
+      >
+    >
+  >;
 
 inline auto assign(auto& ...a) noexcept
 { // assign idiom
