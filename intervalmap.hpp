@@ -675,7 +675,7 @@ public:
 
   //
   size_type count(auto&& k, char = {}) const noexcept
-    requires(detail::Comparable<Compare, key_type, decltype(k)>)
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     for (decltype(root_) p{}, n(root_); n;)
     {
@@ -726,7 +726,7 @@ public:
 
   //
   auto equal_range(auto&& k, char = {}) noexcept
-    requires(detail::Comparable<Compare, key_type, decltype(k)>)
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
@@ -734,7 +734,7 @@ public:
   }
 
   auto equal_range(auto&& k, char = {}) const noexcept
-    requires(detail::Comparable<Compare, key_type, decltype(k)>)
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
@@ -760,7 +760,7 @@ public:
 
   size_type erase(auto&& k, char = {})
     noexcept(noexcept(node::erase(root_, k)))
-    requires(detail::Comparable<Compare, key_type, decltype(k)>)
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<2>(node::erase(root_, k));
   }
