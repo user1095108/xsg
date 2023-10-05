@@ -180,6 +180,7 @@ inline void destroy(auto const n, decltype(n) p)
 }
 
 inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
+  requires(Comparable<decltype(n->cmp), decltype(k), decltype(n->key())>)
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
