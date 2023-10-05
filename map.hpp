@@ -338,7 +338,6 @@ public:
 
   template <int = 0>
   auto& at(auto&& k) noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
@@ -347,7 +346,6 @@ public:
 
   template <int = 0>
   auto const& at(auto&& k) const noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
@@ -357,7 +355,6 @@ public:
   //
   template <int = 0>
   size_type count(auto&& k) const noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, k));
   }
@@ -424,6 +421,21 @@ public:
   }
 
   //
+  template <int = 0>
+  size_type erase(auto&& k)
+    noexcept(noexcept(detail::erase(root_, k)))
+    requires(!std::convertible_to<decltype(k), const_iterator>)
+  {
+    return bool(
+      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
+    );
+  }
+
+  auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
+  {
+    return erase<0>(std::move(k));
+  }
+
   iterator erase(const_iterator const i)
     noexcept(noexcept(
         detail::erase(
@@ -442,21 +454,6 @@ public:
           const_cast<node*>(i.p())
         )
       };
-  }
-
-  template <int = 0>
-  size_type erase(auto&& k)
-    noexcept(noexcept(detail::erase(root_, k)))
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
-  {
-    return bool(
-      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
-    );
-  }
-
-  auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
-  {
-    return erase<0>(std::move(k));
   }
 
   //

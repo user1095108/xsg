@@ -212,7 +212,8 @@ inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
   );
 }
 
-inline auto find(auto n, decltype(n) p, auto&& k) noexcept
+inline auto find(auto n, decltype(n) p, auto& k) noexcept
+  requires(Comparable<decltype(n->cmp), decltype(k), decltype(n->key())>)
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
@@ -380,8 +381,9 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
   return std::pair(nnn, nnp);
 }
 
-inline auto erase(auto& r0, auto&& k)
+inline auto erase(auto& r0, auto& k)
   noexcept(noexcept(delete r0))
+  requires(Comparable<decltype(r0->cmp), decltype(k), decltype(r0->key())>)
 {
   using pointer = std::remove_cvref_t<decltype(r0)>;
   using node = std::remove_pointer_t<pointer>;
