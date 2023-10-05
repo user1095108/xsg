@@ -444,7 +444,8 @@ public:
       };
   }
 
-  size_type erase(auto&& k, char = {})
+  template <int = 0>
+  size_type erase(auto&& k)
     noexcept(noexcept(detail::erase(root_, k)))
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
@@ -453,9 +454,9 @@ public:
     );
   }
 
-  auto erase(key_type k) noexcept(noexcept(erase(k, {})))
+  auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
   {
-    return erase(std::move(k), {});
+    return erase<0>(std::move(k));
   }
 
   //
