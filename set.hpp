@@ -163,7 +163,7 @@ public:
           emplace(r, key_type(std::forward<decltype(a)>(a)...))
         )
       )
-      requires(std::constructible_from<key_type, decltype(a)...>)
+      requires(std::is_constructible_v<key_type, decltype(a)...>)
     {
       return emplace(r, key_type(std::forward<decltype(a)>(a)...));
     }
