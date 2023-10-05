@@ -537,7 +537,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V, class C>
+template <int = 0, typename K, typename V, class C>
 inline auto erase(map<K, V, C>& c, auto&& k, char = {})
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
 {
@@ -546,9 +546,9 @@ inline auto erase(map<K, V, C>& c, auto&& k, char = {})
 
 template <typename K, typename V, class C>
 inline auto erase(map<K, V, C>& c, K k)
-  noexcept(noexcept(erase(c, std::move(k), {})))
+  noexcept(noexcept(erase<0>(c, std::move(k))))
 {
-  return erase(c, std::move(k), {});
+  return erase<0>(c, std::move(k));
 }
 
 template <typename K, typename V, class C>

@@ -398,8 +398,8 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, class C>
-inline auto erase(set<K, C>& c, auto&& k, char = {})
+template <int = 0, typename K, class C>
+inline auto erase(set<K, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
 {
   return c.erase(std::forward<decltype(k)>(k));
@@ -407,9 +407,9 @@ inline auto erase(set<K, C>& c, auto&& k, char = {})
 
 template <typename K, class C>
 inline auto erase(set<K, C>& c, K k)
-  noexcept(noexcept(erase(c, std::move(k), {})))
+  noexcept(noexcept(erase<0>(c, std::move(k))))
 {
-  return erase(c, std::move(k), {});
+  return erase<0>(c, std::move(k));
 }
 
 template <typename K, class C>
