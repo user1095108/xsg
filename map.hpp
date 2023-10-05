@@ -65,7 +65,7 @@ public:
     }
 
     //
-    auto&& key() const noexcept { return std::get<0>(kv_); }
+    auto& key() const noexcept { return std::get<0>(kv_); }
 
     //
     static auto emplace(auto& r, auto&& k, auto&& ...b)

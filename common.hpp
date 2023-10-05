@@ -141,15 +141,16 @@ bool empty() const noexcept { return !root_; }
 void swap(this_class& o) noexcept { std::swap(root_, o.root_); }
 
 //
-bool contains(auto&& k, char = {}) const noexcept
+template <int = 0>
+bool contains(auto&& k) const noexcept
   requires(detail::Comparable<Compare, key_type, decltype(k)>)
 {
   return std::get<0>(detail::find(root_, {}, k));
 }
 
-bool contains(key_type k) const noexcept
+auto contains(key_type k) const noexcept
 {
-  return contains(std::move(k), {});
+  return contains<0>(std::move(k));
 }
 
 //
