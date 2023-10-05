@@ -164,21 +164,23 @@ iterator erase(const_iterator a, const_iterator const b)
 }
 
 //
-iterator find(auto&& k, char = {}) noexcept
+template <int = 0>
+iterator find(auto&& k) noexcept
   requires(detail::Comparable<Compare, key_type, decltype(k)>)
 {
   return {&root_, detail::find(root_, {}, k)};
 }
 
-auto find(key_type k) noexcept { return find(std::move(k), {}); }
+auto find(key_type k) noexcept { return find<0>(std::move(k)); }
 
-const_iterator find(auto&& k, char = {}) const noexcept
+template <int = 0>
+const_iterator find(auto&& k) const noexcept
   requires(detail::Comparable<Compare, key_type, decltype(k)>)
 {
   return {&root_, detail::find(root_, {}, k)};
 }
 
-auto find(key_type k) const noexcept { return find(std::move(k), {}); }
+auto find(key_type k) const noexcept { return find<0>(std::move(k)); }
 
 //
 void insert(std::initializer_list<value_type> l)
@@ -189,43 +191,47 @@ void insert(std::initializer_list<value_type> l)
 }
 
 //
-iterator lower_bound(auto&& k, char = {}) noexcept
+template <int = 0>
+iterator lower_bound(auto&& k) noexcept
 {
   return std::get<0>(equal_range(k));
 }
 
 auto lower_bound(key_type k) noexcept
 {
-  return lower_bound(std::move(k), {});
+  return lower_bound<0>(std::move(k));
 }
 
-const_iterator lower_bound(auto&& k, char = {}) const noexcept
+template <int = 0>
+const_iterator lower_bound(auto&& k) const noexcept
 {
   return std::get<0>(equal_range(k));
 }
 
 auto lower_bound(key_type k) const noexcept
 {
-  return lower_bound(std::move(k), {});
+  return lower_bound<0>(std::move(k));
 }
 
 //
-iterator upper_bound(auto&& k, char = {}) noexcept
+template <int = 0>
+iterator upper_bound(auto&& k) noexcept
 {
   return std::get<1>(equal_range(k));
 }
 
 auto upper_bound(key_type k) noexcept
 {
-  return upper_bound(std::move(k), {});
+  return upper_bound<0>(std::move(k));
 }
 
-const_iterator upper_bound(auto&& k, char = {}) const noexcept
+template <int = 0>
+const_iterator upper_bound(auto&& k) const noexcept
 {
   return std::get<1>(equal_range(k));
 }
 
 auto upper_bound(key_type k) const noexcept
 {
-  return upper_bound(std::move(k), {});
+  return upper_bound<0>(std::move(k));
 }
