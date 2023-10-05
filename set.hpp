@@ -44,11 +44,11 @@ public:
     }
 
     //
-    auto&& key() const noexcept { return kv_; }
+    auto& key() const noexcept { return kv_; }
 
     //
     static auto emplace(auto& r, auto&& k)
-      noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
+      noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
       requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       enum Direction: bool { LEFT, RIGHT };
@@ -163,13 +163,7 @@ public:
           emplace(r, key_type(std::forward<decltype(a)>(a)...))
         )
       )
-      requires(
-        detail::Comparable<
-          Compare,
-          key_type(std::forward<decltype(a)>(a)...),
-          key_type
-        >
-      )
+      requires(std::constructible_from<key_type, decltype(a)...>)
     {
       return emplace(r, key_type(std::forward<decltype(a)>(a)...));
     }
@@ -301,24 +295,14 @@ public:
   auto count(key_type k) const noexcept { return count(std::move(k), {}); }
 
   //
-  template <int = 0>
   auto emplace(auto&& ...a)
     noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
   {
     auto const [n, p, s](
-      node::emplace(
-        root_,
-        std::forward<decltype(a)>(a)...
-      )
+      node::emplace(root_, std::forward<decltype(a)>(a)...)
     );
 
     return std::tuple(iterator(&root_, n, p), s);
-  }
-
-  auto emplace(key_type k)
-    noexcept(noexcept(emplace<0>(std::move(k))))
-  {
-    return emplace<0>(std::move(k));
   }
 
   //
