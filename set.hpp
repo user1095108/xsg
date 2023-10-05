@@ -286,13 +286,14 @@ public:
   auto size() const noexcept { return detail::size(root_, {}); }
 
   //
-  size_type count(auto&& k, char = {}) const noexcept
+  template <int = 0>
+  auto count(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, {}, k));
   }
 
-  auto count(key_type k) const noexcept { return count(std::move(k), {}); }
+  auto count(key_type k) const noexcept { return count<0>(std::move(k)); }
 
   //
   auto emplace(auto&& ...a)
