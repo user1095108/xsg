@@ -94,7 +94,7 @@ int main()
   }
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
-  std::size_t S(st.size());
+  auto S(st.size());
   t0 = timer_t::now();
 
   while (S)
