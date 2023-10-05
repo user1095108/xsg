@@ -336,33 +336,33 @@ public:
     return operator[]<0>(std::move(k));
   }
 
-  auto& at(auto&& k, char = {}) noexcept
+  template <int = 0>
+  auto& at(auto&& k) noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
 
-  auto& at(key_type k) noexcept { return at(std::move(k), {}); }
+  auto& at(key_type k) noexcept { return at<0>(std::move(k)); }
 
-  auto const& at(auto&& k, char = {}) const noexcept
+  template <int = 0>
+  auto const& at(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
 
-  auto& at(key_type k) const noexcept { return at(std::move(k), {}); }
+  auto& at(key_type k) const noexcept { return at<0>(std::move(k)); }
 
   //
-  size_type count(auto&& k, char = {}) const noexcept
+  template <int = 0>
+  size_type count(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, k));
   }
 
-  size_type count(key_type k) const noexcept
-  {
-    return count(std::move(k), {});
-  }
+  auto count(key_type k) const noexcept { return count<0>(std::move(k)); }
 
   //
   template <int = 0>
