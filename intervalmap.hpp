@@ -64,7 +64,7 @@ public:
     }
 
     //
-    auto&& key() const noexcept
+    auto& key() const noexcept
     {
       return std::get<0>(std::get<0>(v_.front()));
     }

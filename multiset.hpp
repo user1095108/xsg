@@ -44,7 +44,7 @@ public:
     }
 
     //
-    auto&& key() const noexcept { return v_.front(); }
+    auto& key() const noexcept { return v_.front(); }
 
     //
     static auto emplace(auto& r, auto&& ...a)
