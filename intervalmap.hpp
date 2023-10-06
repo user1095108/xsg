@@ -901,11 +901,18 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V, class C>
-inline auto erase(intervalmap<K, V, C>& c, auto const& k)
-  noexcept(noexcept(c.erase(k)))
+template <int = 0, typename K, typename V, class C>
+inline auto erase(intervalmap<K, V, C>& c, auto&& k)
+  noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
 {
-  return c.erase(k);
+  return c.erase(std::forward<decltype(k)>(k));
+}
+
+template <typename K, typename V, class C>
+inline auto erase(intervalmap<K, V, C>& c, K k)
+  noexcept(noexcept(erase<0>(c, std::move(k))))
+{
+  return erase<0>(c, std::move(k));
 }
 
 template <typename K, typename V, class C>
