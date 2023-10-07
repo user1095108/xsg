@@ -524,9 +524,8 @@ public:
       }
       else
       {
-        using T = decltype((std::declval<decltype(b)>(), ...));
-
-        std::get<1>(n->kv_) = std::forward<T>((b, ...));
+        std::get<1>(n->kv_) = std::forward<
+          decltype((std::declval<decltype(b)>(), ...))>((b, ...));
       }
     }
 
