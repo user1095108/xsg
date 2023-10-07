@@ -524,7 +524,7 @@ public:
       }
       else
       {
-        using T = std::tuple_element_t<0, std::tuple<decltype(b)...>>;
+        using T = decltype((std::declval<decltype(b)>(), ...));
 
         std::get<1>(n->kv_) = std::forward<T>((b, ...));
       }
