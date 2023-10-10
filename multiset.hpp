@@ -571,22 +571,23 @@ public:
   }
 
   //
-  iterator erase(const_iterator const i)
-    noexcept(noexcept(node::erase(root_, i)))
-  {
-    return node::erase(root_, i);
-  }
-
-  size_type erase(auto&& k, char = {})
+  template <int = 0>
+  size_type erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
+    requires(!std::convertible_to<decltype(k), const_iterator>)
   {
     return std::get<2>(node::erase(root_, k));
   }
 
-  size_type erase(key_type const& k) noexcept(noexcept(erase(k, {})))
+  auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
   {
-    return erase(k, {});
+    return erase<0>(std::move(k));
+  }
+
+  iterator erase(const_iterator const i)
+    noexcept(noexcept(node::erase(root_, i)))
+  {
+    return node::erase(root_, i);
   }
 
   //
