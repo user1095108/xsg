@@ -734,30 +734,30 @@ public:
   }
 
   //
-  auto equal_range(auto&& k, char = {}) noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
+  template <int = 0>
+  auto equal_range(auto&& k) noexcept
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
     return std::pair(iterator(&root_, nl), iterator(&root_, g));
   }
 
-  auto equal_range(auto&& k, char = {}) const noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
+  auto equal_range(key_type k) noexcept
+  {
+    return equal_range<0>(std::move(k));
+  }
+
+  template <int = 0>
+  auto equal_range(auto&& k) const noexcept
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
   }
 
-  auto equal_range(key_type const& k) noexcept
-  {
-    return equal_range(k, {});
-  }
-
   auto equal_range(key_type const& k) const noexcept
   {
-    return equal_range(k, {});
+    return equal_range<0>(std::move(k));
   }
 
   //
