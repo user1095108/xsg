@@ -604,7 +604,6 @@ public:
 
   template <int = 0>
   auto equal_range(auto&& k) const noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
