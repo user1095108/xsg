@@ -71,7 +71,13 @@ public:
 
     //
     static auto emplace(auto& r, auto&& k, auto&& ...a)
-      requires(detail::Comparable<Compare, decltype(k), key_type>)
+      requires(
+        detail::Comparable<
+          Compare,
+          decltype(std::get<0>(k)),
+          decltype(node::m_)
+        >
+      )
     {
       enum Direction: bool { LEFT, RIGHT };
 
@@ -192,7 +198,14 @@ public:
     }
 
     inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
-      requires(detail::Comparable<Compare, decltype(k), key_type>)
+      requires(
+        detail::Comparable<
+          Compare,
+          decltype(std::get<0>(k)),
+          decltype(node::m_)
+        >
+      )
+
     {
       using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
@@ -414,7 +427,13 @@ public:
 
     static auto erase(auto& r0, auto&& k)
       noexcept(noexcept(erase(r0, r0, r0, r0, {})))
-      requires(detail::Comparable<Compare, decltype(k), key_type>)
+      requires(
+        detail::Comparable<
+          Compare,
+          decltype(std::get<0>(k)),
+          decltype(node::m_)
+        >
+      )
     {
       using pointer = std::remove_cvref_t<decltype(r0)>;
       using node = std::remove_pointer_t<pointer>;
@@ -478,7 +497,7 @@ public:
     }
 
     static void reset_max(auto const r0, auto&& k) noexcept
-      requires(detail::Comparable<Compare, decltype(k), decltype(r0->key())>)
+      requires(detail::Comparable<Compare, decltype(k), decltype(node::m_)>)
     {
       auto const f([&](auto&& f, auto const n, decltype(n) p) noexcept ->
         decltype(node::m_)
@@ -692,7 +711,13 @@ public:
   //
   template <int = 0>
   size_type count(auto&& k) const noexcept
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
+    requires(
+      detail::Comparable<
+        Compare,
+        decltype(std::get<0>(k)),
+        decltype(node::m_)
+      >
+    )
   {
     for (decltype(root_) p{}, n(root_); n;)
     {
