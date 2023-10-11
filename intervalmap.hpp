@@ -478,7 +478,7 @@ public:
     }
 
     static void reset_max(auto const r0, auto&& k) noexcept
-      requires(detail::Comparable<Compare, decltype(k), key_type>)
+      requires(detail::Comparable<Compare, decltype(k), decltype(r0->key())>)
     {
       auto const f([&](auto&& f, auto const n, decltype(n) p) noexcept ->
         decltype(node::m_)
@@ -597,9 +597,14 @@ public:
                 nb->l_ = nb->r_ = detail::conv(n);
                 n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
 
-                n->m_ = std::max(node_max(n), nb->m_ = node_max(nb),
-                  [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
-                );
+                n->m_ = std::max(
+                    node_max(n),
+                    nb->m_ = node_max(nb),
+                    [](auto&& a, auto&& b) noexcept
+                    {
+                      return node::cmp(a, b) < 0;
+                    }
+                  );
               }
 
               break;
@@ -608,9 +613,13 @@ public:
               auto const l(f(f, n, a, i - 1)), r(f(f, n, i + 1, b));
               detail::assign(n->l_, n->r_)(detail::conv(l, p), detail::conv(r, p));
 
-              n->m_ = std::max({node_max(n), l->m_, r->m_},
-                [](auto&& a, auto&& b)noexcept{return node::cmp(a, b) < 0;}
-              );
+              n->m_ = std::max(
+                  {node_max(n), l->m_, r->m_},
+                  [](auto&& a, auto&& b) noexcept
+                  {
+                    return node::cmp(a, b) < 0;
+                  }
+                );
           }
 
           return n;
