@@ -607,13 +607,13 @@ public:
   iterator insert(value_type const& v)
     noexcept(noexcept(node::emplace(root_, v)))
   {
-    return { &root_, node::emplace(root_, v) };
+    return {&root_, node::emplace(root_, v)};
   }
 
   iterator insert(value_type&& v)
     noexcept(noexcept(node::emplace(root_, std::move(v))))
   {
-    return { &root_, node::emplace(root_, std::move(v)) };
+    return {&root_, node::emplace(root_, std::move(v))};
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)

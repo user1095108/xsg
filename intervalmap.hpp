@@ -786,9 +786,9 @@ public:
     noexcept(noexcept(node::emplace(root_, std::get<0>(v), std::get<1>(v))))
   {
     return {
-      &root_,
-      node::emplace(root_, std::get<0>(v), std::get<1>(v))
-    };
+        &root_,
+        node::emplace(root_, std::get<0>(v), std::get<1>(v))
+      };
   }
 
   iterator insert(value_type&& v)
@@ -798,9 +798,9 @@ public:
     )
   {
     return {
-      &root_,
-      node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
-    };
+        &root_,
+        node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
+      };
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
@@ -809,12 +809,19 @@ public:
     std::for_each(
       i,
       j,
-      [&](auto&& v) noexcept(noexcept(
-          emplace(std::get<0>(*i), std::get<1>(*i))
+      [&](auto&& v)
+        noexcept(noexcept(
+            emplace(
+              std::get<0>(std::forward<decltype(v)>(v)),
+              std::get<1>(std::forward<decltype(v)>(v))
+            )
+          )
         )
-      )
       {
-        emplace(std::get<0>(v), std::get<1>(v));
+        emplace(
+          std::get<0>(std::forward<decltype(v)>(v)),
+          std::get<1>(std::forward<decltype(v)>(v))
+        );
       }
     );
   }
