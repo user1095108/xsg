@@ -756,7 +756,7 @@ public:
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
   }
 
-  auto equal_range(key_type const& k) const noexcept
+  auto equal_range(key_type k) const noexcept
   {
     return equal_range<0>(std::move(k));
   }
@@ -792,11 +792,14 @@ public:
   }
 
   iterator insert(value_type&& v)
-    noexcept(noexcept(node::emplace(root_, std::get<0>(v), std::get<1>(v))))
+    noexcept(noexcept(
+        node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
+      )
+    )
   {
     return {
       &root_,
-      node::emplace(root_, std::get<0>(v), std::get<1>(v))
+      node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
     };
   }
 

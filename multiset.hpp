@@ -23,10 +23,10 @@ public:
   using reference = value_type&;
   using const_reference = value_type const&;
 
+  using iterator = multimapiterator<node const>;
+  using reverse_iterator = std::reverse_iterator<iterator>;
   using const_iterator = multimapiterator<node const>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-  using iterator = multimapiterator<node>;
-  using reverse_iterator = std::reverse_iterator<iterator>;
 
   struct node
   {
@@ -37,29 +37,28 @@ public:
     std::uintptr_t l_, r_;
     xl::list<value_type> v_;
 
-    explicit node(auto&& ...a)
-      noexcept(noexcept(v_.emplace_back(std::forward<decltype(a)>(a)...)))
+    explicit node(auto&& k)
+      noexcept(noexcept(v_.emplace_back(std::forward<decltype(k)>(k))))
     {
-      v_.emplace_back(std::forward<decltype(a)>(a)...);
+      v_.emplace_back(std::forward<decltype(k)>(k));
     }
 
     //
     auto& key() const noexcept { return v_.front(); }
 
     //
-    static auto emplace(auto& r, auto&& ...a)
-      noexcept(noexcept(new node(key_type(std::forward<decltype(a)>(a)...))))
+    static auto emplace(auto& r, auto&& k)
+      noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
+      requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       enum Direction: bool { LEFT, RIGHT };
-
-      key_type k(std::forward<decltype(a)>(a)...);
 
       node* q, *qp;
 
       auto const create_node([&](decltype(q) const p)
-        noexcept(noexcept(new node(std::move(k))))
+        noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
         {
-          auto const q(new node(std::move(k)));
+          auto const q(new node(std::forward<decltype(k)>(k)));
           q->l_ = q->r_ = detail::conv(p);
 
           return q;
@@ -68,7 +67,7 @@ public:
 
       auto const f([&](auto&& f, auto const n, decltype(n) p,
         enum Direction const d)
-        noexcept(noexcept(create_node(nullptr))) -> size_type
+        noexcept(noexcept(create_node({}))) -> size_type
         {
           size_type sl, sr;
 
@@ -155,6 +154,19 @@ public:
       }
 
       return std::pair(q, qp);
+    }
+
+    static auto emplace(auto& r, auto&& ...a)
+      noexcept(noexcept(
+          node::emplace(
+            r,
+            key_type(std::forward<decltype(a)>(a)...)
+          )
+        )
+      )
+      requires(std::is_constructible_v<key_type, decltype(a)...>)
+    {
+      return node::emplace(r, key_type(std::forward<decltype(a)>(a)...));
     }
 
     static iterator erase(auto& r0, const_iterator const i)
@@ -539,9 +551,9 @@ public:
     noexcept(noexcept(node::emplace(root_, std::forward<decltype(a)>(a)...)))
   {
     return {
-      &root_,
-      node::emplace(root_, std::forward<decltype(a)>(a)...)
-    };
+        &root_,
+        node::emplace(root_, std::forward<decltype(a)>(a)...)
+      };
   }
 
   //
@@ -593,9 +605,9 @@ public:
 
   //
   iterator insert(value_type const& v)
-    noexcept(noexcept(node::emplace(root_, v.first)))
+    noexcept(noexcept(node::emplace(root_, v)))
   {
-    return { &root_, node::emplace(root_, v.first) };
+    return { &root_, node::emplace(root_, v) };
   }
 
   iterator insert(value_type&& v)
@@ -606,9 +618,15 @@ public:
 
   void insert(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace(*i)))
-    requires(std::is_copy_constructible_v<value_type>)
   {
-    std::for_each(i, j, [&](auto&& v) { emplace(v); });
+    std::for_each(
+      i,
+      j,
+      [&](auto&& v) noexcept(noexcept(emplace(std::forward<decltype(v)>(v))))
+      {
+        emplace(std::forward<decltype(v)>(v));
+      }
+    );
   }
 };
 

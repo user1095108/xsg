@@ -25,10 +25,10 @@ public:
   using reference = value_type&;
   using const_reference = value_type const&;
 
-  using const_iterator = mapiterator<node const>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using iterator = mapiterator<node>;
   using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_iterator = mapiterator<node const>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   struct node
   {
