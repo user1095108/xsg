@@ -115,7 +115,7 @@ public:
           }
           else
           {
-            (qp = p, q = n)->v_.emplace_back(std::move(k));
+            (qp = p, q = n)->v_.emplace_back(std::forward<decltype(k)>(k));
 
             return {};
           }

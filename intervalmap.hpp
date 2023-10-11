@@ -192,6 +192,7 @@ public:
     }
 
     inline auto equal_range(auto n, decltype(n) p, auto&& k) noexcept
+      requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
 
@@ -413,6 +414,7 @@ public:
 
     static auto erase(auto& r0, auto&& k)
       noexcept(noexcept(erase(r0, r0, r0, r0, {})))
+      requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       using pointer = std::remove_cvref_t<decltype(r0)>;
       using node = std::remove_pointer_t<pointer>;
@@ -475,7 +477,8 @@ public:
       return m;
     }
 
-    static void reset_max(auto const r0, auto&& key) noexcept
+    static void reset_max(auto const r0, auto&& k) noexcept
+      requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       auto const f([&](auto&& f, auto const n, decltype(n) p) noexcept ->
         decltype(node::m_)
@@ -484,7 +487,7 @@ public:
 
           auto const l(detail::left_node(n, p)), r(detail::right_node(n, p));
 
-          if (auto const c(cmp(key, n->key())); c < 0)
+          if (auto const c(cmp(k, n->key())); c < 0)
           {
             if (r)
             {

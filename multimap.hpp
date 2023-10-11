@@ -68,6 +68,7 @@ public:
           )
         )
       )
+      requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       enum Direction: bool { LEFT, RIGHT };
 

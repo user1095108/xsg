@@ -53,8 +53,8 @@ public:
     {
       enum Direction: bool { LEFT, RIGHT };
 
-      bool s{}; // success
       node* q, *qp;
+      bool s{}; // success
 
       auto const create_node([&](decltype(q) const p)
         noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
