@@ -51,9 +51,9 @@ friend auto operator<=>(this_class const& l, this_class const& r)
   requires(std::three_way_comparable<value_type>)
 {
   return std::lexicographical_compare_three_way(
-    l.begin(), l.end(),
-    r.begin(), r.end()
-  );
+      l.begin(), l.end(),
+      r.begin(), r.end()
+    );
 }
 
 // iterators
