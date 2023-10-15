@@ -32,58 +32,27 @@ auto& operator=(std::initializer_list<value_type> l)
 
 //
 friend bool operator==(this_class const& l, this_class const& r)
-  noexcept(noexcept(
-      std::equal(
-        l.begin(), l.end(),
-        r.begin(), r.end(),
-        [](auto&&, auto&&) noexcept { return true; }
-      )
-    )
-  )
-  requires(requires{
-      std::equal(
-        l.begin(), l.end(),
-        r.begin(), r.end(),
-        [](auto&& a, auto&& b) noexcept
-        {
-          return std::remove_cvref_t<decltype(l)>::node::cmp(a, b) == 0;
-        }
-      );
-    }
+  noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
+  requires(
+    requires{std::declval<value_type>() == std::declval<value_type>();}
   )
 {
-  return std::equal(
-    l.begin(), l.end(),
-    r.begin(), r.end(),
-    [](auto&& a, auto&& b) noexcept
-    {
-      return std::remove_cvref_t<decltype(l)>::node::cmp(a, b) == 0;
-    }
-  );
+  return std::equal(l.begin(), l.end(), r.begin(), r.end());
 }
 
 friend auto operator<=>(this_class const& l, this_class const& r)
   noexcept(noexcept(
       std::lexicographical_compare_three_way(
         l.begin(), l.end(),
-        r.begin(), r.end(),
-        std::remove_cvref_t<decltype(l)>::node::cmp
+        r.begin(), r.end()
       )
     )
   )
-  requires(requires{
-    std::lexicographical_compare_three_way(
-        l.begin(), l.end(),
-        r.begin(), r.end(),
-        std::remove_cvref_t<decltype(l)>::node::cmp
-      );
-    }
-  )
+  requires(std::three_way_comparable<value_type>)
 {
   return std::lexicographical_compare_three_way(
     l.begin(), l.end(),
-    r.begin(), r.end(),
-    std::remove_cvref_t<decltype(l)>::node::cmp
+    r.begin(), r.end()
   );
 }
 
