@@ -33,9 +33,6 @@ auto& operator=(std::initializer_list<value_type> l)
 //
 friend bool operator==(this_class const& l, this_class const& r)
   noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
-  requires(
-    requires{std::declval<value_type>() == std::declval<value_type>();}
-  )
 {
   return std::equal(l.begin(), l.end(), r.begin(), r.end());
 }
