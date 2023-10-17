@@ -602,6 +602,7 @@ public:
   //
   template <int = 0>
   auto equal_range(auto&& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -615,6 +616,7 @@ public:
 
   template <int = 0>
   auto equal_range(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -630,12 +632,14 @@ public:
   template <int = 0>
   size_type erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
-    requires(!std::convertible_to<decltype(k), const_iterator>)
+    requires(detail::Comparable<Compare, decltype(k), key_type> &&
+      !std::convertible_to<decltype(k), const_iterator>)
   {
     return std::get<2>(node::erase(root_, k));
   }
 
   auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return erase<0>(std::move(k));
   }
@@ -693,6 +697,7 @@ public:
 template <int = 0, typename K, typename V, class C>
 inline auto erase(multimap<K, V, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
+  requires(detail::Comparable<Compare, decltype(k), key_type>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }

@@ -104,5 +104,8 @@ int main()
 
   std::cout << std::chrono::nanoseconds(timer_t::now() - t0).count() << std::endl;
 
+  xsg::map<std::string, std::unique_ptr<int>> ll;
+  ll["lalala"] = std::make_unique<int>(11);
+
   return 0;
 }

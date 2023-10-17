@@ -277,13 +277,6 @@ private:
 public:
   map() = default;
 
-  map(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    *this = l;
-  }
-
   map(map const& o)
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
@@ -304,6 +297,12 @@ public:
     insert(i, j);
   }
 
+  map(std::initializer_list<value_type> l)
+    noexcept(noexcept(*this = l))
+  {
+    insert(l.begin(), l.end());
+  }
+
   ~map() noexcept(noexcept(detail::destroy(root_, {})))
   {
     detail::destroy(root_, {});
@@ -322,10 +321,12 @@ public:
           typename node::empty_t())
       )
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(
         std::get<0>(
-          node::emplace(root_, k, typename node::empty_t())
+          node::emplace(root_, std::forward<decltype(k)>(k),
+            typename node::empty_t())
         )->kv_
       );
   }
@@ -338,6 +339,7 @@ public:
 
   template <int = 0>
   auto& at(auto&& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
@@ -346,6 +348,7 @@ public:
 
   template <int = 0>
   auto const& at(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(detail::find(root_, k)->kv_);
   }
@@ -355,6 +358,7 @@ public:
   //
   template <int = 0>
   size_type count(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, k));
   }
@@ -372,6 +376,7 @@ public:
         )
       )
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [n, p, s](
       node::emplace(
@@ -389,6 +394,7 @@ public:
         emplace<0>(std::move(k), std::forward<decltype(a)>(a)...)
       )
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return emplace<0>(std::move(k), std::forward<decltype(a)>(a)...);
   }
@@ -396,6 +402,7 @@ public:
   //
   template <int = 0>
   auto equal_range(auto&& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -409,6 +416,7 @@ public:
 
   template <int = 0>
   auto equal_range(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -424,7 +432,8 @@ public:
   template <int = 0>
   size_type erase(auto&& k)
     noexcept(noexcept(detail::erase(root_, k)))
-    requires(!std::convertible_to<decltype(k), const_iterator>)
+    requires(detail::Comparable<Compare, decltype(k), key_type> &&
+      !std::convertible_to<decltype(k), const_iterator>)
   {
     return bool(
       std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
@@ -514,6 +523,7 @@ public:
         )
       )
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [n, p, s](
       node::emplace(

@@ -248,13 +248,6 @@ private:
 public:
   set() = default;
 
-  set(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    *this = l;
-  }
-
   set(set const& o) 
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
@@ -270,9 +263,14 @@ public:
 
   set(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(insert(i, j)))
-    requires(std::is_constructible_v<Key, decltype(*i)>)
   {
     insert(i, j);
+  }
+
+  set(std::initializer_list<value_type> l)
+    noexcept(noexcept(*this = l))
+  {
+    insert(l.begin(), l.end());
   }
 
   ~set() noexcept(noexcept(detail::destroy(root_, {})))
@@ -336,9 +334,12 @@ public:
   template <int = 0>
   size_type erase(auto&& k)
     noexcept(noexcept(detail::erase(root_, k)))
-    requires(!std::convertible_to<decltype(k), const_iterator>)
+    requires(detail::Comparable<Compare, decltype(k), key_type> &&
+      !std::convertible_to<decltype(k), const_iterator>)
   {
-    return bool(std::get<0>(detail::erase(root_, k)));
+    return bool(
+        std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
+      );
   }
 
   auto erase(key_type k)
@@ -402,6 +403,7 @@ public:
 template <int = 0, typename K, class C>
 inline auto erase(set<K, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
+  requires(detail::Comparable<Compare, decltype(k), key_type>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }

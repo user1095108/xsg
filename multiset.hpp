@@ -472,13 +472,6 @@ private:
 public:
   multiset() = default;
 
-  multiset(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    *this = l;
-  }
-
   multiset(multiset const& o)
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
@@ -494,9 +487,14 @@ public:
 
   multiset(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(insert(i, j)))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     insert(i, j);
+  }
+
+  multiset(std::initializer_list<value_type> l)
+    noexcept(noexcept(*this = l))
+  {
+    insert(l.begin(), l.end());
   }
 
   ~multiset() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
@@ -559,6 +557,7 @@ public:
   //
   template <int = 0>
   auto equal_range(auto&& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -572,6 +571,7 @@ public:
 
   template <int = 0>
   auto equal_range(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
@@ -587,7 +587,8 @@ public:
   template <int = 0>
   size_type erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
-    requires(!std::convertible_to<decltype(k), const_iterator>)
+    requires(detail::Comparable<Compare, decltype(k), key_type> &&
+      !std::convertible_to<decltype(k), const_iterator>)
   {
     return std::get<2>(node::erase(root_, k));
   }
@@ -634,6 +635,7 @@ public:
 template <int = 0, typename K, class C>
 inline auto erase(multiset<K, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
+  requires(detail::Comparable<Compare, decltype(k), key_type>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }
@@ -647,10 +649,7 @@ inline auto erase(multiset<K, C>& c, K k)
 
 template <typename K, class C>
 inline auto erase_if(multiset<K, C>& c, auto pred)
-  noexcept(
-    noexcept(pred(std::declval<K>())) &&
-    noexcept(c.erase(c.begin()))
-  )
+  noexcept(noexcept(pred(std::declval<K>()), c.erase(c.begin())))
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 

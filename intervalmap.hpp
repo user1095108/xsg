@@ -657,13 +657,6 @@ private:
 public:
   intervalmap() = default;
 
-  intervalmap(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    *this = l;
-  }
-
   intervalmap(intervalmap const& o)
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
@@ -679,9 +672,14 @@ public:
 
   intervalmap(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(insert(i, j)))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     insert(i, j);
+  }
+
+  intervalmap(std::initializer_list<value_type> l)
+    noexcept(noexcept(*this = l))
+  {
+    insert(l.begin(), l.end());
   }
 
   ~intervalmap() noexcept(noexcept(delete root_))
@@ -718,6 +716,7 @@ public:
         decltype(node::m_)
       >
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     for (decltype(root_) p{}, n(root_); n;)
     {
@@ -751,6 +750,7 @@ public:
         )
       )
     )
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return {
       &root_,
@@ -774,6 +774,7 @@ public:
   //
   template <int = 0>
   auto equal_range(auto&& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
@@ -787,6 +788,7 @@ public:
 
   template <int = 0>
   auto equal_range(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](node::equal_range(root_, {}, k));
 
@@ -802,7 +804,8 @@ public:
   template <int = 0>
   size_type erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
-    requires(!std::convertible_to<decltype(k), const_iterator>)
+    requires(detail::Comparable<Compare, decltype(k), key_type> &&
+      !std::convertible_to<decltype(k), const_iterator>)
   {
     return std::get<2>(node::erase(root_, k));
   }
@@ -864,8 +867,10 @@ public:
   }
 
   //
+  template <int = 0>
   void all(auto const& k, auto g) const
     noexcept(noexcept(g(std::declval<value_type>())))
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto& [mink, maxk](k);
     auto const eq(node::cmp(mink, maxk) == 0);
@@ -904,7 +909,15 @@ public:
     f(f, root_, {});
   }
 
+  void all(key_type k, auto g) const
+    noexcept(noexcept(all<0>(std::move(k), std::move(g))))
+  {
+    all<0>(std::move(k), std::move(g));
+  }
+
+  template <int = 0>
   bool any(auto const& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto& [mink, maxk](k);
     auto const eq(node::cmp(mink, maxk) == 0);
@@ -956,6 +969,8 @@ public:
 
     return false;
   }
+
+  auto any(key_type k) const noexcept { return any<0>(std::move(k)); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
