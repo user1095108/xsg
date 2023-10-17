@@ -562,12 +562,13 @@ public:
 template <int = 0, typename K, typename V, class C>
 inline auto erase(map<K, V, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
+  requires(detail::Comparable<C, decltype(k), K>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }
 
 template <typename K, typename V, class C>
-inline auto erase(map<K, V, C>& c, K k)
+inline auto erase(map<K, V, C>& c, std::type_identity_t<K> k)
   noexcept(noexcept(erase<0>(c, std::move(k))))
 {
   return erase<0>(c, std::move(k));

@@ -106,6 +106,7 @@ int main()
 
   xsg::map<std::string, std::unique_ptr<int>> ll;
   ll["lalala"] = std::make_unique<int>(11);
+  erase(ll, "lalala");
 
   return 0;
 }
