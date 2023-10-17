@@ -711,10 +711,7 @@ inline auto erase(multimap<K, V, C>& c, std::type_identity_t<K> k)
 
 template <typename K, typename V, class C>
 inline auto erase_if(multimap<K, V, C>& c, auto pred)
-  noexcept(
-    noexcept(pred(std::declval<K>())) &&
-    noexcept(c.erase(c.begin()))
-  )
+  noexcept(noexcept(pred(std::declval<K>()), c.erase(c.begin())))
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
