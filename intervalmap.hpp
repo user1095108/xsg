@@ -982,7 +982,7 @@ inline auto erase(intervalmap<K, V, C>& c, auto&& k)
 }
 
 template <typename K, typename V, class C>
-inline auto erase(intervalmap<K, V, C>& c, K k)
+inline auto erase(intervalmap<K, V, C>& c, std::type_identity_t<K> k)
   noexcept(noexcept(erase<0>(c, std::move(k))))
 {
   return erase<0>(c, std::move(k));

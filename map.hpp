@@ -350,7 +350,7 @@ public:
   auto const& at(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    return std::get<1>(detail::find(root_, k)->kv_);
+    return std::get<1>(detail::find(root_, std::forward<decltype(k)>(k))->kv_);
   }
 
   auto& at(key_type k) const noexcept { return at<0>(std::move(k)); }
@@ -360,7 +360,7 @@ public:
   size_type count(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    return bool(detail::find(root_, k));
+    return bool(detail::find(root_, std::forward<decltype(k)>(k)));
   }
 
   auto count(key_type k) const noexcept { return count<0>(std::move(k)); }
@@ -404,7 +404,9 @@ public:
   auto equal_range(auto&& k) noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    auto const [nl, g](detail::equal_range(root_, {}, k));
+    auto const [nl, g](
+      detail::equal_range(root_, {}, std::forward<decltype(k)>(k))
+    );
 
     return std::pair(iterator(&root_, nl), iterator(&root_, g));
   }
@@ -418,7 +420,9 @@ public:
   auto equal_range(auto&& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    auto const [nl, g](detail::equal_range(root_, {}, k));
+    auto const [nl, g](
+      detail::equal_range(root_, {}, std::forward<decltype(k)>(k))
+    );
 
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
   }
