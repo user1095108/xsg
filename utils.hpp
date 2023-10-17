@@ -382,7 +382,7 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
   return std::pair(nnn, nnp);
 }
 
-inline auto erase(auto& r0, auto&& k)
+inline auto erase(auto& r0, auto const& k)
   noexcept(noexcept(delete r0))
   requires(Comparable<decltype(r0->cmp), decltype(k), decltype(r0->key())>)
 {
