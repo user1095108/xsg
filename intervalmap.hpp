@@ -677,9 +677,9 @@ public:
   }
 
   intervalmap(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
+    noexcept(noexcept(intervalmap(l.begin(), l.end()))):
+    intervalmap(l.begin(), l.end())
   {
-    insert(l.begin(), l.end());
   }
 
   ~intervalmap() noexcept(noexcept(delete root_))

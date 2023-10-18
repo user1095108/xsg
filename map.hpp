@@ -298,9 +298,9 @@ public:
   }
 
   map(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
+    noexcept(noexcept(map(l.begin(), l.end()))):
+    map(l.begin(), l.end())
   {
-    insert(l.begin(), l.end());
   }
 
   ~map() noexcept(noexcept(detail::destroy(root_, {})))

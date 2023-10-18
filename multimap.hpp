@@ -494,13 +494,6 @@ private:
 public:
   multimap() = default;
 
-  multimap(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    *this = l;
-  }
-
   multimap(multimap const& o)
     noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
@@ -519,6 +512,12 @@ public:
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     insert(i, j);
+  }
+
+  multimap(std::initializer_list<value_type> l)
+    noexcept(noexcept(multimap(l.begin(), l.end()))):
+    multimap(l.begin(), l.end())
+  {
   }
 
   ~multimap() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }

@@ -492,9 +492,9 @@ public:
   }
 
   multiset(std::initializer_list<value_type> l)
-    noexcept(noexcept(*this = l))
+    noexcept(noexcept(multiset(l.begin(), l.end()))):
+    multiset(l.begin(), l.end())
   {
-    insert(l.begin(), l.end());
   }
 
   ~multiset() noexcept(noexcept(delete root_)) { detail::destroy(root_, {}); }
