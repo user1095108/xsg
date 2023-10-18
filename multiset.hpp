@@ -632,19 +632,20 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <int = 0, typename K, class C>
+template <typename K, class C>
 inline auto erase(multiset<K, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
-  requires(detail::Comparable<Compare, decltype(k), key_type>)
+  requires(detail::Comparable<Compare, decltype(k), key_type> &&
+    !std::same_as<K, std::remove_cvref_t<decltype(k)>>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }
 
 template <typename K, class C>
-inline auto erase(multiset<K, C>& c, std::type_identity_t<K> k)
-  noexcept(noexcept(erase<0>(c, std::move(k))))
+inline auto erase(multiset<K, C>& c, std::type_identity_t<K> const& k)
+  noexcept(noexcept(c.erase(k)))
 {
-  return erase<0>(c, std::move(k));
+  return c.erase(k);
 }
 
 template <typename K, class C>

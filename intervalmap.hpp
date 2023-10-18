@@ -716,7 +716,6 @@ public:
         decltype(node::m_)
       >
     )
-    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     for (decltype(root_) p{}, n(root_); n;)
     {
@@ -974,18 +973,29 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <int = 0, typename K, typename V, class C>
+template <typename K, typename V, class C>
 inline auto erase(intervalmap<K, V, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
+  requires(
+    detail::Comparable<
+      C,
+      decltype(std::get<0>(k)),
+      decltype(intervalmap<K, V, C>::node::m_)
+    > &&
+    !std::same_as<
+      decltype(intervalmap<K, V, C>::node::m_),
+      std::remove_cvref_t<decltype(k)>
+    >
+  )
 {
   return c.erase(std::forward<decltype(k)>(k));
 }
 
 template <typename K, typename V, class C>
-inline auto erase(intervalmap<K, V, C>& c, std::type_identity_t<K> k)
-  noexcept(noexcept(erase<0>(c, std::move(k))))
+inline auto erase(intervalmap<K, V, C>& c, std::type_identity_t<K> const& k)
+  noexcept(noexcept(c.erase(k)))
 {
-  return erase<0>(c, std::move(k));
+  return c.erase(k);
 }
 
 template <typename K, typename V, class C>
