@@ -400,20 +400,19 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename K, class C>
+template <int = 0, typename K, class C>
 inline auto erase(set<K, C>& c, auto&& k)
   noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
-  requires(detail::Comparable<C, decltype(k), K> &&
-    !std::same_as<K, std::remove_cvref_t<decltype(k)>>)
+  requires(detail::Comparable<C, decltype(k), K>)
 {
   return c.erase(std::forward<decltype(k)>(k));
 }
 
 template <typename K, class C>
-inline auto erase(set<K, C>& c, std::type_identity_t<K> const& k)
-  noexcept(noexcept(c.erase(k)))
+inline auto erase(set<K, C>& c, K const& k)
+  noexcept(noexcept(erase<0>(c, k)))
 {
-  return c.erase(k);
+  return erase<0>(c, k);
 }
 
 template <typename K, class C>
