@@ -180,10 +180,7 @@ iterator lower_bound(auto&& k) noexcept
   return std::get<0>(equal_range(k));
 }
 
-auto lower_bound(key_type k) noexcept
-{
-  return lower_bound<0>(std::move(k));
-}
+auto lower_bound(key_type k) noexcept { return lower_bound<0>(std::move(k)); }
 
 template <int = 0>
 const_iterator lower_bound(auto&& k) const noexcept
@@ -205,10 +202,7 @@ iterator upper_bound(auto&& k) noexcept
   return std::get<1>(equal_range(k));
 }
 
-auto upper_bound(key_type k) noexcept
-{
-  return upper_bound<0>(std::move(k));
-}
+auto upper_bound(key_type k) noexcept { return upper_bound<0>(std::move(k)); }
 
 template <int = 0>
 const_iterator upper_bound(auto&& k) const noexcept
