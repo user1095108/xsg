@@ -286,11 +286,12 @@ public:
   //
   template <int = 0>
   auto count(auto&& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, {}, k));
   }
 
-  auto count(key_type k) const noexcept { return count<0>(std::move(k)); }
+  auto count(key_type const k) const noexcept { return count<0>(k); }
 
   //
   auto emplace(auto&& ...a)
@@ -305,29 +306,28 @@ public:
 
   //
   template <int = 0>
-  auto equal_range(auto&& k) noexcept
+  auto equal_range(auto const& k) noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(iterator(&root_, nl), iterator(&root_, g));
   }
 
-  auto equal_range(key_type k) noexcept
-  {
-    return equal_range<0>(std::move(k));
-  }
+  auto equal_range(key_type const k) noexcept { return equal_range<0>(k); }
 
   template <int = 0>
-  auto equal_range(auto&& k) const noexcept
+  auto equal_range(auto const& k) const noexcept
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     auto const [nl, g](detail::equal_range(root_, {}, k));
 
     return std::pair(const_iterator(&root_, nl), const_iterator(&root_, g));
   }
 
-  auto equal_range(key_type k) const noexcept
+  auto equal_range(key_type const k) const noexcept
   {
-    return equal_range<0>(std::move(k));
+    return equal_range<0>(k);
   }
 
   //
@@ -342,10 +342,11 @@ public:
       );
   }
 
-  auto erase(key_type k)
-    noexcept(noexcept(erase<0>(std::move(k))))
+  auto erase(key_type const k)
+    noexcept(noexcept(erase<0>(k)))
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    return erase<0>(std::move(k));
+    return erase<0>(k);
   }
 
   iterator erase(const_iterator const i)
@@ -369,20 +370,20 @@ public:
   }
 
   //
-  auto insert(value_type const& v)
-    noexcept(noexcept(node::emplace(root_, v)))
+  template <int = 0>
+  auto insert(auto&& k)
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(k)>(k))))
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    auto const [n, p, s](node::emplace(root_, v));
+    auto const [n, p, s](node::emplace(root_, std::forward<decltype(k)>(k)));
 
     return std::tuple(iterator(&root_, n, p), s);
   }
 
-  auto insert(value_type&& v)
-    noexcept(noexcept(node::emplace(root_, std::move(v))))
+  auto insert(key_type k)
+    noexcept(noexcept(insert<0>(std::move(k))))
   {
-    auto const [n, p, s](node::emplace(root_, std::move(v)));
-
-    return std::tuple(iterator(&root_, n, p), s);
+    return insert<0>(std::move(k));
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)

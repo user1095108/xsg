@@ -470,27 +470,39 @@ public:
   }
 
   //
-  auto insert(value_type const& v)
-    noexcept(noexcept(node::emplace(root_, std::get<0>(v), std::get<1>(v))))
+  template <int = 0>
+  auto insert(auto&& v)
+    noexcept(noexcept(
+        node::emplace(
+          root_,
+          std::get<0>(std::forward<decltype(v)>(v)),
+          std::get<1>(std::forward<decltype(v)>(v))
+        )
+      )
+    )
+    requires(
+      detail::Comparable<
+        Compare,
+        decltype(std::get<0>(std::forward<decltype(v)>(v))),
+        key_type
+      >
+    )
   {
     auto const [n, p, s](
-      node::emplace(root_, std::get<0>(v), std::get<1>(v))
+      node::emplace(
+        root_,
+        std::get<0>(std::forward<decltype(v)>(v)),
+        std::get<1>(std::forward<decltype(v)>(v))
+      )
     );
 
     return std::tuple(iterator(&root_, n, p), s);
   }
 
-  auto insert(value_type&& v)
-    noexcept(noexcept(
-        node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
-      )
-    )
+  auto insert(value_type const v)
+    noexcept(noexcept(insert<0>(v)))
   {
-    auto const [n, p, s](
-      node::emplace(root_, std::get<0>(v), std::move(std::get<1>(v)))
-    );
-
-    return std::tuple(iterator(&root_, n, p), s);
+    return insert<0>(v);
   }
 
   void insert(std::input_iterator auto const i, decltype(i) j)
