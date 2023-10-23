@@ -409,7 +409,7 @@ inline auto erase(set<K, C>& c, auto const& k)
 }
 
 template <typename K, class C>
-inline auto erase(set<K, C>& c, std::type_identity_t<K> const k)
+inline auto erase(set<K, C>& c, K const k)
   noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);

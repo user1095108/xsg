@@ -572,7 +572,7 @@ inline auto erase(map<K, V, C>& c, auto const& k)
 }
 
 template <typename K, typename V, class C>
-inline auto erase(map<K, V, C>& c, std::type_identity_t<K> const k)
+inline auto erase(map<K, V, C>& c, K const k)
   noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
