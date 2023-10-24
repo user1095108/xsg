@@ -82,7 +82,7 @@ inline auto next_node(auto n, decltype(n) p) noexcept
   }
   else
   {
-    for (auto&& key(n->key()); p;)
+    for (auto const& key(n->key()); p;)
     {
       if (node::cmp(key, p->key()) < 0)
       {
