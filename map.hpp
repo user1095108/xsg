@@ -576,18 +576,18 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <int = 0, typename K, typename V, class C>
 inline auto erase(map<K, V, C>& c, auto const& k)
-  noexcept(noexcept(c.erase(k)))
-  requires(detail::Comparable<C, decltype(k), K>)
-{
-  return c.erase(k);
-}
-
-template <int = 0, typename K, typename V, class C>
-inline auto erase(map<K, V, C>& c, auto const& k)
   noexcept(noexcept(c.erase(K(k))))
   requires(!detail::Comparable<C, decltype(k), K>)
 {
   return c.erase(K(k));
+}
+
+template <int = 0, typename K, typename V, class C>
+inline auto erase(map<K, V, C>& c, auto const& k)
+  noexcept(noexcept(c.erase(k)))
+  requires(detail::Comparable<C, decltype(k), K>)
+{
+  return c.erase(k);
 }
 
 template <typename K, typename V, class C>
