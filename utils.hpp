@@ -109,7 +109,7 @@ inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
   }
   else
   {
-    for (auto const& key(n->key()); p && (r0 != n);)
+    for (auto const& key(n->key()); p;)
     {
       if (node::cmp(key, p->key()) < 0)
       {
@@ -213,7 +213,7 @@ inline auto equal_range(auto n, decltype(n) p, auto const& k) noexcept
   );
 }
 
-inline auto find(auto n, decltype(n) p, auto& k) noexcept
+inline auto find(auto n, decltype(n) p, auto const& k) noexcept
   requires(Comparable<decltype(n->cmp), decltype(k), decltype(n->key())>)
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
