@@ -23,8 +23,8 @@
 namespace xsg::detail
 {
 
-using difference_type = std::intmax_t;
-using size_type = std::uintmax_t;
+using difference_type = std::ptrdiff_t;
+using size_type = std::size_t;
 
 template <class C, class U, class V>
 concept Comparable =
