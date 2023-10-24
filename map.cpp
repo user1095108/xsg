@@ -108,6 +108,7 @@ int main()
   ll["lalala"] = std::make_unique<int>(11);
   xsg::erase(ll, "lalala");
   xsg::erase(ll, {"lala", 4});
+  xsg::erase(ll, {"lalala"});
 
   return 0;
 }
