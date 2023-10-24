@@ -278,10 +278,10 @@ public:
   map() = default;
 
   map(map const& o)
-    noexcept(noexcept(*this = o))
-    requires(std::is_copy_constructible_v<value_type>)
+    noexcept(noexcept(map(o.begin(), o.end())))
+    requires(std::is_copy_constructible_v<value_type>):
+    map(o.begin(), o.end())
   {
-    *this = o;
   }
 
   map(map&& o)
@@ -292,7 +292,6 @@ public:
 
   map(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(insert(i, j)))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     insert(i, j);
   }
