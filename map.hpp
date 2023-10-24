@@ -302,8 +302,7 @@ public:
   //
   template <int = 0>
   auto& operator[](auto&& k)
-    noexcept(noexcept(
-        node::emplace(root_, std::forward<decltype(k)>(k))))
+    noexcept(noexcept(node::emplace(root_, std::forward<decltype(k)>(k))))
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return std::get<1>(std::get<0>(
