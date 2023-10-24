@@ -208,9 +208,9 @@ inline auto equal_range(auto n, decltype(n) p, auto const& k) noexcept
   }
 
   return std::pair(
-    n ? std::pair(n, p) : std::pair(gn, gp),
-    std::pair(gn, gp)
-  );
+      n ? std::pair(n, p) : std::pair(gn, gp),
+      std::pair(gn, gp)
+    );
 }
 
 inline auto find(auto n, decltype(n) p, auto const& k) noexcept
