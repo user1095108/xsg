@@ -361,13 +361,13 @@ public:
     )
   {
     return {
-      &root_,
-      detail::erase(
-        root_,
-        const_cast<node*>(i.n()),
-        const_cast<node*>(i.p())
-      )
-    };
+        &root_,
+        detail::erase(
+          root_,
+          const_cast<node*>(i.n()),
+          const_cast<node*>(i.p())
+        )
+      };
   }
 
   //
@@ -408,6 +408,14 @@ inline auto erase(set<K, C>& c, auto const& k)
   requires(detail::Comparable<C, decltype(k), K>)
 {
   return c.erase(k);
+}
+
+template <int = 0, typename K, class C>
+inline auto erase(set<K, C>& c, auto const& k)
+  noexcept(noexcept(c.erase(K(k))))
+  requires(!detail::Comparable<C, decltype(k), K>)
+{
+  return c.erase(K(k));
 }
 
 template <typename K, class C>

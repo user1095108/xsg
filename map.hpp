@@ -582,6 +582,14 @@ inline auto erase(map<K, V, C>& c, auto const& k)
   return c.erase(k);
 }
 
+template <int = 0, typename K, typename V, class C>
+inline auto erase(map<K, V, C>& c, auto const& k)
+  noexcept(noexcept(c.erase(K(k))))
+  requires(!detail::Comparable<C, decltype(k), K>)
+{
+  return c.erase(K(k));
+}
+
 template <typename K, typename V, class C>
 inline auto erase(map<K, V, C>& c, K const k)
   noexcept(noexcept(erase<0>(c, k)))
@@ -591,10 +599,7 @@ inline auto erase(map<K, V, C>& c, K const k)
 
 template <typename K, typename V, class C>
 inline auto erase_if(map<K, V, C>& c, auto pred)
-  noexcept(
-    noexcept(pred(std::declval<K>())) &&
-    noexcept(c.erase(c.begin()))
-  )
+  noexcept(noexcept(pred(std::declval<K>()), c.erase(c.begin())))
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
