@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <compare>
 
+#include <numeric> // std::midpoint()
 #include <tuple>
 #include <utility>
 
