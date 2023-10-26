@@ -416,9 +416,9 @@ public:
       }
 
       auto const f([l, q, &qp](auto&& f, auto const p,
-        size_type const a, decltype(a) b) noexcept -> node*
+        std::size_t const a, decltype(a) b) noexcept -> node*
         {
-          auto const i((a + b) / 2);
+          auto const i(std::midpoint(a, b));
           auto const n(l[i]);
 
           if (n == q)
