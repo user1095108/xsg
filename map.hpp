@@ -209,16 +209,13 @@ public:
       }
 
       //
-      auto const f([q, &qp](auto&& f, auto const p,
-        auto const a, decltype(a) b) noexcept -> node*
+      auto const f([q, &qp](auto&& f, auto const p, auto const a,
+        decltype(a) b) noexcept -> node*
         {
           auto const m(std::midpoint(a, b));
           auto const n(*m);
 
-          if (n == q)
-          {
-            qp = p;
-          }
+          if (n == q) qp = p;
 
           if (b == a)
           {
@@ -229,10 +226,7 @@ public:
             // n - nb
             auto const nb(*b);
 
-            if (nb == q)
-            {
-              qp = n;
-            }
+            if (nb == q) qp = n;
 
             nb->l_ = nb->r_ = detail::conv(n);
             n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
@@ -540,10 +534,8 @@ public:
   }
 
   auto insert_or_assign(key_type k, auto&& ...b)
-    noexcept(noexcept(
-        insert_or_assign<0>(std::move(k), std::forward<decltype(b)>(b)...)
-      )
-    )
+    noexcept(noexcept(insert_or_assign<0>(std::move(k),
+      std::forward<decltype(b)>(b)...)))
   {
     return insert_or_assign<0>(std::move(k), std::forward<decltype(b)>(b)...);
   }
