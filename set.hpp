@@ -176,7 +176,7 @@ public:
 
       {
         auto f([&](auto&& f, auto const n,
-          decltype(n) const p) mutable noexcept -> void
+          decltype(n) const p) noexcept -> void
           {
             if (n)
             {
