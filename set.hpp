@@ -171,17 +171,18 @@ public:
     static auto rebalance(auto const n, decltype(n) p,
       decltype(n) q, auto& qp, size_type const sz) noexcept
     {
-      auto const l(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
+      auto const a(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
+      auto b(a);
 
       {
-        auto f([l(l)](auto&& f, auto const n,
+        auto f([&](auto&& f, auto const n,
           decltype(n) const p) mutable noexcept -> void
           {
             if (n)
             {
               f(f, detail::left_node(n, p), n);
 
-              *l++ = n;
+              *b++ = n;
 
               f(f, detail::right_node(n, p), n);
             }
@@ -191,45 +192,41 @@ public:
         f(f, n, p);
       }
 
-      auto const f([l, q, &qp](auto&& f, auto const p,
-        std::size_t const a, decltype(a) b) noexcept -> node*
+      //
+      auto const f([q, &qp](auto&& f, auto const p,
+        auto const a, decltype(a) b) noexcept -> node*
         {
-          auto const i(std::midpoint(a, b));
-          auto const n(l[i]);
+          auto const m(std::midpoint(a, b));
+          auto const n(*m);
 
           if (n == q)
           {
             qp = p;
           }
 
-          switch (b - a)
+          if (b == a)
           {
-            case 0:
-              n->l_ = n->r_ = detail::conv(p);
+            n->l_ = n->r_ = detail::conv(p);
+          }
+          else if (b == a + 1)
+          {
+            // n - nb
+            auto const nb(*b);
 
-              break;
+            if (nb == q)
+            {
+              qp = n;
+            }
 
-            case 1:
-              {
-                // n - nb
-                auto const nb(l[b]);
-
-                if (nb == q)
-                {
-                  qp = n;
-                }
-
-                nb->l_ = nb->r_ = detail::conv(n);
-                n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
-              }
-
-              break;
-
-            default:
-              detail::assign(n->l_, n->r_)(
-                detail::conv(f(f, n, a, i - 1), p),
-                detail::conv(f(f, n, i + 1, b), p)
-              );
+            nb->l_ = nb->r_ = detail::conv(n);
+            n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
+          }
+          else
+          {
+            detail::assign(n->l_, n->r_)(
+              detail::conv(f(f, n, a, m - 1), p),
+              detail::conv(f(f, n, m + 1, b), p)
+            );
           }
 
           return n;
@@ -237,7 +234,7 @@ public:
       );
 
       //
-      return f(f, p, {}, sz - 1);
+      return f(f, p, a, b - 1);
     }
   };
 
