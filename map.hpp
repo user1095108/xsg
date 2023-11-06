@@ -358,7 +358,7 @@ public:
       )
     );
 
-    return std::tuple(iterator(&root_, n, p), s);
+    return std::pair(iterator(&root_, n, p), s);
   }
 
   auto emplace(key_type k, auto&& ...a)
@@ -468,7 +468,7 @@ public:
       )
     );
 
-    return std::tuple(iterator(&root_, n, p), s);
+    return std::pair(iterator(&root_, n, p), s);
   }
 
   auto insert(value_type const v)
@@ -502,12 +502,12 @@ public:
 
   //
   template <int = 0>
-  auto insert_or_assign(auto&& k, auto&& ...b)
+  auto insert_or_assign(auto&& k, auto&& ...a)
     noexcept(noexcept(
         node::emplace(
           root_,
           std::forward<decltype(k)>(k),
-          std::forward<decltype(b)>(b)...
+          std::forward<decltype(a)>(a)...
         )
       )
     )
@@ -517,30 +517,30 @@ public:
       node::emplace(
         root_,
         std::forward<decltype(k)>(k),
-        std::forward<decltype(b)>(b)...
+        std::forward<decltype(a)>(a)...
       )
     );
 
     if (!s)
     {
-      if constexpr(sizeof...(b))
+      if constexpr(sizeof...(a))
       {
-        std::get<1>(n->kv_) = mapped_type(std::forward<decltype(b)>(b)...);
+        std::get<1>(n->kv_) = mapped_type(std::forward<decltype(a)>(a)...);
       }
       else
       {
-        std::get<1>(n->kv_) = (std::forward<decltype(b)>(b), ...);
+        std::get<1>(n->kv_) = (std::forward<decltype(a)>(a), ...);
       }
     }
 
-    return std::tuple(iterator(&root_, n, p), s);
+    return std::pair(iterator(&root_, n, p), s);
   }
 
-  auto insert_or_assign(key_type k, auto&& ...b)
+  auto insert_or_assign(key_type k, auto&& ...a)
     noexcept(noexcept(insert_or_assign<0>(std::move(k),
-      std::forward<decltype(b)>(b)...)))
+      std::forward<decltype(a)>(a)...)))
   {
-    return insert_or_assign<0>(std::move(k), std::forward<decltype(b)>(b)...);
+    return insert_or_assign<0>(std::move(k), std::forward<decltype(a)>(a)...);
   }
 };
 

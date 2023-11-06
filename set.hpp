@@ -53,8 +53,8 @@ public:
     {
       enum Direction: bool { LEFT, RIGHT };
 
-      node* q, *qp;
       bool s{}; // success
+      node* q, *qp;
 
       auto const create_node([&](decltype(q) const p)
         noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
@@ -68,7 +68,7 @@ public:
 
       auto const f([&](auto&& f, auto const n, decltype(n) p,
         enum Direction const d)
-        noexcept(noexcept(create_node(nullptr)))  -> size_type
+        noexcept(noexcept(create_node({}))) -> size_type
         {
           size_type sl, sr;
 
@@ -160,9 +160,7 @@ public:
 
     static auto emplace(auto& r, auto&& ...a)
       noexcept(noexcept(
-          emplace(r, key_type(std::forward<decltype(a)>(a)...))
-        )
-      )
+          emplace(r, key_type(std::forward<decltype(a)>(a)...))))
       requires(std::is_constructible_v<key_type, decltype(a)...>)
     {
       return emplace(r, key_type(std::forward<decltype(a)>(a)...));
@@ -296,7 +294,7 @@ public:
       node::emplace(root_, std::forward<decltype(a)>(a)...)
     );
 
-    return std::tuple(iterator(&root_, n, p), s);
+    return std::pair(iterator(&root_, n, p), s);
   }
 
   //
@@ -372,7 +370,7 @@ public:
   {
     auto const [n, p, s](node::emplace(root_, std::forward<decltype(k)>(k)));
 
-    return std::tuple(iterator(&root_, n, p), s);
+    return std::pair(iterator(&root_, n, p), s);
   }
 
   auto insert(key_type k)
