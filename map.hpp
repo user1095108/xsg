@@ -86,7 +86,7 @@ public:
             )
           );
 
-          s = q; q->l_ = q->r_ = detail::conv(p);
+          s = true; q->l_ = q->r_ = detail::conv(p);
 
           return q;
         }

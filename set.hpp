@@ -61,7 +61,7 @@ public:
         {
           auto const q(new node(std::forward<decltype(k)>(k)));
 
-          s = q; q->l_ = q->r_ = detail::conv(p);
+          s = true; q->l_ = q->r_ = detail::conv(p);
 
           return q;
         }
