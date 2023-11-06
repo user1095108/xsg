@@ -86,7 +86,7 @@ public:
             )
           );
 
-          q->l_ = q->r_ = detail::conv(p);
+          s = q; q->l_ = q->r_ = detail::conv(p);
 
           return q;
         }
@@ -113,7 +113,7 @@ public:
             }
             else
             {
-              sl = s = (q = create_node(qp = n));
+              sl = bool(q = create_node(qp = n));
               n->l_ = detail::conv(q, p);
             }
 
@@ -134,7 +134,7 @@ public:
             }
             else
             {
-              sr = s = (q = create_node(qp = n));
+              sr = bool(q = create_node(qp = n));
               n->r_ = detail::conv(q, p);
             }
 
@@ -172,7 +172,7 @@ public:
         }
       );
 
-      r ? f(f, r, {}, {}) : s = (r = q = create_node(qp = {}));
+      r ? f(f, r, {}, {}) : bool(r = q = create_node(qp = {}));
 
       return std::tuple(q, qp, s);
     }
