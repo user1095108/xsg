@@ -39,19 +39,19 @@ public:
     std::uintptr_t l_, r_;
     value_type kv_;
 
-    explicit node(auto&& a, auto&& ...b)
+    explicit node(auto&& k, auto&& ...a)
       noexcept(noexcept(
           value_type(
             std::piecewise_construct_t{},
-            std::forward_as_tuple(std::forward<decltype(a)>(a)),
-            std::forward_as_tuple(std::forward<decltype(b)>(b)...)
+            std::forward_as_tuple(std::forward<decltype(k)>(k)),
+            std::forward_as_tuple(std::forward<decltype(a)>(a)...)
           )
         )
       ):
       kv_(
         std::piecewise_construct_t{},
-        std::forward_as_tuple(std::forward<decltype(a)>(a)),
-        std::forward_as_tuple(std::forward<decltype(b)>(b)...)
+        std::forward_as_tuple(std::forward<decltype(k)>(k)),
+        std::forward_as_tuple(std::forward<decltype(a)>(a)...)
       )
     {
     }
@@ -60,11 +60,11 @@ public:
     auto& key() const noexcept { return std::get<0>(kv_); }
 
     //
-    static auto emplace(auto& r, auto&& k, auto&& ...b)
+    static auto emplace(auto& r, auto&& k, auto&& ...a)
       noexcept(noexcept(
           new node(
             std::forward<decltype(k)>(k),
-            std::forward<decltype(b)>(b)...
+            std::forward<decltype(a)>(a)...
           )
         )
       )
@@ -77,12 +77,12 @@ public:
 
       auto const create_node([&](decltype(q) const p)
         noexcept(noexcept(new node(std::forward<decltype(k)>(k),
-          std::forward<decltype(b)>(b)...)))
+          std::forward<decltype(a)>(a)...)))
         {
           auto const q(
             new node(
               std::forward<decltype(k)>(k),
-              std::forward<decltype(b)>(b)...
+              std::forward<decltype(a)>(a)...
             )
           );
 
