@@ -412,8 +412,8 @@ public:
       !std::convertible_to<decltype(k), const_iterator>)
   {
     return bool(
-      std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
-    );
+        std::get<0>(detail::erase(root_, std::forward<decltype(k)>(k)))
+      );
   }
 
   auto erase(key_type k) noexcept(noexcept(erase<0>(std::move(k))))
