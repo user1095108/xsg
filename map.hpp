@@ -212,13 +212,12 @@ public:
       auto const f([q, &qp](auto&& f, auto const p, auto const a,
         decltype(a) b) noexcept -> node*
         {
-          auto const m(std::midpoint(a, b));
-          auto const n(*m);
-
-          if (n == q) qp = p;
+          node* n;
 
           if (b == a)
           {
+            if (n = *a; n == q) qp = p;
+
             n->l_ = n->r_ = detail::conv(p);
           }
           else if (b == a + 1)
@@ -226,13 +225,17 @@ public:
             // n - nb
             auto const nb(*b);
 
-            if (nb == q) qp = n;
+            if (n = *a; n == q) qp = p; else if (nb == q) qp = n;
 
             nb->l_ = nb->r_ = detail::conv(n);
             n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
           }
           else
           {
+            auto const m(std::midpoint(a, b));
+
+            if (n = *m; n == q) qp = p;
+
             detail::assign(n->l_, n->r_)(
               detail::conv(f(f, n, a, m - 1), p),
               detail::conv(f(f, n, m + 1, b), p)
