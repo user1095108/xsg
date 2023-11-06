@@ -88,7 +88,7 @@ public:
             }
             else
             {
-              sl = bool(q = create_node(qp = n));
+              sl = 1; q = create_node(qp = n);
               n->l_ = detail::conv(q, p);
             }
 
@@ -109,7 +109,7 @@ public:
             }
             else
             {
-              sr = bool(q = create_node(qp = n));
+              sr = 1; q = create_node(qp = n);
               n->r_ = detail::conv(q, p);
             }
 
