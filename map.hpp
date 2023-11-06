@@ -172,14 +172,7 @@ public:
         }
       );
 
-      if (r)
-      {
-        f(f, r, {}, {});
-      }
-      else
-      {
-        s = (r = q = create_node(qp = {}));
-      }
+      r ? f(f, r, {}, {}) : s = (r = q = create_node(qp = {}));
 
       return std::tuple(q, qp, s);
     }
