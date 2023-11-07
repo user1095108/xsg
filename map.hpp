@@ -79,6 +79,8 @@ public:
         noexcept(noexcept(new node(std::forward<decltype(k)>(k),
           std::forward<decltype(a)>(a)...)))
         {
+          s = true;
+
           auto const q(
             new node(
               std::forward<decltype(k)>(k),
@@ -86,7 +88,7 @@ public:
             )
           );
 
-          s = true; q->l_ = q->r_ = detail::conv(p);
+          q->l_ = q->r_ = detail::conv(p);
 
           return q;
         }

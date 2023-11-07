@@ -59,9 +59,10 @@ public:
       auto const create_node([&](decltype(q) const p)
         noexcept(noexcept(new node(std::forward<decltype(k)>(k))))
         {
-          auto const q(new node(std::forward<decltype(k)>(k)));
+          s = true;
 
-          s = true; q->l_ = q->r_ = detail::conv(p);
+          auto const q(new node(std::forward<decltype(k)>(k)));
+          q->l_ = q->r_ = detail::conv(p);
 
           return q;
         }
