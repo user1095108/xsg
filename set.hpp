@@ -118,8 +118,7 @@ public:
           }
           else
           {
-            qp = p;
-            q = n;
+            detail::assign(q, qp)(n, p);
 
             return {};
           }
