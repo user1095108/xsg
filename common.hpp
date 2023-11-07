@@ -23,8 +23,7 @@ auto& operator=(this_class&& o)
 auto& operator=(std::initializer_list<value_type> l)
   noexcept(noexcept(clear(), insert(l.begin(), l.end())))
 {
-  clear();
-  insert(l.begin(), l.end());
+  clear(); insert(l.begin(), l.end());
 
   return *this;
 }
@@ -143,11 +142,7 @@ auto contains(key_type const k) const noexcept { return contains<0>(k); }
 iterator erase(const_iterator a, const_iterator const b)
   noexcept(noexcept(erase(a)))
 {
-  iterator i(b);
-
-  for (; a != b; i = erase(a), a = i);
-
-  return i;
+  while (a != b) { a = erase(a); }; return {&root_, a.n(), a.p()};
 }
 
 //
