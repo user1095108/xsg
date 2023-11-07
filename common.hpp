@@ -3,8 +3,7 @@ auto& operator=(this_class const& o)
   noexcept(noexcept(clear(), insert(o.begin(), o.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
-  clear();
-  insert(o.begin(), o.end());
+  clear(); insert(o.begin(), o.end());
 
   return *this;
 }
@@ -142,7 +141,7 @@ auto contains(key_type const k) const noexcept { return contains<0>(k); }
 iterator erase(const_iterator a, const_iterator const b)
   noexcept(noexcept(erase(a)))
 {
-  while (a != b) { a = erase(a); }; return {&root_, a.n(), a.p()};
+  while (a != b) { a = erase(a); } return {&root_, a.n(), a.p()};
 }
 
 //
