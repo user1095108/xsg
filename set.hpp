@@ -192,7 +192,7 @@ public:
 
           if (b == a)
           {
-            if (n = *a; n == q) qp = p;
+            if ((n = *a) == q) qp = p;
 
             n->l_ = n->r_ = detail::conv(p);
           }
@@ -201,7 +201,7 @@ public:
             // n - nb
             auto const nb(*b);
 
-            if (n = *a; n == q) qp = p; else if (nb == q) qp = n;
+            if ((n = *a) == q) qp = p; else if (nb == q) qp = n;
 
             nb->l_ = nb->r_ = detail::conv(n);
             n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
@@ -210,7 +210,7 @@ public:
           {
             auto const m(std::midpoint(a, b));
 
-            if (n = *m; n == q) qp = p;
+            if ((n = *m) == q) qp = p;
 
             detail::assign(n->l_, n->r_)(
               detail::conv(f(f, n, a, m - 1), p),
