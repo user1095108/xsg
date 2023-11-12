@@ -167,7 +167,7 @@ public:
       auto b(a);
 
       {
-        auto f([&](auto&& f, auto const n,
+        auto const f([&](auto&& f, auto const n,
           decltype(n) const p) noexcept -> void
           {
             if (n)
