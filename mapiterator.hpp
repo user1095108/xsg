@@ -12,13 +12,8 @@ namespace xsg
 template <typename T>
 class mapiterator
 {
-  using inverse_const_t = std::conditional_t<
-    std::is_const_v<T>,
-    mapiterator<std::remove_const_t<T>>,
-    mapiterator<T const>
-  >;
-
-  friend inverse_const_t;
+  using iterator_t = mapiterator<std::remove_const_t<T>>;
+  friend mapiterator<T const>;
 
   T* n_, *p_;
   T* const* r_;
@@ -61,7 +56,7 @@ public:
   mapiterator(mapiterator const&) = default;
   mapiterator(mapiterator&&) = default;
 
-  mapiterator(inverse_const_t const& o) noexcept requires(std::is_const_v<T>):
+  mapiterator(iterator_t const& o) noexcept requires(std::is_const_v<T>):
     n_(o.n_),
     p_(o.p_),
     r_(o.r_)
@@ -77,8 +72,7 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    std::tie(n_, p_) = detail::next_node(n_, p_);
-    return *this;
+    std::tie(n_, p_) = detail::next_node(n_, p_); return *this;
   }
 
   auto& operator--() noexcept
@@ -86,6 +80,7 @@ public:
     std::tie(n_, p_) = n_ ?
       detail::prev_node(n_, p_) :
       detail::last_node(*r_, {});
+
     return *this;
   }
 
