@@ -86,22 +86,22 @@ public:
 
   mapiterator operator++(int) noexcept
   {
-    auto const t(std::make_pair(n_, p_));
+    auto const n(n_), p(p_);
 
     std::tie(n_, p_) = detail::next_node(n_, p_);
 
-    return {r_, t};
+    return {r_, n, p};
   }
 
   mapiterator operator--(int) noexcept
   {
-    auto const t(std::make_pair(n_, p_));
+    auto const n(n_), p(p_);
 
     std::tie(n_, p_) = n_ ?
       detail::prev_node(n_, p_) :
       detail::last_node(*r_, {});
 
-    return {r_, t};
+    return {r_, n, p};
   }
 
   // member access
