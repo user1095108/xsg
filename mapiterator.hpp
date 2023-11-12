@@ -84,8 +84,25 @@ public:
     return *this;
   }
 
-  auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
-  auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
+  auto operator++(int) noexcept
+  {
+    auto const t(std::make_pair(n_, p_));
+
+    std::tie(n_, p_) = detail::next_node(n_, p_);
+
+    return mapiterator(r_, t);
+  }
+
+  auto operator--(int) noexcept
+  {
+    auto const t(std::make_pair(n_, p_));
+
+    std::tie(n_, p_) = n_ ?
+      detail::prev_node(n_, p_) :
+      detail::last_node(*r_, {});
+
+    return mapiterator(r_, t);
+  }
 
   // member access
   auto operator->() const noexcept { return &n_->kv_; }
