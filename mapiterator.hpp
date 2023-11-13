@@ -67,6 +67,12 @@ public:
   mapiterator& operator=(mapiterator const&) = default;
   mapiterator& operator=(mapiterator&&) = default;
 
+  mapiterator& operator=(iterator_t const& o) noexcept
+    requires(std::is_const_v<T>)
+  {
+    n_ = o.n_; p_ = o.p_; r_ = o.r_; return *this;
+  }
+
   bool operator==(mapiterator const& o) const noexcept { return n_ == o.n_; }
 
   // increment, decrement
