@@ -170,10 +170,8 @@ public:
     }
 
     static iterator erase(auto& r0, const_iterator const i)
-      noexcept(
-        noexcept(std::declval<node>().v_.erase(i.i())) &&
-        noexcept(node::erase(r0, i.n(), i.p()))
-      )
+      noexcept(noexcept(std::declval<node>().v_.erase(i.i()),
+        node::erase(r0, i.n(), i.p())))
     {
       if (auto const n(i.n()), p(i.p()); 1 == n->v_.size())
       {
@@ -346,7 +344,7 @@ public:
       return std::tuple(nnn, nnp, s);
     }
 
-    static auto erase(auto& r0, auto&& k)
+    static auto erase(auto& r0, auto const& k)
       noexcept(noexcept(erase(r0, r0, r0, r0, {})))
     {
       using pointer = std::remove_cvref_t<decltype(r0)>;
