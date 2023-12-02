@@ -633,15 +633,23 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 template <int = 0, typename K, class C>
-inline auto erase(multiset<K, C>& c, auto&& k)
-  noexcept(noexcept(c.erase(std::forward<decltype(k)>(k))))
-  requires(detail::Comparable<Compare, decltype(k), key_type>)
+inline auto erase(multiset<K, C>& c, auto const& k)
+  noexcept(noexcept(c.erase(K(k))))
+  requires(!detail::Comparable<C, decltype(k), K>)
 {
-  return c.erase(std::forward<decltype(k)>(k));
+  return c.erase(K(k));
+}
+
+template <int = 0, typename K, class C>
+inline auto erase(multiset<K, C>& c, auto const& k)
+  noexcept(noexcept(c.erase(k)))
+  requires(detail::Comparable<C, decltype(k), K>)
+{
+  return c.erase(k);
 }
 
 template <typename K, class C>
-inline auto erase(multiset<K, C>& c, K const& k)
+inline auto erase(multiset<K, C>& c, K const k)
   noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
