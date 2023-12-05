@@ -340,8 +340,8 @@ public:
     noexcept(noexcept(
         detail::erase(
           root_,
-          const_cast<node*>(i.n()),
-          const_cast<node*>(i.p())
+          const_cast<node*>(i.n_),
+          const_cast<node*>(i.p_)
         )
       )
     )
@@ -350,8 +350,8 @@ public:
         &root_,
         detail::erase(
           root_,
-          const_cast<node*>(i.n()),
-          const_cast<node*>(i.p())
+          const_cast<node*>(i.n_),
+          const_cast<node*>(i.p_)
         )
       };
   }

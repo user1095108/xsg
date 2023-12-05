@@ -30,6 +30,9 @@ public:
   using pointer = value_type*;
   using reference = value_type&;
 
+  template <typename, typename, class> friend class map;
+  template <typename, class> friend class set;
+
 public:
   mapiterator() = default;
 
@@ -115,8 +118,7 @@ public:
   auto& operator*() const noexcept { return n_->kv_; }
 
   //
-  auto n() const noexcept { return n_; }
-  auto p() const noexcept { return p_; }
+  explicit operator bool() const noexcept { return n_; }
 };
 
 }
