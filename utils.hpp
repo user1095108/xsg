@@ -99,33 +99,6 @@ inline auto next_node(auto n, decltype(n) p) noexcept
   return std::pair(pointer{}, pointer{});
 }
 
-inline auto next_node(auto const r0, auto n, decltype(n) p) noexcept
-{
-  using pointer = std::remove_cvref_t<decltype(n)>;
-  using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
-
-  if (auto const r(right_node(n, p)); r)
-  {
-    return first_node(r, n);
-  }
-  else
-  {
-    for (auto const& key(n->key()); p;)
-    {
-      if (node::cmp(key, p->key()) < 0)
-      {
-        return std::pair(p, left_node(p, n));
-      }
-      else
-      {
-        assign(n, p)(p, right_node(p, n));
-      }
-    }
-  }
-
-  return std::pair(pointer{}, pointer{});
-}
-
 inline auto prev_node(auto n, decltype(n) p) noexcept
 {
   using node = std::remove_const_t<std::remove_pointer_t<decltype(n)>>;
