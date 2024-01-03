@@ -303,6 +303,12 @@ public:
     return operator[]<0>(std::move(k));
   }
 
+  auto& operator[](auto&& k) const
+    noexcept(noexcept(at(std::forward<decltype(k)>(k))))
+  {
+    return at(std::forward<decltype(k)>(k));
+  }
+
   template <int = 0>
   auto& at(auto&& k) noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
