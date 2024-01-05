@@ -38,7 +38,7 @@ concept Comparable =
 
 inline auto assign(auto& ...a) noexcept
 { // assign idiom
-  return [&](auto const ...b) noexcept { [](...)noexcept{}((a = b)...); };
+  return [&](auto const ...b) noexcept { assign((a = b)...); };
 }
 
 inline auto conv(auto const ...n) noexcept
