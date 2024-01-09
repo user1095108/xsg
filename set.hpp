@@ -116,7 +116,7 @@ public:
 
             sl = detail::size(detail::left_node(n, p), n);
           }
-          else
+          else [[unlikely]]
           {
             detail::assign(q, qp)(n, p);
 
