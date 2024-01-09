@@ -49,12 +49,12 @@ inline auto conv(auto const ...n) noexcept
 //
 inline auto left_node(auto const n, decltype(n) p) noexcept
 {
-  return std::remove_const_t<decltype(n)>(n->l_ ^ conv(p));
+  return std::remove_const_t<decltype(n)>(conv(p) ^ n->l_);
 }
 
 inline auto right_node(auto const n, decltype(n) p) noexcept
 {
-  return std::remove_const_t<decltype(n)>(n->r_ ^ conv(p));
+  return std::remove_const_t<decltype(n)>(conv(p) ^ n->r_);
 }
 
 inline auto first_node(auto n, decltype(n) p) noexcept
@@ -112,13 +112,13 @@ inline auto prev_node(auto n, decltype(n) p) noexcept
   {
     for (auto const& key(n->key()); p;)
     {
-      if (node::cmp(key, p->key()) > 0)
+      if (node::cmp(key, p->key()) < 0)
       {
-        return std::pair(p, right_node(p, n));
+        assign(n, p)(p, left_node(p, n));
       }
       else
       {
-        assign(n, p)(p, left_node(p, n));
+        return std::pair(p, right_node(p, n));
       }
     }
   }
