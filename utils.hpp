@@ -170,7 +170,7 @@ inline auto equal_range(auto n, decltype(n) p, auto const& k) noexcept
     {
       assign(n, p)(right_node(n, p), n);
     }
-    else
+    else [[unlikely]]
     {
       if (auto const r(right_node(n, p)); r)
       {
@@ -202,7 +202,7 @@ inline auto find(auto n, decltype(n) p, auto const& k) noexcept
     {
       assign(n, p)(right_node(n, p), n);
     }
-    else
+    else [[unlikely]]
     {
       break;
     }
@@ -229,14 +229,7 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
         nnp = p;
       }
 
-      if (q)
-      {
-        *q = conv(fnn, pp);
-      }
-      else
-      {
-        r0 = fnn;
-      }
+      q ? *q = conv(fnn, pp) : bool(r0 = fnn);
 
       // convert and attach l to fnn
       fnn->l_ = conv(l, p); 
@@ -282,14 +275,7 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
         nnp = lnn;
       }
 
-      if (q)
-      {
-        *q = conv(lnn, pp);
-      }
-      else
-      {
-        r0 = lnn;
-      }
+      q ? *q = conv(lnn, pp) : bool(r0 = lnn);
 
       // convert and attach r to lnn
       lnn->r_ = conv(r, p); 
@@ -341,14 +327,7 @@ inline auto erase(auto& r0, auto const pp, decltype(pp) p, decltype(pp) n,
       lr->l_ ^= np; lr->r_ ^= np;
     }
 
-    if (q)
-    {
-      *q = conv(lr, pp);
-    }
-    else
-    {
-      r0 = lr;
-    }
+    q ? *q = conv(lr, pp) : bool(r0 = lr);
   }
 
   delete n;
@@ -375,7 +354,7 @@ inline auto erase(auto& r0, auto const& k)
     {
       assign(pp, p, n, q)(p, n, right_node(n, p), &n->r_);
     }
-    else
+    else [[unlikely]]
     {
       return erase(r0, pp, p, n, q);
     }
