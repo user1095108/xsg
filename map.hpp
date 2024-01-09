@@ -304,6 +304,20 @@ public:
   }
 
   template <int = 0>
+  auto& operator[](auto const& k) const
+    noexcept(noexcept(at(k)))
+    requires(detail::Comparable<Compare, decltype(k), key_type>)
+  {
+    return at(k);
+  }
+
+  auto& operator[](key_type const k) const
+    noexcept(noexcept(operator[]<0>(k)))
+  {
+    return operator[]<0>(k);
+  }
+
+  template <int = 0>
   auto& at(auto&& k) noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
