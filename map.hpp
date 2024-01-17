@@ -184,23 +184,24 @@ public:
       auto const a(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
       auto b(a);
 
+      struct S
       {
-        auto const f([&](auto&& f, auto const n,
-          decltype(n) const p) noexcept -> void
+        decltype(b)& b_;
+
+        void operator()(node* const n, decltype(n) p) const noexcept
+        {
+          if (n)
           {
-            if (n)
-            {
-              f(f, detail::left_node(n, p), n);
+            operator()(detail::left_node(n, p), n);
 
-              *b++ = n;
+            *b_++ = n;
 
-              f(f, detail::right_node(n, p), n);
-            }
+            operator()(detail::right_node(n, p), n);
           }
-        );
+        }
+      };
 
-        f(f, n, p);
-      }
+      S{b}(n, p);
 
       //
       auto const f([q, &qp](auto&& f, auto const p, auto const a,
