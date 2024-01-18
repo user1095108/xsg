@@ -187,7 +187,7 @@ public:
       {
         std::remove_const_t<decltype(a)> b_;
 
-        void operator()(node* const n, decltype(n) p) noexcept
+        void operator()(decltype(n) n, decltype(n) p) noexcept
         {
           if (n)
           {
