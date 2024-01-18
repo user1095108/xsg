@@ -182,13 +182,12 @@ public:
       decltype(n) q, auto& qp, size_type const sz) noexcept
     {
       auto const a(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
-      auto b(a);
 
       struct S
       {
-        decltype(b)& b_;
+        std::remove_const_t<decltype(a)> b_;
 
-        void operator()(node* const n, decltype(n) p) const noexcept
+        void operator()(node* const n, decltype(n) p) noexcept
         {
           if (n)
           {
@@ -201,17 +200,18 @@ public:
         }
       };
 
-      S{b}(n, p);
+      struct T
+      {
+        decltype(q) q_;
+        decltype(qp) qp_;
 
-      //
-      auto const f([q, &qp](auto&& f, auto const p, auto const a,
-        decltype(a) b) noexcept -> node*
+        node* f(decltype(p) p, decltype(a) a, decltype(a) b) const noexcept
         {
           node* n;
 
           if (b == a)
           {
-            if ((n = *a) == q) qp = p;
+            if ((n = *a) == q_) qp_ = p;
 
             n->l_ = n->r_ = detail::conv(p);
           }
@@ -220,7 +220,7 @@ public:
             // n - nb
             auto const nb(*b);
 
-            if ((n = *a) == q) qp = p; else if (nb == q) qp = n;
+            if ((n = *a) == q_) qp_ = p; else if (nb == q_) qp_ = n;
 
             nb->l_ = nb->r_ = detail::conv(n);
             n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
@@ -229,20 +229,21 @@ public:
           {
             auto const m(std::midpoint(a, b));
 
-            if ((n = *m) == q) qp = p;
+            if ((n = *m) == q_) qp_ = p;
 
             detail::assign(n->l_, n->r_)(
-              detail::conv(f(f, n, a, m - 1), p),
-              detail::conv(f(f, n, m + 1, b), p)
+              detail::conv(f(n, a, m - 1), p),
+              detail::conv(f(n, m + 1, b), p)
             );
           }
 
           return n;
         }
-      );
+      };
 
-      //
-      return f(f, p, a, b - 1);
+      S s{a}; s(n, p);
+
+      return T{q, qp}.f(p, a, s.b_ - 1);
     }
   };
 
