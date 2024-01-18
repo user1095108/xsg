@@ -213,17 +213,16 @@ public:
           {
             if ((n = *a) == q_) qp_ = p;
 
-            n->l_ = n->r_ = detail::conv(p);
+            detail::assign(n->l_, n->r_)(detail::conv(p), detail::conv(p));
           }
           else if (b == a + 1)
-          {
-            // n - nb
+          { // n - nb
             auto const nb(*b);
 
             if ((n = *a) == q_) qp_ = p; else if (nb == q_) qp_ = n;
 
-            nb->l_ = nb->r_ = detail::conv(n);
-            n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
+            detail::assign(nb->l_, nb->r_, n->l_, n->r_)(detail::conv(n),
+              detail::conv(n), detail::conv(p), detail::conv(p, nb));
           }
           else
           {
