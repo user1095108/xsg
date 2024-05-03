@@ -124,10 +124,9 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebalance(n, p, q, qp, s)); p)
+            if (auto const nn(detail::rebalance(n, p, q, qp, s)); p)
             {
-              d ?
-                p->r_ = detail::conv(nn, detail::right_node(p, n)) :
+              d ? p->r_ = detail::conv(nn, detail::right_node(p, n)) :
                 p->l_ = detail::conv(nn, detail::left_node(p, n));
             }
             else
@@ -388,78 +387,6 @@ public:
       }
 
       return erase(r0, pp, p, n, q);
-    }
-
-    static auto rebalance(auto const n, decltype(n) p,
-      decltype(n) q, auto& qp, size_type const sz) noexcept
-    {
-      auto const l(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
-
-      {
-        auto f([l(l)](auto&& f, auto const n,
-          decltype(n) const p) mutable noexcept -> void
-          {
-            if (n)
-            {
-              f(f, detail::left_node(n, p), n);
-
-              *l++ = n;
-
-              f(f, detail::right_node(n, p), n);
-            }
-          }
-        );
-
-        f(f, n, p);
-      }
-
-      auto const f([l, q, &qp](auto&& f, auto const p,
-        std::size_t const a, decltype(a) b) noexcept -> node*
-        {
-          auto const i(std::midpoint(a, b));
-          auto const n(l[i]);
-
-          if (n == q)
-          {
-            qp = p;
-          }
-
-          switch (b - a)
-          {
-            case 0:
-              n->l_ = n->r_ = detail::conv(p);
-
-              break;
-
-            case 1:
-              {
-                // n - nb
-                auto const nb(l[b]);
-
-                if (nb == q)
-                {
-                  qp = n;
-                }
-
-                nb->l_ = nb->r_ = detail::conv(n);
-                n->l_ = detail::conv(p); n->r_ = detail::conv(nb, p);
-              }
-
-              break;
-
-            default:
-              detail::assign(n->l_, n->r_)(
-                detail::conv(f(f, n, a, i - 1), p),
-                detail::conv(f(f, n, i + 1, b), p)
-              );
-          }
-
-          return n;
-        }
-      );
-
-      //
-      return f(f, p, {}, sz - 1);
     }
   };
 

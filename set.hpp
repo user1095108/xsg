@@ -127,10 +127,9 @@ public:
           if (auto const s(1 + sl + sr), S(2 * s);
             (3 * sl > S) || (3 * sr > S))
           {
-            if (auto const nn(rebalance(n, p, q, qp, s)); p)
+            if (auto const nn(detail::rebalance(n, p, q, qp, s)); p)
             {
-              d ?
-                p->r_ = detail::conv(nn, detail::right_node(p, n)) :
+              d ? p->r_ = detail::conv(nn, detail::right_node(p, n)) :
                 p->l_ = detail::conv(nn, detail::left_node(p, n));
             }
             else
@@ -158,73 +157,6 @@ public:
       requires(std::is_constructible_v<key_type, decltype(a)...>)
     {
       return emplace(r, key_type(std::forward<decltype(a)>(a)...));
-    }
-
-    static auto rebalance(auto const n, decltype(n) p,
-      decltype(n) q, auto& qp, size_type const sz) noexcept
-    {
-      auto const a(static_cast<node**>(XSG_ALLOCA(sizeof(node*) * sz)));
-
-      struct S
-      {
-        std::remove_const_t<decltype(a)> b_;
-
-        void operator()(decltype(n) n, decltype(n) p) noexcept
-        {
-          if (n)
-          {
-            operator()(detail::left_node(n, p), n);
-
-            *b_++ = n;
-
-            operator()(detail::right_node(n, p), n);
-          }
-        }
-      };
-
-      struct T
-      {
-        decltype(q) q_;
-        decltype(qp) qp_;
-
-        node* f(decltype(p) p, decltype(a) a, decltype(a) b) const noexcept
-        {
-          node* n;
-
-          if (b == a)
-          {
-            if ((n = *a) == q_) qp_ = p;
-
-            detail::assign(n->l_, n->r_)(detail::conv(p), detail::conv(p));
-          }
-          else if (b == a + 1)
-          { // n - nb
-            auto const nb(*b);
-
-            if ((n = *a) == q_) qp_ = p; else if (nb == q_) qp_ = n;
-
-            detail::assign(nb->l_, nb->r_, n->l_, n->r_)(detail::conv(n),
-              detail::conv(n), detail::conv(p), detail::conv(p, nb));
-          }
-          else
-          {
-            auto const m(std::midpoint(a, b));
-
-            if ((n = *m) == q_) qp_ = p;
-
-            detail::assign(n->l_, n->r_)(
-              detail::conv(f(n, a, m - 1), p),
-              detail::conv(f(n, m + 1, b), p)
-            );
-          }
-
-          return n;
-        }
-      };
-
-      S s{a}; s(n, p);
-
-      return T{q, qp}.f(p, a, s.b_ - 1);
     }
   };
 
