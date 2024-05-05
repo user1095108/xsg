@@ -78,7 +78,7 @@ public:
         }
       );
 
-      return r ? detail::emplace(r, {}, k, create_node) :
+      return r ? detail::emplace(r, k, create_node) :
         std::tuple<node*, node*, bool>(r = create_node({}), {}, true);
     }
   };

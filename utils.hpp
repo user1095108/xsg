@@ -456,11 +456,10 @@ inline auto rebalance(auto const n, decltype(n) p,
   return T{q, qp}.f(p, a, s.b_ - 1);
 }
 
-inline auto emplace(auto& r, std::remove_reference_t<decltype(r)> const p,
-  auto const& k, auto const& create_node)
+inline auto emplace(auto& r, auto const& k, auto const& create_node)
   noexcept(noexcept(create_node({})))
 {
-  using node_t = std::remove_pointer_t<std::remove_const_t<decltype(p)>>;
+  using node_t = std::remove_pointer_t<std::remove_reference_t<decltype(r)>>;
 
   struct S
   {
@@ -551,7 +550,7 @@ inline auto emplace(auto& r, std::remove_reference_t<decltype(r)> const p,
   };
 
   //
-  S s{r, k, create_node}; s(r, p, {});
+  S s{r, k, create_node}; s(r, {}, {});
 
   return std::tuple(s.q_, s.qp_, s.s_);
 }
