@@ -70,25 +70,12 @@ public:
       )
       requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
-      enum Direction: bool { LEFT, RIGHT };
-
-      node* q, *qp;
-
-      auto const create_node([&](decltype(q) const p)
-        noexcept(noexcept(
-            new node(
-              std::forward<decltype(k)>(k),
-              std::forward<decltype(a)>(a)...
-            )
-          )
-        )
+      auto const create_node([&](node* const p)
+        noexcept(noexcept(new node(std::forward<decltype(k)>(k),
+          std::forward<decltype(a)>(a)...)))
         {
-          auto const q(
-            new node(
-              std::forward<decltype(k)>(k),
-              std::forward<decltype(a)>(a)...
-            )
-          );
+          auto const q(new node(std::forward<decltype(k)>(k),
+            std::forward<decltype(a)>(a)...));
 
           q->l_ = q->r_ = detail::conv(p);
 
@@ -96,97 +83,19 @@ public:
         }
       );
 
-      auto const f([&](auto&& f, auto const n, decltype(n) p,
-        enum Direction const d)
-        noexcept(noexcept(create_node({}))) -> size_type
-        {
-          size_type sl, sr;
-
-          if (auto const c(cmp(k, n->key())); c < 0)
-          {
-            if (auto const l(detail::left_node(n, p)); l)
-            {
-              if (auto const sz(f(f, l, n, LEFT)); sz)
-              {
-                sl = sz;
-              }
-              else
-              {
-                return {};
-              }
-            }
-            else
-            {
-              sl = bool(q = create_node(qp = n));
-              n->l_ = detail::conv(q, p);
-            }
-
-            sr = detail::size(detail::right_node(n, p), n);
-          }
-          else if (c > 0)
-          {
-            if (auto const r(detail::right_node(n, p)); r)
-            {
-              if (auto const sz(f(f, r, n, RIGHT)); sz)
-              {
-                sr = sz;
-              }
-              else
-              {
-                return {};
-              }
-            }
-            else
-            {
-              sr = bool(q = create_node(qp = n));
-              n->r_ = detail::conv(q, p);
-            }
-
-            sl = detail::size(detail::left_node(n, p), n);
-          }
-          else
-          {
-            (qp = p, q = n)->v_.emplace_back(
-              std::forward<decltype(k)>(k),
-              std::forward<decltype(a)>(a)...
-            );
-
-            return {};
-          }
-
-          //
-          if (auto const s(1 + sl + sr), S(2 * s);
-            (3 * sl > S) || (3 * sr > S))
-          {
-            if (auto const nn(detail::rebalance(n, p, q, qp, s)); p)
-            {
-              d ? p->r_ = detail::conv(nn, detail::right_node(p, n)) :
-                p->l_ = detail::conv(nn, detail::left_node(p, n));
-            }
-            else
-            {
-              r = nn;
-            }
-
-            return {};
-          }
-          else
-          {
-            return s;
-          }
-        }
-      );
-
       if (r)
       {
-        f(f, r, {}, {});
+        auto const [q, qp, s](detail::emplace(r, k, create_node));
+
+        if (!s) q->v_.emplace_back(std::forward<decltype(k)>(k),
+          std::forward<decltype(a)>(a)...);
+
+        return std::pair(q, qp);
       }
       else
       {
-        r = q = create_node(qp = {});
+        return std::pair<node*, node*>(r = create_node({}), {});
       }
-
-      return std::pair(q, qp);
     }
 
     static iterator erase(auto& r0, const_iterator const i)
