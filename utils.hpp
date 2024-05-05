@@ -456,6 +456,106 @@ inline auto rebalance(auto const n, decltype(n) p,
   return T{q, qp}.f(p, a, s.b_ - 1);
 }
 
+inline auto emplace(auto& r, std::remove_reference_t<decltype(r)> const p,
+  auto const& k, auto const& create_node)
+  noexcept(noexcept(create_node({})))
+{
+  using node_t = std::remove_pointer_t<std::remove_const_t<decltype(p)>>;
+
+  struct S
+  {
+    enum Direction: bool { LEFT, RIGHT };
+
+    decltype(r) r_;
+    decltype(k) k_;
+    decltype(create_node) create_node_;
+
+    node_t* q_{}, *qp_{};
+    bool s_{};
+
+    size_type operator()(node_t* n, decltype(n) p, enum Direction const d)
+      noexcept(noexcept(create_node_({})))
+    {
+      size_type sl, sr;
+
+      if (auto const c(node_t::cmp(k_, n->key())); c < 0)
+      {
+        if (auto const l(left_node(n, p)); l)
+        {
+          if (auto const sz((*this)(l, n, LEFT)); sz)
+          {
+            sl = sz;
+          }
+          else
+          {
+            return {};
+          }
+        }
+        else
+        {
+          s_ = true; sl = 1; q_ = create_node_(qp_ = n);
+          n->l_ = conv(q_, p);
+        }
+
+        sr = size(right_node(n, p), n);
+      }
+      else if (c > 0)
+      {
+        if (auto const r(right_node(n, p)); r)
+        {
+          if (auto const sz((*this)(r, n, RIGHT)); sz)
+          {
+            sr = sz;
+          }
+          else
+          {
+            return {};
+          }
+        }
+        else
+        {
+          s_ = true; sr = 1; q_ = create_node_(qp_ = n);
+          n->r_ = conv(q_, p);
+        }
+
+        sl = size(left_node(n, p), n);
+      }
+      else [[unlikely]]
+      {
+        assign(q_, qp_)(n, p);
+
+        return {};
+      }
+
+      //
+      if (auto const s(1 + sl + sr), S(2 * s);
+        (3 * sl > S) || (3 * sr > S))
+      {
+        if (auto const nn(rebalance(n, p, q_, qp_, s)); p)
+        {
+          d ? p->r_ = conv(nn, right_node(p, n)) :
+            p->l_ = conv(nn, left_node(p, n));
+        }
+        else
+        {
+          r_ = nn;
+        }
+
+        return {};
+      }
+      else
+      {
+        return s;
+      }
+    }
+  };
+
+  //
+  S s{r, k, create_node}; s(r, p, {});
+
+  return std::tuple(s.q_, s.qp_, s.s_);
+}
+
 }
 
 #endif // XSG_UTILS_HPP
