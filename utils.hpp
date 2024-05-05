@@ -472,6 +472,12 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
     node_t* q_, *qp_;
     bool s_;
 
+    explicit S(decltype(r_) r, decltype(k_) k,
+      decltype(create_node_) cn) noexcept:
+      r_(r), k_(k), create_node_(cn)
+    {
+    }
+
     size_type operator()(node_t* n, decltype(n) p, enum Direction const d)
       noexcept(noexcept(create_node_({})))
     {
@@ -521,7 +527,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
       }
       else [[unlikely]]
       {
-        assign(q_, qp_)(n, p);
+        assign(q_, qp_, s_)(n, p, false);
 
         return {};
       }
@@ -550,7 +556,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
   };
 
   //
-  S s{r, k, create_node, {}, {}, {}}; s(r, {}, {});
+  S s(r, k, create_node); s(r, {}, {});
 
   return std::tuple(s.q_, s.qp_, s.s_);
 }
