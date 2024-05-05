@@ -521,7 +521,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
       }
       else [[unlikely]]
       {
-        assign(q_, qp_, s_)(n, p, false);
+        assign(q_, qp_)(n, p);
 
         return {};
       }
