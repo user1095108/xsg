@@ -550,10 +550,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
   };
 
   //
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-  S s{r, k, create_node}; s(r, {}, {});
-#pragma GCC diagnostic pop
+  S s{r, k, create_node, {}, {}, {}}; s(r, {}, {});
 
   return std::tuple(s.q_, s.qp_, s.s_);
 }
