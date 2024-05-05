@@ -469,8 +469,8 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
     decltype(k) k_;
     decltype(create_node) create_node_;
 
-    node_t* q_{}, *qp_{};
-    bool s_{};
+    node_t* q_, *qp_;
+    bool s_;
 
     size_type operator()(node_t* n, decltype(n) p, enum Direction const d)
       noexcept(noexcept(create_node_({})))
@@ -492,7 +492,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
         }
         else
         {
-          s_ = true; sl = 1; q_ = create_node_(qp_ = n);
+          assign(sl, q_, qp_, s_)(1, create_node_(n), n, true);
           n->l_ = conv(q_, p);
         }
 
@@ -513,7 +513,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
         }
         else
         {
-          s_ = true; sr = 1; q_ = create_node_(qp_ = n);
+          assign(sr, q_, qp_, s_)(1, create_node_(n), n, true);
           n->r_ = conv(q_, p);
         }
 
@@ -521,7 +521,7 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
       }
       else [[unlikely]]
       {
-        assign(q_, qp_)(n, p);
+        assign(q_, qp_, s_)(n, p, false);
 
         return {};
       }
@@ -550,7 +550,10 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
   };
 
   //
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
   S s{r, k, create_node}; s(r, {}, {});
+#pragma GCC diagnostic pop
 
   return std::tuple(s.q_, s.qp_, s.s_);
 }
