@@ -76,13 +76,8 @@ public:
     }
 
     static auto emplace(auto& r, auto&& ...a)
-      noexcept(noexcept(
-          node::emplace(
-            r,
-            key_type(std::forward<decltype(a)>(a)...)
-          )
-        )
-      )
+      noexcept(noexcept(node::emplace(r,
+        key_type(std::forward<decltype(a)>(a)...))))
       requires(std::is_constructible_v<key_type, decltype(a)...>)
     {
       return node::emplace(r, key_type(std::forward<decltype(a)>(a)...));

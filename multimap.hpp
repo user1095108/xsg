@@ -61,13 +61,8 @@ public:
 
     //
     static auto emplace(auto& r, auto&& k, auto&& ...a)
-      noexcept(noexcept(
-          new node(
-            std::forward<decltype(k)>(k),
-            std::forward<decltype(a)>(a)...
-          )
-        )
-      )
+      noexcept(noexcept(new node(std::forward<decltype(k)>(k),
+        std::forward<decltype(a)>(a)...)))
       requires(detail::Comparable<Compare, decltype(k), key_type>)
     {
       auto const create_node([&](node* const p)
