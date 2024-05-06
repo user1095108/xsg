@@ -178,7 +178,7 @@ public:
   size_type count(auto const& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
-    return bool(detail::find(root_, std::forward<decltype(k)>(k)));
+    return bool(detail::find(root_, k));
   }
 
   auto count(key_type const k) const noexcept { return count<0>(k); }
