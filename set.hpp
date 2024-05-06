@@ -119,7 +119,7 @@ public:
 
   //
   template <int = 0>
-  auto count(auto&& k) const noexcept
+  auto count(auto const& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     return bool(detail::find(root_, {}, k));
