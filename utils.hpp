@@ -472,8 +472,8 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
     node_t* q_, *qp_;
     bool s_;
 
-    explicit S(decltype(r_) r, decltype(k_) k,
-      decltype(create_node_) cn) noexcept:
+    explicit S(decltype(r) r, decltype(k) k,
+      decltype(create_node) cn) noexcept:
       r_(r), k_(k), create_node_(cn)
     {
     }
@@ -485,16 +485,9 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
 
       if (auto const c(node_t::cmp(k_, n->key())); c < 0)
       {
-        if (auto const l(left_node(n, p)); l)
+        if (auto const l = left_node(n, p))
         {
-          if (auto const sz((*this)(l, n, LEFT)); sz)
-          {
-            sl = sz;
-          }
-          else
-          {
-            return {};
-          }
+          if (!(sl = (*this)(l, n, LEFT))) return {};
         }
         else
         {
@@ -506,16 +499,9 @@ inline auto emplace(auto& r, auto const& k, auto const& create_node)
       }
       else if (c > 0)
       {
-        if (auto const r(right_node(n, p)); r)
+        if (auto const r = right_node(n, p))
         {
-          if (auto const sz((*this)(r, n, RIGHT)); sz)
-          {
-            sr = sz;
-          }
-          else
-          {
-            return {};
-          }
+          if (!(sr = ((*this)(r, n, RIGHT)))) return {};
         }
         else
         {
