@@ -1,54 +1,3 @@
-// self-assign neglected
-auto& operator=(this_class const& o)
-  noexcept(noexcept(clear(), insert(o.begin(), o.end())))
-  requires(std::is_copy_constructible_v<value_type>)
-{
-  clear(); insert(o.begin(), o.end());
-
-  return *this;
-}
-
-auto& operator=(this_class&& o)
-  noexcept(noexcept(detail::destroy(root_, {})))
-{
-  detail::destroy(root_, {});
-
-  root_ = o.root_;
-  o.root_ = {};
-
-  return *this;
-}
-
-auto& operator=(std::initializer_list<value_type> l)
-  noexcept(noexcept(clear(), insert(l.begin(), l.end())))
-{
-  clear(); insert(l.begin(), l.end());
-
-  return *this;
-}
-
-//
-friend bool operator==(this_class const& l, this_class const& r)
-  noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
-{
-  return std::equal(l.begin(), l.end(), r.begin(), r.end());
-}
-
-friend auto operator<=>(this_class const& l, this_class const& r)
-  noexcept(noexcept(
-      std::lexicographical_compare_three_way(
-        l.begin(), l.end(),
-        r.begin(), r.end()
-      )
-    )
-  )
-{
-  return std::lexicographical_compare_three_way(
-      l.begin(), l.end(),
-      r.begin(), r.end()
-    );
-}
-
 // iterators
 iterator begin() noexcept
 {
@@ -102,6 +51,57 @@ const_reverse_iterator rend() const noexcept
 
 auto crbegin() const noexcept { return rbegin(); }
 auto crend() const noexcept { return rend(); }
+
+// self-assign neglected
+auto& operator=(this_class const& o)
+  noexcept(noexcept(clear(), insert(o.begin(), o.end())))
+  requires(std::is_copy_constructible_v<value_type>)
+{
+  clear(); insert(o.begin(), o.end());
+
+  return *this;
+}
+
+auto& operator=(this_class&& o)
+  noexcept(noexcept(detail::destroy(root_, {})))
+{
+  detail::destroy(root_, {});
+
+  root_ = o.root_;
+  o.root_ = {};
+
+  return *this;
+}
+
+auto& operator=(std::initializer_list<value_type> l)
+  noexcept(noexcept(clear(), insert(l.begin(), l.end())))
+{
+  clear(); insert(l.begin(), l.end());
+
+  return *this;
+}
+
+//
+friend bool operator==(this_class const& l, this_class const& r)
+  noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
+{
+  return std::equal(l.begin(), l.end(), r.begin(), r.end());
+}
+
+friend auto operator<=>(this_class const& l, this_class const& r)
+  noexcept(noexcept(
+      std::lexicographical_compare_three_way(
+        l.begin(), l.end(),
+        r.begin(), r.end()
+      )
+    )
+  )
+{
+  return std::lexicographical_compare_three_way(
+      l.begin(), l.end(),
+      r.begin(), r.end()
+    );
+}
 
 //
 auto root() const noexcept { return root_; }
