@@ -71,7 +71,7 @@ auto& operator=(this_class&& o)
   return *this;
 }
 
-auto& operator=(std::initializer_list<value_type> l)
+auto& operator=(std::initializer_list<value_type> const l)
   noexcept(noexcept(clear(), insert(l.begin(), l.end())))
 {
   clear(); insert(l.begin(), l.end());
@@ -159,7 +159,7 @@ const_iterator find(auto const& k) const noexcept
 auto find(key_type const k) const noexcept { return find<0>(k); }
 
 //
-void insert(std::initializer_list<value_type> l)
+void insert(std::initializer_list<value_type> const l)
   noexcept(noexcept(insert(l.begin(), l.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
