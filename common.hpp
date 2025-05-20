@@ -57,7 +57,7 @@ auto& operator=(this_class const& o)
   noexcept(noexcept(clear(), insert(o.begin(), o.end())))
   requires(std::is_copy_constructible_v<value_type>)
 {
-  clear(); insert(o.begin(), o.end());
+  if (this != &o) clear(), insert(o.begin(), o.end());
 
   return *this;
 }
@@ -66,9 +66,7 @@ auto& operator=(this_class&& o)
   noexcept(noexcept(detail::destroy(root_, {})))
 {
   detail::destroy(root_, {});
-
-  root_ = o.root_;
-  o.root_ = {};
+  detail::assign(root_, o.root_)(o.root_, nullptr);
 
   return *this;
 }
