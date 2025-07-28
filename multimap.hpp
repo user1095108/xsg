@@ -123,7 +123,7 @@ public:
       decltype(pp) n, std::uintptr_t* const q)
       noexcept(noexcept(delete r0))
     {
-      size_type const s(n->v_.size()); // !!!
+      std::uintmax_t const s(n->v_.size()); // !!!
       auto [nnn, nnp](detail::next_node(n, p));
 
       // pp - p - n - lr
@@ -294,7 +294,7 @@ public:
         }
       }
 
-      return std::tuple(pointer{}, pointer{}, size_type{});
+      return std::tuple(pointer{}, pointer{}, std::uintmax_t{});
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)
@@ -459,7 +459,7 @@ public:
 
   //
   template <int = 0>
-  size_type erase(auto&& k)
+  auto erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
     requires(detail::Comparable<Compare, decltype(k), key_type> &&
       !std::convertible_to<decltype(k), const_iterator>)
