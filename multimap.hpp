@@ -123,7 +123,7 @@ public:
       decltype(pp) n, std::uintptr_t* const q)
       noexcept(noexcept(delete r0))
     {
-      std::uintmax_t const s(n->v_.size()); // !!!
+      auto const s(n->v_.size()); // !!!
       auto [nnn, nnp](detail::next_node(n, p));
 
       // pp - p - n - lr
@@ -294,7 +294,7 @@ public:
         }
       }
 
-      return std::tuple(pointer{}, pointer{}, std::uintmax_t{});
+      return std::tuple(pointer{}, pointer{}, decltype(r0->v_.size()){});
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)

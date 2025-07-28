@@ -282,7 +282,7 @@ public:
         }
       }
 
-      return std::tuple(pointer{}, pointer{}, size_type{});
+      return std::tuple(pointer{}, pointer{}, decltype(r0->v_.size()){});
     }
 
     static auto erase(auto& r0, auto const n, decltype(n) const p)
@@ -425,7 +425,7 @@ public:
 
   //
   template <int = 0>
-  size_type erase(auto&& k)
+  auto erase(auto&& k)
     noexcept(noexcept(node::erase(root_, k)))
     requires(detail::Comparable<Compare, decltype(k), key_type> &&
       !std::convertible_to<decltype(k), const_iterator>)
