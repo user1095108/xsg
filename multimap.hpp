@@ -123,7 +123,7 @@ public:
       decltype(pp) n, std::uintptr_t* const q)
       noexcept(noexcept(delete r0))
     {
-      auto const s(n->v_.size());
+      size_type const s(n->v_.size()); // !!!
       auto [nnn, nnp](detail::next_node(n, p));
 
       // pp - p - n - lr
