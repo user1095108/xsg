@@ -502,7 +502,7 @@ inline auto erase_if(multiset<K, C>& c, auto pred)
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
-  for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
+  for (auto i(c.begin()); i; pred(*i) ? ++r, i = c.erase(i) : ++i);
 
   return r;
 }
