@@ -169,6 +169,9 @@ public:
   auto& i() const noexcept { return i_; }
   auto n() const noexcept { return n_; }
   auto p() const noexcept { return p_; }
+
+  //
+  explicit operator bool() const noexcept { return n_; }
 };
 
 }
