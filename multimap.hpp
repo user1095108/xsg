@@ -358,7 +358,8 @@ public:
   auto size() const noexcept
   {
     static constinit auto const f(
-      [](auto&& f, auto const n, decltype(n) p) noexcept -> size_type
+      [](auto&& f, auto const n, decltype(n) p) noexcept ->
+        decltype(n->v_.size())
       {
         return n ?
           n->v_.size() +
