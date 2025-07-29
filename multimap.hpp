@@ -355,7 +355,7 @@ public:
 # include "common.hpp"
 
   //
-  size_type size() const noexcept
+  auto size() const noexcept
   {
     static constinit auto const f(
       [](auto&& f, auto const n, decltype(n) p) noexcept -> size_type
@@ -364,7 +364,7 @@ public:
           n->v_.size() +
           f(f, detail::left_node(n, p), n) +
           f(f, detail::right_node(n, p), n) :
-          size_type{};
+          decltype(n->v_.size()){};
       }
     );
 
@@ -373,7 +373,7 @@ public:
 
   //
   template <int = 0>
-  size_type count(auto const& k) const noexcept
+  auto count(auto const& k) const noexcept
     requires(detail::Comparable<Compare, decltype(k), key_type>)
   {
     for (decltype(root_) p{}, n(root_); n;)
@@ -392,7 +392,7 @@ public:
       }
     }
 
-    return {};
+    return decltype(root_->v_.size()){};
   }
 
   auto count(key_type const k) const noexcept { return count<0>(k); }
